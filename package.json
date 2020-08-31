@@ -1,0 +1,19 @@
+{
+  "name": "octobot",
+  "version": "1.0.0",
+  "description": "octo development team official bot",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Octo-Development-Team/OctoBot.git"
+  },
+  "author": "derock",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Octo-Development-Team/OctoBot/issues"
+  },
+  "homepage": "https://github.com/Octo-Development-Team/OctoBot#readme"
+}
