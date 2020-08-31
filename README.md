@@ -1,2 +1,3 @@
-# OctoBot
-Main Octo Development Bot
+# OctoBot Development Branch
+
+This is the development branch
