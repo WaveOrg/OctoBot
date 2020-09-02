@@ -11,16 +11,17 @@ module.exports = {
      * @param {Discord.Client} client 
      */
     async run(message, args, client) {
-        if(message.member.voice.channelID) {
-            if(audioPlayers.has(message.member.voice.channel.id)) {
+        if (message.member.voice.channelID) {
+            if (audioPlayers.has(message.member.voice.channel.id)) {
                 const song = audioPlayers.get(message.member.voice.channel.id)
-                const details = song.getCurrentDetails()
-                const l = (Date.now() - song.getPos()) / 1000;
-                const vl = parseInt(details.videoDetails.lengthSeconds)
 
-                const barProgress = Math.floor(utils.scale(l, 0, vl, 0, 10))
+                if (isNaN(args[0])) return message.channel.send(ErrorEmbed("Please use a number to set the bass boost amount!"))
+                if (parseInt(args[0]) > 100 || parseInt(args[0]) < 0) return message.channel.send(ErrorEmbed("Please select a number between 0 - 100"))
 
-                message.channel.send(InfoEmbed("[Now Playing]", `${details.videoDetails.title}\n\n${utils.generateProgressBar(barProgress, 10, `${ms(l * 1000)}/${ms(parseFloat(vl) * 1000)}`)}`).setThumbnail(details.videoDetails.thumbnail.thumbnails[details.videoDetails.thumbnail.thumbnails.length - 1].url))
+                song.bassBoost(parseInt(args[0]))
+
+                message.channel.send(InfoEmbed("🔊 Bass Boost " + (parseInt(args[0]) == 0? "**DISABLED**" : "**ENABLED**") + "!", `Awesomeness set to \`${args[0]}%\` for the next song!`))
+
             } else {
                 message.channel.send(ErrorEmbed("<:no:750451799609311412> Nothing is playing silly!").setTitle("").setFooter("").setTimestamp(""))
             }
@@ -30,10 +31,10 @@ module.exports = {
     },
 
     config: {
-        command: "nowplaying",
-        aliases: ["np"],
-        description: "Shows the current song.",
+        command: "bassboost",
+        aliases: ["bass", "bb"],
+        description: "Bass boost the next song.",
         permissions: [],
-        usage: `{{PREFIX}}nowplaying`
+        usage: `{{PREFIX}}bassboost`
     }
 }

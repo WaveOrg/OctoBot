@@ -19,7 +19,7 @@ module.exports = async (client) => {
             command["category"] = folder;
 
             if(!command.config || !command.config.command || !command.config.aliases || !command.config.description || typeof command.config.admin == undefined || !command.run) {
-                logger.error(`${command.config.command || file} failed to load`);
+                logger.error(`${command.config? command.config.command || file : file} failed to load`);
                 continue;
             }
 

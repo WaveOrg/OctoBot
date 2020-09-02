@@ -19,7 +19,7 @@ module.exports = {
                 var desc = ''
     
                 for(let song of songs)
-                    desc += `[${song.data.videoDetails.title}](${song.url})\n`
+                    desc += `[${song.data.videoDetails.title}](${song.url})\n`      
     
                 message.channel.send(InfoEmbed("🎧 Queue", `${desc == ''? "No songs avaliable!" : desc}`))
             } else {

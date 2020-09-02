@@ -14,13 +14,10 @@ module.exports = {
         if(message.member.voice.channelID) {
             if(audioPlayers.has(message.member.voice.channel.id)) {
                 const song = audioPlayers.get(message.member.voice.channel.id)
-                const details = song.getCurrentDetails()
-                const l = (Date.now() - song.getPos()) / 1000;
-                const vl = parseInt(details.videoDetails.lengthSeconds)
+                
+                song.skip()
 
-                const barProgress = Math.floor(utils.scale(l, 0, vl, 0, 10))
-
-                message.channel.send(InfoEmbed("[Now Playing]", `${details.videoDetails.title}\n\n${utils.generateProgressBar(barProgress, 10, `${ms(l * 1000)}/${ms(parseFloat(vl) * 1000)}`)}`).setThumbnail(details.videoDetails.thumbnail.thumbnails[details.videoDetails.thumbnail.thumbnails.length - 1].url))
+                message.channel.send(InfoEmbed("⏩ Skipped", `Song Skipped`).setThumbnail())
             } else {
                 message.channel.send(ErrorEmbed("<:no:750451799609311412> Nothing is playing silly!").setTitle("").setFooter("").setTimestamp(""))
             }
@@ -30,10 +27,10 @@ module.exports = {
     },
 
     config: {
-        command: "nowplaying",
-        aliases: ["np"],
-        description: "Shows the current song.",
+        command: "skip",
+        aliases: ["s"],
+        description: "Skips the current song.",
         permissions: [],
-        usage: `{{PREFIX}}nowplaying`
+        usage: `{{PREFIX}}skip`
     }
 }

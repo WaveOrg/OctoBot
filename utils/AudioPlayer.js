@@ -19,6 +19,7 @@ module.exports = class AudioPlayer {
         this.channel = textChannel;
         this.enabled = false;
         this.onEnd = onEnd;
+        this.filters = '';
 
         (async () => this.currentSongDetails = await ytdl.getInfo(startingSongURL))();
 
@@ -55,7 +56,11 @@ module.exports = class AudioPlayer {
      */
     async play(song) {
         if(this.enabled) {
-            ytdl(song).pipe(this.stream)
+            ytdl(song, {
+                filter: 'audioonly',
+                opusEnabled: true,
+                encoderArgs: this.filters
+            }).pipe(this.stream)
 
             this.currentSongDetails = await ytdl.getInfo(song);
             this.channel.send(InfoEmbed("▶ Music Started", `Currently Playing: \`${this.currentSongDetails.videoDetails.title}\``))
@@ -104,5 +109,36 @@ module.exports = class AudioPlayer {
 
     getPos() {
         return this.started
+    }
+
+    skip() {
+        if(this.enabled) {
+            this.start();
+        }
+    }
+
+    /**
+     * 
+     * @param {number} volume 
+     */
+    setVolume(volume) { this.voiceconn.dispatcher.setVolume(volume) }
+
+    getCurrentVolume() { return this.voiceconn.dispatcher.volume * 100 }
+
+    clearQueue() { this.queue = []; }
+
+    pause() { 
+        if(this.voiceconn.dispatcher.paused) this.voiceconn.dispatcher.resume()
+        else this.voiceconn.dispatcher.pause()
+
+        return this.voiceconn.dispatcher.paused
+    }
+
+    /**
+     * 
+     * @param {number} number 
+     */
+    bassBoost(number) {
+        this.filters = 'bass=g=' + number +',dynaudnorm=f=200'
     }
 }

@@ -11,6 +11,8 @@ module.exports = {
         if(message.author.bot) return;
         if(message.channel.type != "text") return;
 
+        if(!message.content.toLowerCase().startsWith(prefix)) return;
+
         const arguments = message.content.slice(prefix.length).trim().split(/ +/g);
         const command = arguments.shift().toLowerCase();
 
