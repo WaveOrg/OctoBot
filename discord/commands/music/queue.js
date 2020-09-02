@@ -2,7 +2,8 @@ const Discord = require("discord.js")
 const { utils, logger, audioPlayers } = require("../../../globals");
 const AudioPlayer = require('../../../utils/AudioPlayer');
 const { InfoEmbed, ErrorEmbed } = require("../../../utils/utils");
-const ytdl = require('ytdl-core')
+const ytdl = require('ytdl-core');
+const { Menu } = require("../../../utils/menu");
 
 module.exports = {
     /**
@@ -19,7 +20,27 @@ module.exports = {
                 var desc = ''
     
                 for(let song of songs)
-                    desc += `[${song.data.videoDetails.title}](${song.url})\n`      
+                    desc += `[${song.data.videoDetails.title}](${song.url})\n`
+
+                if(desc.length > 2048) {
+                    const pages = utils.cutStringButAtNewLineUnderCharacterLimit(desc);
+
+                    return new Menu(message.channel, message.author.id, pages.map((txt, index) => { 
+
+                        const reactions = { }
+                        if(index != 0) reactions["▶"] = "next"
+                        if(index + 1 != pages.length) reactions["◀"] = "previous"
+
+                        console.log(txt)
+                        console.log(reactions)
+
+                        return { 
+                            name: `${index}`, 
+                            content: InfoEmbed('📜 Queue Page '+index, txt),
+                            reactions: reactions
+                        } 
+                    }))
+                } 
     
                 message.channel.send(InfoEmbed("🎧 Queue", `${desc == ''? "No songs avaliable!" : desc}`))
             } else {

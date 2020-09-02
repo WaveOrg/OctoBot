@@ -25,7 +25,7 @@ module.exports = {
                 message.channel.send(ErrorEmbed("<:no:750451799609311412> Nothing is playing silly!").setTitle("").setFooter("").setTimestamp(""))
             }
         } else {
-            message.channel.send(ErrorEmbed("<:no:750451799609311412> You must be in a VC!").setTitle("").setFooter("").setTimestamp(""))
+            message.channel.send(ErrorEmbed("<:no:750451799609311412> You must be in a VC with the bot!").setTitle("").setFooter("").setTimestamp(""))
         }
     },
 

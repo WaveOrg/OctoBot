@@ -1,4 +1,5 @@
 const discord = require("discord.js")
+const { logger } = require("../globals")
 
 module.exports = {
     InfoEmbed(title, desc) {
@@ -30,5 +31,42 @@ module.exports = {
         return returnStr;
     },
 
-    scale: (number, oldMin, oldMax, newMin, newMax) => (((newMax - newMin) * (number - oldMin)) / (oldMax - oldMin)) + newMin
+    scale: (number, oldMin, oldMax, newMin, newMax) => (((newMax - newMin) * (number - oldMin)) / (oldMax - oldMin)) + newMin,
+
+    /**
+     * 
+     * @param {string} string 
+     * @param {number} characterLimit 
+     */
+    cutStringButAtNewLineUnderCharacterLimit(string, characterLimit) {
+
+        console.log(typeof string)
+        console.log(string.length)
+
+        var lines = string.split(/\n/g); 
+        var returnArr = [""];
+        var index = 0;
+
+        for(let i = 0; i < characterLimit; ) {
+            const line = lines.shift()
+
+            console.log(`index: ${index} | length: ${i}`)
+            console.log(line)
+
+            if(line) {
+                i += line.length;
+
+                if(i < characterLimit) {
+                    returnArr[index] += line + '\n'
+                } else {
+                    i = 0;
+                    index++;
+                    
+                    returnArr[index] = line + '\n'
+                }
+            } else break;
+        }
+
+        return returnArr;
+    }
 }

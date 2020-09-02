@@ -11,15 +11,15 @@ module.exports = {
      */
     async run(message, args, client) {
         
-        if(!message.member.voice.channelID) return message.channel.send(ErrorEmbed("You must be in a Voice Channel to do this!"))
+        if(!message.member.voice.channelID) return message.channel.send(ErrorEmbed("<:no:750451799609311412> You're not in a VC!").setTitle("").setFooter("").setTimestamp(""))
 
         if(audioPlayers.has(message.member.voice.channel.id)) {
             const song = audioPlayers.get(message.member.voice.channel.id)
 
             if(!args[0]) return message.channel.send(InfoEmbed("🔊 Current Volume", `The current volume is ${song.getCurrentVolume()}`))
 
-            if(isNaN(args[0])) return message.channel.send(ErrorEmbed("Please use a number to set the volume!"))
-            if (parseInt(args[0]) > 100 || parseInt(args[0]) <= 0) return message.channel.send(ErrorEmbed("Please select a number between 1 - 100"))
+            if(isNaN(args[0])) return message.channel.send(ErrorEmbed("<:no:750451799609311412> That's not a number!").setTitle("").setFooter("").setTimestamp(""))
+            if (parseInt(args[0]) > 100 || parseInt(args[0]) <= 0) return message.channel.send("<:no:750451799609311412> Please select a number between 1 - 100.").setTitle("").setFooter("").setTimestamp("")
             song.setVolume(parseInt(args[0])/100)
 
             message.channel.send(InfoEmbed("🔊 Volume Changed", `Volume set to \`${args[0]}%\``))

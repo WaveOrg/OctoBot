@@ -40,7 +40,9 @@ module.exports = class AudioPlayer {
 
         voiceChannel.join().then(voiceConnection => {
             this.voiceconn = voiceConnection;
-            voiceConnection.play(this.stream)
+            voiceConnection.play(this.stream, {
+                volume: 0.5
+            })
             this.enabled = true;
 
             this.start();
@@ -58,8 +60,7 @@ module.exports = class AudioPlayer {
         if(this.enabled) {
             ytdl(song, {
                 filter: 'audioonly',
-                opusEnabled: true,
-                encoderArgs: this.filters
+                opusEnabled: true
             }).pipe(this.stream)
 
             this.currentSongDetails = await ytdl.getInfo(song);
@@ -70,12 +71,17 @@ module.exports = class AudioPlayer {
     }
 
     start() {
+
+        logger.debug(`Playing next song - Queue: ${this.queue} - Filters: ${this.filters}`)
+
         if(this.enabled) {
             if(this.queue.length > 0) {
                 const { url: song } = this.queue.shift()
                 this.play(song)
 
-                this.stream.on('end', () => {
+                this.voiceconn.dispatcher.on('finish', () => {
+
+                    logger.debug(`Finished playing ${song} - ended`)
 
                     this.stream = new streams.Transform()
                     this.stream._transform = (chunk, encoding, done) => {
@@ -88,7 +94,7 @@ module.exports = class AudioPlayer {
                 })
             } else {
                 this.voiceconn.disconnect();
-                this.onEnd();
+                this.onEnd(this.vc.id);
             }
         }
     }
@@ -113,6 +119,15 @@ module.exports = class AudioPlayer {
 
     skip() {
         if(this.enabled) {
+            this.stream.destroy();
+            this.stream = new streams.Transform()
+            this.stream._transform = (chunk, encoding, done) => {
+                this.stream.push(chunk);
+                done();
+            }
+
+            this.voiceconn.play(this.stream)
+
             this.start();
         }
     }
@@ -138,7 +153,11 @@ module.exports = class AudioPlayer {
      * 
      * @param {number} number 
      */
-    bassBoost(number) {
-        this.filters = 'bass=g=' + number +',dynaudnorm=f=200'
+    bassBoost(gain) {
+        if (gain === null || gain === 0) {
+            this.filters = null;
+        } else {
+            this.filters = ['-af', `equalizer=f=40:width_type=h:width=50:g=${gain}`]
+        }
     }
 }
