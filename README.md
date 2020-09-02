@@ -1,2 +1,2 @@
 # OctoBot
-Main Octo Development Bot
+Main Octo Development Bot Repository
