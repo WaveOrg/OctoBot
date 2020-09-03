@@ -58,7 +58,7 @@ module.exports = class AudioPlayer {
      */
     async play(song) {
         if(this.enabled) {
-            ytdl(song, {
+            this.ytddl = ytdl(song, {
                 filter: 'audioonly',
                 opusEnabled: true
             }).pipe(this.stream)
@@ -72,7 +72,7 @@ module.exports = class AudioPlayer {
 
     start() {
 
-        logger.debug(`Playing next song - Queue: ${this.queue} - Filters: ${this.filters}`)
+        logger.debug(`Playing next song - Queue: ${this.queue.length} - Filters: ${this.filters}`)
 
         if(this.enabled) {
             if(this.queue.length > 0) {
@@ -91,10 +91,13 @@ module.exports = class AudioPlayer {
 
                     this.voiceconn.play(this.stream)
                     this.start()
+
                 })
             } else {
-                this.voiceconn.disconnect();
-                this.onEnd(this.vc.id);
+                setTimeout(() => {
+                    this.voiceconn.disconnect();
+                    this.onEnd(this.vc.id);
+                }, 10000)
             }
         }
     }
@@ -119,16 +122,24 @@ module.exports = class AudioPlayer {
 
     skip() {
         if(this.enabled) {
-            this.stream.destroy();
-            this.stream = new streams.Transform()
-            this.stream._transform = (chunk, encoding, done) => {
-                this.stream.push(chunk);
-                done();
+            try {
+                this.ytddl.end();
+                this.stream.destroy();
+
+                this.stream = new streams.Transform();
+                this.stream._transform = (chunk, encoding, done) => {
+                    this.stream.push(chunk);
+                    done();
+                }
+
+                this.voiceconn.play(this.stream);
+
+                this.stream.pipe(this.voiceconn.dispatcher);
+
+                this.start();
+            } catch (error) {
+                console.log(error)
             }
-
-            this.voiceconn.play(this.stream)
-
-            this.start();
         }
     }
 

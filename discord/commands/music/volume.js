@@ -19,7 +19,7 @@ module.exports = {
             if(!args[0]) return message.channel.send(InfoEmbed("🔊 Current Volume", `The current volume is ${song.getCurrentVolume()}`))
 
             if(isNaN(args[0])) return message.channel.send(ErrorEmbed("<:no:750451799609311412> That's not a number!").setTitle("").setFooter("").setTimestamp(""))
-            if (parseInt(args[0]) > 100 || parseInt(args[0]) <= 0) return message.channel.send(ErrorEmbed("<:no:750451799609311412> Please select a number between 1 - 100.").setTitle("").setFooter("").setTimestamp(""))
+            if (parseInt(args[0]) > 200 || parseInt(args[0]) <= 0) return message.channel.send(ErrorEmbed("<:no:750451799609311412> Please select a number between 1 - 200.").setTitle("").setFooter("").setTimestamp(""))
             song.setVolume(parseInt(args[0])/100)
 
             message.channel.send(InfoEmbed("🔊 Volume Changed", `Volume set to \`${args[0]}%\``))
