@@ -2,7 +2,7 @@ const Discord = require("discord.js")
 const { utils, logger } = require("../../../globals");
 const { InfoEmbed, ErrorEmbed } = utils;
 
-const responses = ["Yes", "No", "Maybe", "Perhaps", "Hmm"]
+const responses = ["Yes", "No", "Maybe", "Perhaps", "Ask me again later", "Probably", "I don't think so"]
 
 module.exports = {
     /**
