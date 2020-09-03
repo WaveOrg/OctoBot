@@ -18,6 +18,8 @@ module.exports = class Logger {
         //     this.error("UnhandledRejection: " + error)
         // });
 
+        this.ensureDirectory()
+
         process.on('beforeExit', code => {
             if(code != 0) {
                 this.error("Unhandled error has caused an unexpected shutdown. Code: " + code)
@@ -97,6 +99,18 @@ module.exports = class Logger {
         )
         fs.appendFileSync(`${this.location}/${this.getFormattedDate(new Date())}.log`, `${this.getFormattedTime()} [ERROR]---------------------------------\n${this.getFormattedTime()} [ERROR] ${message.split('\n').join(`\n${this.getFormattedTime()} [ERROR] `)}\n${this.getFormattedTime()} [ERROR]---------------------------------\n`);
         global.errors++;
+    }
+
+    async ensureDirectory() {
+        const exists = fs.existsSync(this.location);
+        if(!exists) {
+            try {
+                await fs.mkdirSync(this.location, { recursive: true })
+            } catch(err) {
+                // console.error because if I do this.error it's gonna try to write to file and everything goes big bad
+                console.error(err)
+            }
+        }
     }
 
     test() {

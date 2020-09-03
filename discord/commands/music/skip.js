@@ -31,6 +31,6 @@ module.exports = {
         aliases: ["s"],
         description: "Skips the current song.",
         permissions: [],
-        usage: `{{PREFIX}}skip`
+        usage: `skip`
     }
 }

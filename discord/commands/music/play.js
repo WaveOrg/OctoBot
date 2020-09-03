@@ -119,6 +119,6 @@ module.exports = {
         aliases: ["music", "search"],
         description: "Play a song",
         permissions: [],
-        usage: `{{PREFIX}}play <url/keyword>`
+        usage: `play <url/keyword>`
     }
 }

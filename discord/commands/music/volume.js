@@ -33,6 +33,6 @@ module.exports = {
         aliases: ["setvolume"],
         description: "Set the volume",
         permissions: [],
-        usage: `{{PREFIX}}volume <0-100>`
+        usage: `volume <0-100>`
     }
 }

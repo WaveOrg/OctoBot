@@ -107,6 +107,6 @@ module.exports = {
         aliases: ["search"],
         description: "Search for 5 songs.",
         permissions: [],
-        usage: `{{PREFIX}}search <keyword>`
+        usage: `search <keyword>`
     }
 }

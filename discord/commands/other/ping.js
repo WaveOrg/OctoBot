@@ -16,6 +16,6 @@ module.exports = {
         command: "ping",
         aliases: ["lag"],
         description: "Check the bot's ping!",
-        usage: `{{PREFIX}}ping`
+        usage: `ping`
     }
 }

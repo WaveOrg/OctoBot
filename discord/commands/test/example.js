@@ -38,6 +38,6 @@ module.exports = {
         aliases: ["test"],
         description: "This is a test command",
         permissions: ["ADMINISTRATOR"],
-        usage: `{{PREFIX}}examplecmd`
+        usage: `examplecmd`
     }
 }

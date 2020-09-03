@@ -56,6 +56,6 @@ module.exports = {
         aliases: ["q"],
         description: "Show the songs next up in the queue.",
         permissions: [],
-        usage: `{{PREFIX}}queue`
+        usage: `queue`
     }
 }

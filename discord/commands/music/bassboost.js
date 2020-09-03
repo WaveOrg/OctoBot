@@ -36,6 +36,6 @@ module.exports = {
         aliases: ["bass", "bb"],
         description: "Bass boost the next song.",
         permissions: [],
-        usage: `{{PREFIX}}bassboost`
+        usage: `bassboost`
     }
 }

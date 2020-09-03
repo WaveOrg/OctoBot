@@ -34,6 +34,6 @@ module.exports = {
         aliases: ["np"],
         description: "Shows the current song.",
         permissions: [],
-        usage: `{{PREFIX}}nowplaying`
+        usage: `nowplaying`
     }
 }

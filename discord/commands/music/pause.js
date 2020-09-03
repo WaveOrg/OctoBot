@@ -31,6 +31,6 @@ module.exports = {
         aliases: ["pleasefuckingstopplayingthissong"],
         description: "Pauses the current song.",
         permissions: [],
-        usage: `{{PREFIX}}pause`
+        usage: `pause`
     }
 }
