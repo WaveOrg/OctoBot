@@ -22,6 +22,7 @@
     "discord.js": "^12.3.1",
     "mongoose": "^5.10.2",
     "ms": "^2.1.2",
+    "node-fetch": "^2.6.0",
     "node-opus": "^0.3.3",
     "statcord.js": "^3.0.7",
     "youtube-playlist": "^1.0.4",
