@@ -25,7 +25,11 @@ module.exports = {
             return message.channel.send(utils.NoPermsEmbed())
         }
         
-        cmd.run(message, arguments, client)
+        try {
+            cmd.run(message, arguments, client)
+        } catch (error) {
+            logger.error(`Got an error when processing ${message.content}\n${error}\nUSER: ${message.author.id}`)
+        }
     },
     config: {
         name: "Message",

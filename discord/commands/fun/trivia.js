@@ -28,6 +28,8 @@ const categories = {
     "Animals": 27
 }
 
+const runningTrivia = new Map();
+
 module.exports = {
     /**
      * 
@@ -36,6 +38,19 @@ module.exports = {
      * @param {Discord.Client} client 
      */
     async run(message, args, client) {
+
+        if(runningTrivia.has(message.channel.id)) {
+            if(args[0] && args[0].toLowerCase() == "stop") {
+                let currentScores = runningTrivia.get(message.channel.id)
+                runningTrivia.delete(message.channel.id);
+
+                const sorted = sortProperties(currentScores);
+                message.channel.send(InfoEmbed("🎉 Trivia Winners!", `${sorted.map(v => `<@${v[0]}> - **${v[1]}**`).join("\n")}`))
+
+                return;
+            } else return message.channel.send(ErrorEmbed("The ocean police told us we can only let people have one trivia per channel!"))
+        }
+
         var amount = isNaN(args[0])? 10 : parseInt(args[0]);
         var subject = isNaN(amount)? args.join(" ") : args[1]? args.slice(1).join(" ") : null;
 
@@ -84,14 +99,14 @@ module.exports = {
             // question: str, correct_answer: str
         }
 
-        console.log(questions.length)
+        runningTrivia.set(message.channel.id, {})
         trivia(questions, message.channel)
     },
     config: {
         command: "trivia",
         aliases: ["quiz"],
         description: " Quiz yourself on different topics!",
-        usage: `trivia [amount of questions] [category]`
+        usage: `trivia [amount of questions] [category] |or| stop`
     }
 }
 
@@ -102,6 +117,9 @@ module.exports = {
  * @param {Discord.TextChannel} channel 
  */
 async function ask(q, i, a, channel) {
+
+    q = unescape(q);
+
     if(i.length > 0) {
         let incAndCorr = shuffle(i)
         await channel.send(InfoEmbed(q, incAndCorr.map(f => `\`${f}\``).join(" ")).setFooter("8 seconds to respond!"));
@@ -111,7 +129,7 @@ async function ask(q, i, a, channel) {
 
     const f = await channel.awaitMessages(m => !m.bot && typeof a == "string"? m.content.toLowerCase() == a.toLowerCase() : a.includes(m.content.toLowerCase()), { time: 8000 })
     
-    channel.send(InfoEmbed("🎉 The following people got the answer correct!", f.map(message => `<@${message.author.id}>`).join(" ") || "No one!"))
+    if(runningTrivia.has(channel.id)) channel.send(InfoEmbed("🎉 The following people got the answer correct!", f.map(message => `<@${message.author.id}>`).join(" ") || "No one!"))
 
     return f.map(message => message.member.id )
 }
@@ -122,7 +140,11 @@ async function ask(q, i, a, channel) {
  * @param {Discord.TextChannel} channel 
  */
 async function trivia(questions, channel, scores = {}) {
+
+    if(!runningTrivia.has(channel.id)) return;
+
     const question = questions.shift()
+    runningTrivia.set(channel.id, scores)
 
     if(question) {
         const points = await ask(question.question, question.incorrect_answers || [], question.correct_answer || question.answers.map(e => e.toLowerCase()), channel);

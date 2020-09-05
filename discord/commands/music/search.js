@@ -3,12 +3,8 @@ const { utils, logger, audioPlayers } = require("../../../globals");
 const AudioPlayer = require('../../../utils/AudioPlayer');
 const { InfoEmbed, ErrorEmbed } = require("../../../utils/utils");
 
-var search = require('youtube-search');
-
-const opts = {
-    maxResults: 5,
-    key: 'AIzaSyAHet6xGRuEfMAtaDty_Px0DqZ7PQA9hrQ'
-};
+const Youtube = require('youtube-query');
+const search = new Youtube('AIzaSyAHet6xGRuEfMAtaDty_Px0DqZ7PQA9hrQ');
 
 module.exports = {
     /**
@@ -36,7 +32,7 @@ module.exports = {
             }
         } else {
             const edit = await message.channel.send(ErrorEmbed("🔍 Searching for " + args.join(" ")).setTitle(""));
-            search(args.join(" "), opts, async (err, res) => {
+            search.search(args.join(" ")).fetch(5, async (err, res) => {
                 if(err) {
                     logger.error("Error looking up " + args.join(" ") + "\n" + err);
                     message.channel.send(ErrorEmbed("An internal error occured! This error has been logged."))
@@ -46,7 +42,7 @@ module.exports = {
                 if(res.length == 0 ) {
                     message.channel.send(ErrorEmbed("❌ No results found!").setTitle(""))
                 } else {
-                    await edit.edit(InfoEmbed("Results for __" + args.join(" ") + "__:", res.map((aa, index) => `**${index + 1}** » [${decodeURIComponent(aa.title)}](${aa.link})\n`)))
+                    await edit.edit(InfoEmbed("Results for __" + args.join(" ") + "__:", res.map((aa, index) => `**${index + 1}** » [${decodeURIComponent(aa.snippet.title)}](youtube.com/watch?v=${aa.id.videoId})\n`)))
                     edit.awaitReactions((r, u) => u.id == message.author.id && ['❌', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣'].slice(0, res.length + 1).includes(r.emoji.name), {max: 1}).then(async (rs, u) => {
 
                         const r = rs.first()
@@ -73,16 +69,16 @@ module.exports = {
                             const song = res[num]
 
                             if(audioPlayers.has(message.member.voice.channel.id)) {
-                                audioPlayers.get(message.member.voice.channel.id).addSong(song.link)
-                                message.channel.send(InfoEmbed(`🎵 Added to queue!`, `${song.title} has been added!`).setThumbnail(song.thumbnails.high.url))
+                                audioPlayers.get(message.member.voice.channel.id).addSong(`youtube.com/watch?v=${song.id.videoId}`)
+                                message.channel.send(InfoEmbed(`🎵 Added to queue!`, `${song.snippet.title} has been added!`).setThumbnail(song.snippet.thumbnails.high.url))
                             } else {
-                                const player = new AudioPlayer(message.member.voice.channel, message.channel, song.link, () => {
+                                const player = new AudioPlayer(message.member.voice.channel, message.channel, `youtube.com/watch?v=${song.id.videoId}`, () => {
                                     audioPlayers.delete(message.member.voice.channel.id)
                                     message.channel.send(InfoEmbed("❌ Music Ended", "I've played the last song, cya later!"))
                                 })
                 
                                 audioPlayers.set(message.member.voice.channel.id, player)
-                                message.channel.send(InfoEmbed(`🎵 Added to queue!`, `${song.title} has been added!`).setThumbnail(song.thumbnails.high.url))
+                                message.channel.send(InfoEmbed(`🎵 Added to queue!`, `${song.snippet.title} has been added!`).setThumbnail(song.snippet.thumbnails.high.url))
                             }
                         } catch (error) {
                             

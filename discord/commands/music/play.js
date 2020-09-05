@@ -1,15 +1,11 @@
-const Discord = require("discord.js")
+const Discord = require("discord.js");
 const { utils, logger, audioPlayers } = require("../../../globals");
 const AudioPlayer = require('../../../utils/AudioPlayer');
 const { InfoEmbed, ErrorEmbed } = require("../../../utils/utils");
-const ytlist = require('youtube-playlist')
+const ytlist = require('youtube-playlist');
 
-var search = require('youtube-search');
-
-const opts = {
-    maxResults: 1,
-    key: 'AIzaSyAHet6xGRuEfMAtaDty_Px0DqZ7PQA9hrQ'
-};
+const Youtube = require('youtube-query');
+const search = new Youtube('AIzaSyAHet6xGRuEfMAtaDty_Px0DqZ7PQA9hrQ');
 
 module.exports = {
     /**
@@ -85,7 +81,7 @@ module.exports = {
             }
         } else {
             const edit = await message.channel.send(ErrorEmbed("🔍 Searching for " + args.join(" ")).setTitle(""));
-            search(args.join(" "), opts, async (err, res) => {
+            search.search(args.join(" ")).fetch(1, async (err, res) => {
                 if(err) {
                     logger.error("Error looking up " + args.join(" ") + "\n" + err);
                     message.channel.send(ErrorEmbed("An internal error occured! This error has been logged."))
@@ -98,17 +94,20 @@ module.exports = {
                     const song = res[0]
 
                     if(audioPlayers.has(message.member.voice.channel.id)) {
-                        audioPlayers.get(message.member.voice.channel.id).addSong(song.link)
-                        message.channel.send(InfoEmbed(`🎵 Added to queue!`, `${song.title} has been added!`).setThumbnail(song.thumbnails.high.url))
+                        audioPlayers.get(message.member.voice.channel.id).addSong(`youtube.com/watch?v=${song.id.videoId}`)
+                        message.channel.send(InfoEmbed(`🎵 Added to queue!`, `${song.snippet.title} has been added!`).setThumbnail(song.snippet.thumbnails.high.url))
                     } else {
-                        const player = new AudioPlayer(message.member.voice.channel, message.channel, song.link, () => {
+                        const player = new AudioPlayer(message.member.voice.channel, message.channel, `youtube.com/watch?v=${song.id.videoId}`, () => {
                             audioPlayers.delete(message.member.voice.channel.id)
                             message.channel.send(InfoEmbed("❌ Music Ended", "I've played the last song, cya later!"))
                         })
         
                         audioPlayers.set(message.member.voice.channel.id, player)
-                        message.channel.send(InfoEmbed(`🎵 Added to queue!`, `${song.title} has been added!`).setThumbnail(song.thumbnails.high.url))
+                        message.channel.send(InfoEmbed(`🎵 Added to queue!`, `${song.snippet.title} has been added!`).setThumbnail(song.snippet.thumbnails.high.url))
                     }
+
+
+                    
                 }
             })
         }

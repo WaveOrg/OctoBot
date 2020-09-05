@@ -17,8 +17,10 @@ module.exports = {
             return;
         }
 
-        const thing = args.join(" ");
-        message.channel.send(InfoEmbed(thing, responses[Math.floor(Math.random() * responses.length)]));
+        var title = args.join(" ");
+        if(title.length > 256) title = title.substr(0, 253) + '...'
+
+        message.channel.send(InfoEmbed(title, responses[Math.floor(Math.random() * responses.length)]));
     },
 
     config: {
