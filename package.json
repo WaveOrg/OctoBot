@@ -18,8 +18,11 @@
   },
   "homepage": "https://github.com/Octo-Development-Team/OctoBot#readme",
   "dependencies": {
+    "audio-gain": "^1.1.2",
     "chalk": "^4.1.0",
     "discord.js": "^12.3.1",
+    "low-pass-filter": "^1.0.0",
+    "lpf": "^1.0.0",
     "mongoose": "^5.10.2",
     "ms": "^2.1.2",
     "node-fetch": "^2.6.0",

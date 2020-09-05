@@ -5,6 +5,7 @@ const ytdl = require('ytdl-core');
 const { InfoEmbed } = require('./utils');
 
 const streams = require('stream');
+const lpf = require('lpf')
 
 module.exports = class AudioPlayer {
     
@@ -27,7 +28,9 @@ module.exports = class AudioPlayer {
 
         this.stream = new streams.Transform()
         this.stream._transform = (chunk, encoding, done) => {
-            this.stream.push(chunk);
+            const ch = this.addBassBoost(chunk)
+
+            this.stream.push(ch);
             done();
         }
 
@@ -168,7 +171,24 @@ module.exports = class AudioPlayer {
         if (gain === null || gain === 0) {
             this.filters = null;
         } else {
-            this.filters = ['-af', `equalizer=f=40:width_type=h:width=50:g=${gain}`]
+            this.filters = gain
         }
+    }
+
+    addBassBoost(chunk) {
+        console.log("ASDF")
+
+        if(this.filters != null && this.filters != 0) {
+            const array = [...chunk]
+            var newar = []
+            console.log("started processing chunk of length: " + [...chunk].length)
+            array.forEach((n, i) => {
+                newar.push(lpf.next(n))
+                console.log(`${i} / ${array.length}`)
+            })
+            const gained = require('audio-gain')(Buffer.from(newar));
+            return Buffer.from(array.concat(gained))
+
+        } else return chunk;
     }
 }

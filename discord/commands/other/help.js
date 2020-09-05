@@ -14,13 +14,15 @@ module.exports = {
             const fields = [];
 
             client.commands.forEach(command => {
-                const uppercaseCate = command.category.charAt(0).toUpperCase() + command.category.slice(1);
+                if(command.category != "test") {
+                    const uppercaseCate = command.category.charAt(0).toUpperCase() + command.category.slice(1);
 
-                if(!fields[uppercaseCate]) 
-                    fields[uppercaseCate] = {inline: true, name: uppercaseCate, value: ""};
-                
-                if(!fields[uppercaseCate].value.includes(`\`${command.config.command}\``)) 
-                    fields[uppercaseCate].value += `\`${command.config.command}\` `
+                    if(!fields[uppercaseCate]) 
+                        fields[uppercaseCate] = {inline: true, name: uppercaseCate, value: ""};
+                    
+                    if(!fields[uppercaseCate].value.includes(`\`${command.config.command}\``)) 
+                        fields[uppercaseCate].value += `\`${command.config.command}\` `
+                }
             });
 
             message.channel.send(InfoEmbed("🖨 All Commands", "Use `" + prefix + "help [command name]` for more info on a command.")
