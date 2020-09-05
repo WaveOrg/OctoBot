@@ -2,6 +2,7 @@ const Log = require("./utils/logger");
 const Statcord = require("statcord.js");
 const Discord = require('discord.js')
 const Client = new Discord.Client()
+const { Player } = require("./utils/music/player");
 
 module.exports = {
     /**
@@ -29,5 +30,9 @@ module.exports = {
     /**
      * Music Related
      */
-    audioPlayers: new Map()
+    audioPlayers: new Map(),
+    player: new Player(Client, {
+        leaveOnEnd: false,
+        leaveOnEmpty: false
+    })
 }

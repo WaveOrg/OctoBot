@@ -12,6 +12,8 @@ module.exports = {
         logger.log(`${chalk.blueBright("[Discord]")} StatCord auto-post started.`)
 
         logger.log(`${chalk.blueBright("[Discord]")} ${client.user.username} is ready! I am in ${client.guilds.cache.size} guilds with ${client.users.cache.size} users.`);
+
+        client.user.setStatus('invisible')
     },
     config: {
         name: "Ready",

@@ -7,6 +7,8 @@ const { InfoEmbed } = require('./utils');
 const streams = require('stream');
 const lpf = require('lpf')
 
+const lowPassFilter = require('low-pass-filter').lowPassFilter;
+
 module.exports = class AudioPlayer {
     
     /**
@@ -62,7 +64,7 @@ module.exports = class AudioPlayer {
     async play(song) {
         if(this.enabled) {
             this.ytddl = ytdl(song, {
-                filter: 'audioonly',
+                quality: 'highestaudio',
                 opusEnabled: true
             }).pipe(this.stream)
 
@@ -92,7 +94,10 @@ module.exports = class AudioPlayer {
                         done();
                     }
 
-                    this.voiceconn.play(this.stream)
+                    this.voiceconn.play(this.stream, {
+                        encoderArgs: this.bassBoost? ['-af', `equalizer=f=40:width_type=h:width=50:g=${this.bassBoost}`] : null,
+                        format: null
+                    })
                     this.start()
 
                 })
@@ -135,7 +140,10 @@ module.exports = class AudioPlayer {
                     done();
                 }
 
-                this.voiceconn.play(this.stream);
+                this.voiceconn.play(this.stream, {
+                    encoderArgs: this.bassBoost? ['-af', `equalizer=f=40:width_type=h:width=50:g=${this.bassBoost}`] : null,
+                    format: null
+                })
 
                 this.stream.pipe(this.voiceconn.dispatcher);
 
@@ -173,22 +181,32 @@ module.exports = class AudioPlayer {
         } else {
             this.filters = gain
         }
+
+        this.voiceconn.play(this.stream, {
+            encoderArgs: this.bassBoost? ['-af', `equalizer=f=40:width_type=h:width=50:g=${this.bassBoost}`] : null,
+            format: null
+        })
     }
 
     addBassBoost(chunk) {
-        console.log("ASDF")
+        // console.log("ASDF")
 
-        if(this.filters != null && this.filters != 0) {
-            const array = [...chunk]
-            var newar = []
-            console.log("started processing chunk of length: " + [...chunk].length)
-            array.forEach((n, i) => {
-                newar.push(lpf.next(n))
-                console.log(`${i} / ${array.length}`)
-            })
-            const gained = require('audio-gain')(Buffer.from(newar));
-            return Buffer.from(array.concat(gained))
+        // if(this.filters != null && this.filters != 0) {
 
-        } else return chunk;
+        //     const array = [...chunk]
+
+        //     console.log("started processing chunk of length: " + [...chunk].length)
+            
+        //     lowPassFilter(array, 22050, 44100, 1)
+
+        //     console.log(array)
+
+        //     const gained = require('audio-gain')(Buffer.from(array));
+
+        //     return Buffer.from(gained)
+
+        // } else return chunk;
+
+        return chunk;
     }
 }

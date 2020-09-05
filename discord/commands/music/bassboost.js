@@ -1,5 +1,5 @@
 const Discord = require("discord.js")
-const { utils, logger, audioPlayers } = require("../../../globals");
+const { utils, logger, audioPlayers, player } = require("../../../globals");
 const { InfoEmbed, ErrorEmbed } = require("../../../utils/utils");
 const ms = require('ms')
 
@@ -11,31 +11,30 @@ module.exports = {
      * @param {Discord.Client} client 
      */
     async run(message, args, client) {
-        if (message.member.voice.channelID) {
-            if (audioPlayers.has(message.member.voice.channel.id)) {
-                const song = audioPlayers.get(message.member.voice.channel.id)
+        
+        if(!player.isPlaying(message.guild.id)) return message.channel.send(ErrorEmbed("Nothing is playing!"))
+        if(!args[0] || isNaN(args[0])) return message.channel.send(ErrorEmbed("Usage: `bassboost <amount in dB>`"))
+        if(parseInt(args[0]) > 100 || parseInt(args[0]) < -100) return message.channel.send(ErrorEmbed("dB must be between -100 and 100"))
 
-                if (isNaN(args[0])) return message.channel.send(ErrorEmbed("Please use a number to set the bass boost amount!"))
-                if (parseInt(args[0]) > 100000 || parseInt(args[0]) < 0) return message.channel.send(ErrorEmbed("Please select a number between 0 - 100"))
+        var currentFilters = player.getQueue(message.guild.id).filters || {}
 
-                song.bassBoost(parseInt(args[0]))
-
-                message.channel.send(InfoEmbed("🔊 Bass Boost " + (parseInt(args[0]) == 0? "**DISABLED**" : "**ENABLED**") + "!", `Awesomeness set to \`${args[0]}%\` for the next song!`))
-
-            } else {
-                console.log("f")
-                message.channel.send(ErrorEmbed("<:no:750451799609311412> Nothing is playing silly!").setTitle("").setFooter("").setTimestamp(""))
-            }
+        if(parseInt(args[0]) == 0) {
+            currentFilters[this.config.command] = false
+            player.setFilters(message.guild.id, currentFilters, 0)
         } else {
-            message.channel.send(ErrorEmbed("<:no:750451799609311412> You must be in a VC!").setTitle("").setFooter("").setTimestamp(""))
+            currentFilters[this.config.command] = true
+            player.setFilters(message.guild.id, currentFilters, parseInt(args[0]))
         }
+
+        message.channel.send(InfoEmbed("📢 Filters Set", `Bassboost has been ${currentFilters[this.config.command]? "enabled" : "disabled"}`))
+
     },
 
     config: {
         command: "bassboost",
-        aliases: ["bass", "bb"],
-        description: "Bass boost the next song.",
+        aliases: ["bass"],
+        description: "Add bassboost effect.",
         permissions: [],
-        usage: `bassboost`
+        usage: `bassboost <boost in dB>`
     }
 }

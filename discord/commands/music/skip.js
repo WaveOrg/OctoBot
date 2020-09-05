@@ -1,5 +1,5 @@
 const Discord = require("discord.js")
-const { utils, logger, audioPlayers } = require("../../../globals");
+const { utils, logger, audioPlayers, player } = require("../../../globals");
 const { InfoEmbed, ErrorEmbed } = require("../../../utils/utils");
 const ms = require('ms')
 
@@ -11,24 +11,18 @@ module.exports = {
      * @param {Discord.Client} client 
      */
     async run(message, args, client) {
-        if(message.member.voice.channelID) {
-            if(audioPlayers.has(message.member.voice.channel.id)) {
-                const song = audioPlayers.get(message.member.voice.channel.id)
-                
-                song.skip()
+        
+        if(!player.isPlaying(message.guild.id)) return message.channel.send(ErrorEmbed("Nothing is playing!"))
 
-                message.channel.send(InfoEmbed("⏩ Skipped", `Song Skipped`).setThumbnail())
-            } else {
-                message.channel.send(ErrorEmbed("<:no:750451799609311412> Nothing is playing silly!").setTitle("").setFooter("").setTimestamp(""))
-            }
-        } else {
-            message.channel.send(ErrorEmbed("<:no:750451799609311412> You must be in a VC!").setTitle("").setFooter("").setTimestamp(""))
-        }
+        player.skip(message.guild.id)
+
+        message.channel.send(InfoEmbed("⏭ Skipped", `The song has been skipped!`))
+
     },
 
     config: {
         command: "skip",
-        aliases: ["s"],
+        aliases: [],
         description: "Skips the current song.",
         permissions: [],
         usage: `skip`
