@@ -780,9 +780,9 @@ class Player {
         if ((index >= 1) && (index <= 15)) {
             const bar = '▬▬▬▬▬▬▬▬▬▬▬▬▬▬'.split('')
             bar.splice(index, 0, '🔘')
-            return bar.join('')
+            return {bar: bar.join(''), time: currentStreamTime}
         } else {
-            return '🔘▬▬▬▬▬▬▬▬▬▬▬▬▬▬'
+            return {bar: '🔘▬▬▬▬▬▬▬▬▬▬▬▬▬▬', time: currentStreamTime}
         }
     }
 
@@ -821,7 +821,7 @@ class Player {
      */
     _playYTDLStream (queue, updateFilter) {
         return new Promise((resolve) => {
-            const seekTime = updateFilter ? queue.voiceConnection.dispatcher.streamTime + queue.additionalStreamTime : undefined
+            const seekTime = updateFilter ? queue.voiceConnection.dispatcher? queue.voiceConnection.dispatcher.streamTime + queue.additionalStreamTime : undefined : undefined
             const encoderArgsFilters = []
             Object.keys(queue.filters).forEach((filterName) => {
                 if (queue.filters[filterName]) {
@@ -834,6 +834,7 @@ class Player {
             } else {
                 encoderArgs = ['-af', encoderArgsFilters.join(',')]
             }
+            //if(!queue.playing) return this._playYTDLStream(queue, updateFilter)
             const newStream = ytdl(queue.playing.url, {
                 filter: 'audioonly',
                 opusEncoded: true,
