@@ -16,6 +16,8 @@ module.exports = {
         if(!args[0] || isNaN(args[0])) return message.channel.send(ErrorEmbed("Usage: `bassboost <amount in dB>`"))
         if(parseInt(args[0]) > 100 || parseInt(args[0]) < -100) return message.channel.send(ErrorEmbed("dB must be between -100 and 100"))
 
+        const msg = await message.channel.send(InfoEmbed("", "<a:loading:752246174550982728> Processing filter `BassBoost`."));
+
         var currentFilters = player.getQueue(message.guild.id).filters || {}
 
         if(parseInt(args[0]) == 0) {
@@ -26,7 +28,7 @@ module.exports = {
             player.setFilters(message.guild.id, currentFilters, parseInt(args[0]))
         }
 
-        message.channel.send(InfoEmbed("📢 Filters Set", `Bassboost has been ${currentFilters[this.config.command]? "enabled" : "disabled"}`))
+        msg.edit(InfoEmbed("", `<:yes:752247197436870666> Bassboost has been ${currentFilters[this.config.command]? "enabled" : "disabled"}`))
 
     },
 

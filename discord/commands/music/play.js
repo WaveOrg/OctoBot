@@ -17,7 +17,7 @@ module.exports = {
         if(!message.member.voice.channelID) return message.channel.send(ErrorEmbed("You must be in a Voice Channel to do this!"))
         if(!args[0]) return message.channel.send(ErrorEmbed("Incorrect Usage. `play <keyword/url>`"));
 
-        const sent = await message.channel.send(ErrorEmbed("🔍 Searching for `" + args.join(" ") + '`').setTitle(" "))
+        const sent = await message.channel.send(new Discord.MessageEmbed().setDescription("🔍 Searching for `" + args.join(" ") + '`').setTitle(" ").setColor("12cad6"))
 
         const track = await player.play(message.member.voice.channel, args.join(" "), message.member.user.tag);
 

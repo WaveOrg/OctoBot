@@ -14,6 +14,8 @@ module.exports = {
         
         if(!player.isPlaying(message.guild.id)) return message.channel.send(ErrorEmbed("Nothing is playing!"))
 
+        const msg = await message.channel.send(InfoEmbed("", "<a:loading:752246174550982728> Processing filter `Nightcore`."));
+
         var currentFilters = player.getQueue(message.guild.id).filters || {}
         if(currentFilters["nightcore"] == true) {
             currentFilters["nightcore"] = false
@@ -23,7 +25,7 @@ module.exports = {
             player.setFilters(message.guild.id, currentFilters)
         }
 
-        message.channel.send(InfoEmbed("📢 Filters Set", `Nightcore has been ${currentFilters["nightcore"]? "enabled" : "disabled"}`))
+        msg.edit(InfoEmbed("", `<:yes:752247197436870666> Nightcore has been ${currentFilters["nightcore"]? "enabled" : "disabled"}`))
 
     },
 

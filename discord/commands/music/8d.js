@@ -14,6 +14,8 @@ module.exports = {
         
         if(!player.isPlaying(message.guild.id)) return message.channel.send(ErrorEmbed("Nothing is playing!"))
 
+        const msg = await message.channel.send(InfoEmbed("", "<a:loading:752246174550982728> Processing filter `8D`."));
+
         var currentFilters = player.getQueue(message.guild.id).filters || {}
         if(currentFilters["8D"] == true) {
             currentFilters["8D"] = false
@@ -23,7 +25,7 @@ module.exports = {
             player.setFilters(message.guild.id, currentFilters)
         }
 
-        message.channel.send(InfoEmbed("📢 Filters Set", `8D has been ${currentFilters["8D"]? "enabled" : "disabled"}`))
+        msg.edit(InfoEmbed("", `<:yes:752247197436870666> 8D has been ${currentFilters["8D"]? "enabled" : "disabled"}`))
 
     },
 

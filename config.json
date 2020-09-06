@@ -1,4 +1,11 @@
 {
     "prefix": "l!",
-    "token": "NzUxMDk5MzAzNjMxNTE5ODY1.X1EJvA.IwL33Sqr5AGGhTy8d_OzYWJI8d4"
+    "token": "NzUxMDk5MzAzNjMxNTE5ODY1.X1EJvA.IwL33Sqr5AGGhTy8d_OzYWJI8d4",
+    "mongo": {
+        "user": "octodev",
+        "password": "i5k8QBVjLkDBbchA",
+        "host": "51.195.139.188",
+        "port": 27017,
+        "database": "octodev"
+    }
 }

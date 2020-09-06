@@ -1,5 +1,6 @@
-const discord = require("discord.js")
-const { logger } = require("../globals")
+const discord = require("discord.js");
+const dns = require("dns").promises;
+const { logger } = require("../globals");
 
 module.exports = {
     InfoEmbed(title, desc) {
@@ -7,7 +8,7 @@ module.exports = {
     },
 
     ErrorEmbed(desc) {
-        return new discord.MessageEmbed().setTitle("<:no:750451799609311412> Error").setDescription(desc).setColor("f04747")
+        return new discord.MessageEmbed().setDescription("<:no:750451799609311412> " + desc).setColor("f04747")
     },
 
     NoPermsEmbed() {
@@ -68,5 +69,14 @@ module.exports = {
         }
 
         return returnArr;
+    },
+    
+    /**
+     * 
+     * @param {String} domain
+     * @returns {String} IP address corresponding to the domain 
+     */
+    async resolveDomain(domain) {
+        return (await dns.lookup(domain)).address
     }
 }
