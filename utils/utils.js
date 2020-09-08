@@ -11,6 +11,10 @@ module.exports = {
         return new discord.MessageEmbed().setDescription("<:no:750451799609311412> " + desc).setColor("f04747")
     },
 
+    RedEmbed(title, desc) {
+        return new discord.MessageEmbed().setTitle(title).setDescription(desc).setColor("f04747")
+    },
+
     NoPermsEmbed() {
         return new discord.MessageEmbed().setTitle("<:no:750451799609311412> Insufficient Permissions").setDescription("You do not have permission to run this command!").setColor("fa1616")
     },

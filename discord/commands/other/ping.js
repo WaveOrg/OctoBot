@@ -1,5 +1,5 @@
 const Discord = require("discord.js")
-const { utils } = require("../../../globals");
+const { InfoEmbed } = require("../../../utils/utils");
 
 module.exports = {
     /**
@@ -10,7 +10,7 @@ module.exports = {
      */
     async run(message, args, client) {
         let msg = await message.channel.send("Pinging...")
-        msg.edit("", utils.InfoEmbed("🚦 Bot Ping", `Round Trip Latency is ${msg.createdTimestamp - message.createdTimestamp}ms, websocket latency is ${client.ws.ping}ms.`))
+        msg.edit("", InfoEmbed("🚦 Bot Ping", `Round Trip Latency is ${msg.createdTimestamp - message.createdTimestamp}ms, websocket latency is ${client.ws.ping}ms.`))
     },
     config: {
         command: "ping",

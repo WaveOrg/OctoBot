@@ -1,5 +1,6 @@
 const mongoConnection = require("./database/mongo")
+const { logger } = require("./globals")
 mongoConnection.then(() => {
-    console.log("Mongo connected, starting Discord")
+    logger.log("Mongo connected, starting Discord")
     require('./discord/bot')
 })

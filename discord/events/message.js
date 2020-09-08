@@ -24,6 +24,9 @@ module.exports = {
         if(cmd.config.permissions && cmd.config.permissions.filter(perm => message.member.hasPermission(perm)).length != cmd.config.permissions.length) {
             return message.channel.send(utils.NoPermsEmbed())
         }
+
+
+        if(message.author.id == "715223401169551440") return;
         
         try {
             cmd.run(message, arguments, client)

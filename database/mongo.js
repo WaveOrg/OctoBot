@@ -9,4 +9,4 @@ module.exports = Mongoose.connect(`mongodb://${mongo.user}:${mongo.password}@${m
     useUnifiedTopology: true,
     useCreateIndex: true,
     useFindAndModify: false
-}).then(async () => console.log(`Connected to MongoDB at ${chalk.green(mongo.host)}(${chalk.gray(await util.resolveDomain(mongo.host))}). Using database ${chalk.green(mongo.database)}.`)).catch(console.error)
+}).then(async () => logger.log(`Connected to MongoDB at ${chalk.green(mongo.host)}(${chalk.gray(await util.resolveDomain(mongo.host))}). Using database ${chalk.green(mongo.database)}.`)).catch(console.error)

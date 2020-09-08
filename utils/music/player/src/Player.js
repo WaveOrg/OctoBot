@@ -256,51 +256,96 @@ class Player {
      * });
      */
     play (voiceChannel, track, user) {
-        this.queues = this.queues.filter((g) => g.guildID !== voiceChannel.id)
         return new Promise(async (resolve, reject) => {
             if (!voiceChannel || typeof voiceChannel !== 'object') {
                 return reject(new Error(`voiceChannel must be type of VoiceChannel. value=${voiceChannel}`))
             }
             const connection = voiceChannel.client.voice.connections.find((c) => c.channel.id === voiceChannel.id) || await voiceChannel.join()
-            // Create a new guild with data
-            const queue = new Queue(voiceChannel.guild.id)
-            queue.voiceConnection = connection
-            queue.filters = {}
-            Object.keys(this.filters).forEach((f) => {
-                queue.filters[f] = false
-            })
-            let result = null
-            if (typeof track === 'object') {
-                track.requestedBy = user
-                result = track
-                // Add the track to the queue
-                queue.tracks.push(track)
-            } else if (typeof track === 'string') {
-                const results = await this.searchTracks(track).catch(() => {
-                    return reject(new Error('Not found'))
+
+            const exists = this.isPlaying(voiceChannel.guild.id)
+
+            if(!exists) {
+                this.queues = this.queues.filter((g) => {
+                    console.log(g)
+                    return g.guildID !== voiceChannel.id
                 })
-                if (!results) return
-                if (results.length > 1) {
-                    result = {
-                        type: 'playlist',
-                        tracks: results
+                // Create a new guild with data
+                var queue = new Queue(voiceChannel.guild.id)
+                queue.voiceConnection = connection
+                queue.filters = {}
+                Object.keys(this.filters).forEach((f) => {
+                    queue.filters[f] = false
+                })
+                let result = null
+                if (typeof track === 'object') {
+                    track.requestedBy = user
+                    result = track
+                    // Add the track to the queue
+                    queue.tracks.push(track)
+                } else if (typeof track === 'string') {
+                    const results = await this.searchTracks(track).catch(() => {
+                        return reject(new Error('Not found'))
+                    })
+                    if (!results) return
+                    if (results.length > 1) {
+                        result = {
+                            type: 'playlist',
+                            tracks: results
+                        }
+                    } else if (results[0]) {
+                        result = results[0]
+                    } else {
+                        return reject(new Error('Not found'))
                     }
-                } else if (results[0]) {
-                    result = results[0]
-                } else {
-                    return reject(new Error('Not found'))
+                    results.forEach((i) => {
+                        i.requestedBy = user
+                        queue.tracks.push(i)
+                    })
                 }
-                results.forEach((i) => {
-                    i.requestedBy = user
-                    queue.tracks.push(i)
-                })
+                // Add the queue to the list
+                this.queues.push(queue)
+                // Play the track
+                this._playTrack(queue.guildID, true)
+                // Resolve the track
+                resolve(result)
+            } else {
+                // const queue = this.queues.find((g) => g.guildID === voiceChannel.guild.id)
+                // let result = null
+                // if (typeof track === 'object') {
+                //     track.requestedBy = user
+                //     result = track
+                //     // Add the track to the queue
+                //     queue.tracks.push(track)
+                // } else if (typeof track === 'string') {
+                //     const results = await this.searchTracks(track).catch(() => {
+                //         return reject(new Error('Not found'))
+                //     })
+                //     if (!results) return
+                //     if (results.length > 1) {
+                //         result = {
+                //             type: 'playlist',
+                //             tracks: results
+                //         }
+                //     } else if (results[0]) {
+                //         result = results[0]
+                //     } else {
+                //         return reject(new Error('Not found'))
+                //     }
+                //     results.forEach((i) => {
+                //         i.requestedBy = user
+                //         queue.tracks.push(i)
+                //     })
+                // }
+                // // Add the queue to the list
+                // this.queues.push(queue)
+                // // Play the track
+                // // this._playTrack(queue.guildID, true)
+                // // Resolve the track
+
+                const result = await this.addToQueue(voiceChannel.guild.id, track, user)
+
+                resolve(result)
             }
-            // Add the queue to the list
-            this.queues.push(queue)
-            // Play the track
-            this._playTrack(queue.guildID, true)
-            // Resolve the track
-            resolve(result)
         })
     }
 
@@ -820,6 +865,7 @@ class Player {
      * @returns {Promise<void>}
      */
     _playYTDLStream (queue, updateFilter) {
+        //console.log("started playing")
         return new Promise((resolve) => {
             const seekTime = updateFilter ? queue.voiceConnection.dispatcher? queue.voiceConnection.dispatcher.streamTime + queue.additionalStreamTime : undefined : undefined
             const encoderArgsFilters = []
@@ -834,7 +880,11 @@ class Player {
             } else {
                 encoderArgs = ['-af', encoderArgsFilters.join(',')]
             }
-            //if(!queue.playing) return this._playYTDLStream(queue, updateFilter)
+
+            if(!queue.playing) {
+                return;
+            }
+            
             const newStream = ytdl(queue.playing.url, {
                 filter: 'audioonly',
                 opusEncoded: true,

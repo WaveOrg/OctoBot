@@ -3,8 +3,8 @@ const { utils, logger, player } = require("../../../globals");
 const { InfoEmbed, ErrorEmbed } = require("../../../utils/utils");
 const ytlist = require('youtube-playlist');
 
-const Youtube = require('youtube-query');
-const search = new Youtube('AIzaSyAHet6xGRuEfMAtaDty_Px0DqZ7PQA9hrQ');
+// const Youtube = require('youtube-query');
+// const search = new Youtube('AIzaSyAHet6xGRuEfMAtaDty_Px0DqZ7PQA9hrQ');
 
 module.exports = {
     /**
@@ -17,7 +17,7 @@ module.exports = {
         if(!message.member.voice.channelID) return message.channel.send(ErrorEmbed("You must be in a Voice Channel to do this!"))
         if(!args[0]) return message.channel.send(ErrorEmbed("Incorrect Usage. `play <keyword/url>`"));
 
-        const sent = await message.channel.send(new Discord.MessageEmbed().setDescription("🔍 Searching for `" + args.join(" ") + '`').setTitle(" ").setColor("12cad6"))
+        const sent = await message.channel.send(new Discord.MessageEmbed().setDescription("🔍 Searching the waves for `" + (args.join(" ").length > 1000? args.join(" ").substr(0, 1000) : args.join(" ")) + '`').setTitle(" ").setColor("12cad6"))
 
         const track = await player.play(message.member.voice.channel, args.join(" "), message.member.user.tag);
 
