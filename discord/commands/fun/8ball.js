@@ -1,6 +1,6 @@
 const Discord = require("discord.js")
 const { utils, logger } = require("../../../globals");
-const { InfoEmbed, ErrorEmbed } = utils;
+const { InfoEmbed, ErrorEmbed } = require('../../../utils/utils');
 
 const responses = ["Yes", "No", "Maybe", "Perhaps", "Ask me again later", "Probably", "I don't think so"]
 
