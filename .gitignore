@@ -103,3 +103,6 @@ dist
 .tern-port
 
 config.json
+
+# JetBrains WebStorm workspace folder
+.idea/
