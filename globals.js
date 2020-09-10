@@ -30,7 +30,6 @@ module.exports = {
     /**
      * Music Related
      */
-    audioPlayers: new Map(),
     player: new Player(Client, {
         leaveOnEnd: false,
         leaveOnEmpty: false

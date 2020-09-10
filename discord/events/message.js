@@ -1,5 +1,8 @@
 const { prefix } = require("../../config.json");
-const { utils, settings, tracker, statcord, logger } = require("../../globals");
+const { utils, statcord, logger } = require("../../globals");
+
+const guildOptions = require('../../database/models/GuildOptions');
+const { InfoEmbed, RedEmbed, ErrorEmbed } = require("../../utils/utils");
 
 module.exports = {
     /**
@@ -11,22 +14,26 @@ module.exports = {
         if(message.author.bot) return;
         if(message.channel.type != "text") return;
 
-        if(!message.content.toLowerCase().startsWith(prefix)) return;
+        var {prefix: _prefix, activeModules} = (await guildOptions.findOne({ guildId: message.guild.id }).exec())
 
-        const arguments = message.content.slice(prefix.length).trim().split(/ +/g);
+        if(message.content.trim() == `<@!${client.user.id}>`) return message.channel.send(InfoEmbed('🤖 Bot Prefix', `The current prefix is \`${_prefix}\``))
+        if(message.content.startsWith(`<@!${client.user.id}>`)) _prefix = `<@!${client.user.id}>`
+
+        if(!message.content.toLowerCase().startsWith(_prefix)) return;
+
+        const arguments = message.content.slice(_prefix.length).trim().split(/ +/g);
         const command = arguments.shift().toLowerCase();
 
         let cmd = client.commands.get(command);
         if(!cmd) return
+
+        if(!activeModules.includes(getKeyByValue(guildOptions.modules, cmd.category)) && cmd.category != "configuration") return message.channel.send(ErrorEmbed("This module is disabled!"))
 
         statcord.postCommand(command, message.author.id)
 
         if(cmd.config.permissions && cmd.config.permissions.filter(perm => message.member.hasPermission(perm)).length != cmd.config.permissions.length) {
             return message.channel.send(utils.NoPermsEmbed())
         }
-
-
-        if(message.author.id == "715223401169551440") return;
         
         try {
             cmd.run(message, arguments, client)
@@ -38,4 +45,8 @@ module.exports = {
         name: "Message",
         type: "message"
     }
+}
+
+function getKeyByValue(object, value) {
+    return Object.keys(object).find(key => object[key] === value);
 }

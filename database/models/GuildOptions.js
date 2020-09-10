@@ -3,7 +3,7 @@ const { prefix } = require('../../config.json')
 
 const modules = {
     MUSIC: "music",
-    MODERATION: "mod",
+    MODERATION: "moderation",
     WELCOME_MESSAGES: "welcomeMessage",
     LEAVE_MESSAGES: "leaveMessage",
     USER_VERIFICATION: "userVerification",
@@ -12,7 +12,8 @@ const modules = {
     TICKETS: "tickets",
     FUN: "fun",
     PERSISTENT_ROLES: "persistentRoles",
-    CUSTOM_COMMANDS: "cc"
+    CUSTOM_COMMANDS: "cc",
+    OTHER: 'other'
 }
 
 const welcomeLeaveTypes = {
@@ -34,7 +35,7 @@ const guildOptionsSchema = new Mongoose.Schema({
     activeModules: {
         type: Array,
         required: true,
-        default: []
+        default: Object.keys(modules)
     },
     messages: {
         type: new Mongoose.Schema({
