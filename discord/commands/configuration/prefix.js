@@ -1,9 +1,9 @@
 const Discord = require("discord.js")
 const { utils } = require("../../../globals");
-const guildOptions = require('../../../database/models/GuildOptions');
+const { guildOptionsOf } = require('../../../utils/dbUtils');
 const { InfoEmbed, NoPermsEmbed, ErrorEmbed } = require("../../../utils/utils");
 
-const {prefix: defaultPrefix} = require('../../../config.json')
+const { prefix: defaultPrefix } = require('../../../config.json')
 
 module.exports = {
     /**
@@ -13,8 +13,10 @@ module.exports = {
      * @param {Discord.Client} client 
      */
     async run(message, args, client) {
-        
-        const currentPrefix = (await guildOptions.findOne({ guildId: message.guild.id }).exec()).prefix || "l!"
+    
+        const guildOptions = guildOptionsOf(message.guild)
+    
+        const currentPrefix = await guildOptions.getPrefix();
 
         switch(args[0]? args[0].toLowerCase() : '') {
             case 'set':
@@ -22,7 +24,7 @@ module.exports = {
                 if(!args[1]) return message.channel.send(ErrorEmbed('Usage: `prefix set <new prefix>`'))
                 if(args[1].length > 32) return message.channel.send(ErrorEmbed('The prefix must be under 32 characters!'))
 
-                await guildOptions.updateOne({ guildId: message.guild.id }, { prefix: args[1] }).exec();
+                await guildOptions.setPrefix(args[1])
 
                 message.channel.send(InfoEmbed('🤖 Prefix', `Prefix changed from \`${currentPrefix}\` to \`${args[1]}\``))
 
@@ -31,7 +33,7 @@ module.exports = {
             case 'reset':
                 if(!message.member.hasPermission("ADMINISTRATOR")) return message.channel.send(NoPermsEmbed())
 
-                await guildOptions.updateOne({ guildId: message.guild.id }, { prefix: defaultPrefix }).exec();
+                await guildOptions.setPrefix(defaultPrefix)
 
                 message.channel.send(InfoEmbed('🤖 Prefix', `Prefix changed from \`${currentPrefix}\` to \`${defaultPrefix}\``))
 
@@ -44,7 +46,7 @@ module.exports = {
                 break;
 
             default:
-                message.channel.send(ErrorEmbed("Unknown Subcommand " + args[0].toLowerCase()))
+                message.channel.send(ErrorEmbed("Unknown Subcommand `" + args[0].toLowerCase() + "`"))
                 break
         }
 

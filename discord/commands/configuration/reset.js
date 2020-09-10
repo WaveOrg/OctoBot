@@ -1,6 +1,6 @@
 const Discord = require("discord.js")
 const { utils } = require("../../../globals");
-const guildOptions = require('../../../database/models/GuildOptions');
+const { guildOptionsOf } = require('../../../utils/dbUtils');
 const { InfoEmbed, NoPermsEmbed, ErrorEmbed, RedEmbed } = require("../../../utils/utils");
 
 module.exports = {
@@ -14,11 +14,9 @@ module.exports = {
         
         if(message.guild.owner.id != message.member.id) return message.channel.send(NoPermsEmbed().setFooter("This command is restricted to the Guild Owner!"))
 
-        await guildOptions.deleteOne({ guildId: message.guild.id }).exec()
-        
-        await new guildOptions({ 
-            guildId: message.guild.id
-        }).save()
+        const guildOptions = guildOptionsOf(message.guild)
+
+        await guildOptions.resetEverything()
 
         message.channel.send(RedEmbed("✂ Reset", "Everything has been reset!"))
     },

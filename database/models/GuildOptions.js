@@ -63,6 +63,3 @@ const guildOptionsSchema = new Mongoose.Schema({
 }, { collection: "guildSettings" })
 
 module.exports = Mongoose.model("guildOptions", guildOptionsSchema);
-
-module.exports.modules = modules;
-module.exports.welcomeLeaveTypes = welcomeLeaveTypes;

@@ -82,13 +82,5 @@ module.exports = {
      */
     async resolveDomain(domain) {
         return (await dns.lookup(domain)).address
-    },
-
-    getPremiumStatus(userID) {
-        return new Promise(async (r) => {
-            // TODO: CHECK DATABASE.
-
-            r(false);
-        })
     }
 }

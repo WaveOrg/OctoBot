@@ -1,13 +1,34 @@
+const _ = require("lodash")
 const setValue = require("set-value")
 const getValue = require("get-value")
 const { guildOptions } = require("./containerCache")
 const GuildOptions = require("../models/GuildOptions")
 
 // Normally Array.prototype.push() returns the length, so this betterPush returns the new array, allowing for a little cleaner code imo.
-Array.prototype.betterPush = function(x) {
-    this.push(x);
+Array.prototype.betterPush = function(value) {
+    this.push(value);
     return this;
 };
+
+Array.prototype.remove = function(value) {
+    const index = activeModules.indexOf(module)
+    if(index > -1) {
+        this.splice(index, 1);
+    }
+    return this;
+}
+
+/**
+ * 
+ * @param {Object} object 
+ * @param {Array<String>} keys 
+ */
+function omitDeep(object, keys) {
+
+    return _.cloneDeepWith(object, (it) => {
+        if(it && typeof it === "object") for(let key of keys) delete it[key]
+    })
+  }
 
 /**
  * This class is here to make getting data from database
@@ -38,13 +59,21 @@ module.exports = class GuildOptionsContainer {
     }
 
     /**
+     * 
+     * @returns {Primise<Mongoose.Document>}
+     */
+    getFromDatabase() {
+        return GuildOptions.findOne({ guildId: this.guild.id })
+    }
+
+    /**
      *
      * @param { String } property
      * @returns {Promise<unknown>}
      */
     getProperty(property) {
         return new Promise(async resolve => {
-            const result = await GuildOptions.findOne({ guildId: this.guild.id })
+            const result = await this.getFromDatabase()
             // Because dot notation and stuff
             resolve(getValue(result, property))
         })
@@ -138,7 +167,7 @@ module.exports = class GuildOptionsContainer {
         // Doesn't use isModuleEnabled for better code efficiency, less calls to database
         const activeModules = await this.getActiveModules();
         if (activeModules.includes(module)) {
-            return this.setActiveModules(activeModules.splice(activeModules.indexOf(module), 1))
+            return this.setActiveModules(activeModules.remove(module))
         }
         return Promise.resolve();
     }
@@ -153,8 +182,7 @@ module.exports = class GuildOptionsContainer {
         if (!activeModules.includes(module)) {
             return this.setActiveModules(activeModules.betterPush(module))
         } else {
-            activeModules.splice(activeModules.indexOf(module), 1);
-            return this.setActiveModules(activeModules)
+            return this.setActiveModules(activeModules.remove(module))
         }
     }
 
@@ -176,6 +204,13 @@ module.exports = class GuildOptionsContainer {
         return new Promise(async resolve => {
             resolve(new WelcomeLeaveMessageContainer(this, "leave", (await this.getProperty("messages.leave"))))
         })
+    }
+
+
+    async resetEverything() {
+        return this.setPropertyWithObject(omitDeep(new GuildOptions({
+            guildId: this.guild.id
+        }), ["_id", "__v"]))
     }
 
 }
@@ -208,9 +243,10 @@ class WelcomeLeaveMessageContainer {
      */
     async setDataType(dataType) {
         return new Promise(async resolve => {
-            const current = await this.parentContainer.getProperty("messages");
-            setValue(current, `${this.type}.dataType`, dataType)
-            resolve((await this.parentContainer.setProperty("messages", current)));
+            const current = await this.parentContainer.getFromDatabase();
+            current.messages[this.type].dataType = dataType;
+            current.markModified(`${this.type}.dataType`);
+            current.save()
         })
     }
 
@@ -228,9 +264,10 @@ class WelcomeLeaveMessageContainer {
      */
     async setData(data) {
         return new Promise(async resolve => {
-            const current = await this.parentContainer.getProperty("messages");
-            setValue(current, `${this.type}.data`, data)
-            resolve((await this.parentContainer.setProperty("messages", current)));
+            const current = await this.parentContainer.getFromDatabase();
+            current.messages[this.type].data = data;
+            current.markModified(`${this.type}.data`);
+            current.save()
         })
     }
 

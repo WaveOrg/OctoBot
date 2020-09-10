@@ -13,9 +13,9 @@ const userDataSchema = new Mongoose.Schema({
     rankCard: { // Image in Base64
         type: String,
         required: true,
-        default: ""
+        default: "null" // null because Mongoose doesn't like empty strings
     },
 
-})
+}, { collection: "userData" })
 
 module.exports = Mongoose.model("userData", userDataSchema);

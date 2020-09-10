@@ -1,5 +1,6 @@
 const Discord = require("discord.js")
-const { InfoEmbed, ErrorEmbed, getPremiumStatus, RedEmbed } = require('../../../utils/utils');
+const { InfoEmbed, ErrorEmbed, RedEmbed } = require('../../../utils/utils');
+const { userDataOf } = require("../../../utils/dbUtils")
 const { logger } = require("../../../globals");
 
 module.exports = {
@@ -15,7 +16,7 @@ module.exports = {
 
         if(!args[0] || isNaN(args[0]) || parseInt(args[0]) < 1) return message.channel.send(ErrorEmbed("Usage: `" + this.config.usage +"`"));
             
-        const premiumStatus = await getPremiumStatus(message.author.id);
+        const premiumStatus = await userDataOf(message.author).isPremium();
 
         if(!premiumStatus && parseInt(args[0]) > 200) return message.channel.send(ErrorEmbed("Only premium users can delete over 200 messages!"));
         if(parseInt(args[0]) > 1000) return message.channel.send(ErrorEmbed("You can only delete up to 1000 messages!"));
