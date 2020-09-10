@@ -1,26 +1,6 @@
 const Mongoose = require('mongoose')
+const { modules, welcomeLeaveTypes } = require("../constants")
 const { prefix } = require('../../config.json')
-
-const modules = {
-    MUSIC: "music",
-    MODERATION: "moderation",
-    WELCOME_MESSAGES: "welcomeMessage",
-    LEAVE_MESSAGES: "leaveMessage",
-    USER_VERIFICATION: "userVerification",
-    AUTO_RESPONDER: "autoRespond",
-    AUTO_ROLE: "autoRole",
-    TICKETS: "tickets",
-    FUN: "fun",
-    PERSISTENT_ROLES: "persistentRoles",
-    CUSTOM_COMMANDS: "cc",
-    OTHER: 'other'
-}
-
-const welcomeLeaveTypes = {
-    TEXT: "text",
-    JSON_EMBED: "embed",
-    IMAGE_BASE64: "image"
-}
 
 const guildOptionsSchema = new Mongoose.Schema({
     guildId: {
@@ -35,7 +15,7 @@ const guildOptionsSchema = new Mongoose.Schema({
     activeModules: {
         type: Array,
         required: true,
-        default: Object.keys(modules)
+        default: Object.values(modules)
     },
     messages: {
         type: new Mongoose.Schema({

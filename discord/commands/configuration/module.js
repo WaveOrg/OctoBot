@@ -1,7 +1,7 @@
 const Discord = require("discord.js")
-const { utils } = require("../../../globals");
 const guildOptions = require('../../../database/models/GuildOptions');
 const { InfoEmbed, NoPermsEmbed, ErrorEmbed } = require("../../../utils/utils");
+const { modules } = require("../../../database/constants")
 
 // Normally Array.prototype.push() returns the length, so this betterPush returns the new array, allowing for a little cleaner code imo.
 Array.prototype.betterPush = function(x) {
@@ -18,16 +18,18 @@ module.exports = {
      */
     async run(message, args, client) {
 
-        switch(args[0]? args[0].toLowerCase() : null) {
+        let moduleToEnable;
+        let currentModules;
+        switch(args[0] ? args[0].toLowerCase() : null) {
             case 'enable':
                 if(!message.member.hasPermission("ADMINISTRATOR")) return message.channel.send(NoPermsEmbed())
                 if(!args[1]) return message.channel.send(ErrorEmbed('Usage: `module enable <prefix> <module name>`\nRun `module list` to see all possibilities!'))
-                if(!Object.keys(guildOptions.modules).some(m => args[1].toUpperCase().trim() == m)) return message.channel.send(ErrorEmbed('Unknown Module!\nRun `module list` to see all possibilities!'))
+                if(!Object.keys(modules).some(m => args[1].toUpperCase().trim() === m)) return message.channel.send(ErrorEmbed('Unknown Module!\nRun `module list` to see all possibilities!'))
 
-                var moduleToEnable = args[1].toUpperCase().trim()
+                moduleToEnable = modules[args[1].toUpperCase().trim()]
 
-                var currentModules = (await guildOptions.findOne({ guildId: message.guild.id }).exec()).activeModules
-                await guildOptions.updateOne({ guildId: message.guild.id }, { activeModules: currentModules.includes(moduleToEnable)? currentModules : currentModules.betterPush(moduleToEnable) })
+                currentModules = (await guildOptions.findOne({ guildId: message.guild.id }).exec()).activeModules
+                await guildOptions.updateOne({ guildId: message.guild.id }, { activeModules: currentModules.includes(moduleToEnable) ? currentModules : currentModules.betterPush(moduleToEnable) })
 
                 message.channel.send(InfoEmbed('🛡 Module Enabled', `\`${args[1].toUpperCase()}\` has been enabled!`))
 
@@ -36,11 +38,11 @@ module.exports = {
             case 'disable':
                 if(!message.member.hasPermission("ADMINISTRATOR")) return message.channel.send(NoPermsEmbed())
                 if(!args[1]) return message.channel.send(ErrorEmbed('Usage: `module enable <prefix> <module name>`\nRun `module list` to see all possibilities!'))
-                if(!Object.keys(guildOptions.modules).some(m => args[1].toUpperCase().trim() == m)) return message.channel.send(ErrorEmbed('Unknown Module!\nRun `module list` to see all possibilities!'))
+                if(!Object.keys(modules).some(m => args[1].toUpperCase().trim() == m)) return message.channel.send(ErrorEmbed('Unknown Module!\nRun `module list` to see all possibilities!'))
 
-                var moduleToEnable = args[1].toUpperCase().trim()
+                moduleToEnable = modules[args[1].toUpperCase().trim()]
 
-                var currentModules = (await guildOptions.findOne({ guildId: message.guild.id }).exec()).activeModules
+                currentModules = (await guildOptions.findOne({ guildId: message.guild.id }).exec()).activeModules
                 await guildOptions.updateOne({ guildId: message.guild.id }, { activeModules: currentModules.includes(moduleToEnable)? removeItemOnce(currentModules, moduleToEnable) : currentModules })
 
                 message.channel.send(InfoEmbed('🛡 Module Enabled', `\`${args[1].toUpperCase()}\` has been disabled!`))
@@ -50,11 +52,11 @@ module.exports = {
             case 'status':
                 if(!message.member.hasPermission("ADMINISTRATOR")) return message.channel.send(NoPermsEmbed())
                 if(!args[1]) return message.channel.send(ErrorEmbed('Usage: `module enable <prefix> <module name>`\nRun `module list` to see all possibilities!'))
-                if(!Object.keys(guildOptions.modules).some(m => args[1].toUpperCase().trim() == m)) return message.channel.send(ErrorEmbed('Unknown Module!\nRun `module list` to see all possibilities!'))
+                if(!Object.keys(modules).some(m => args[1].toUpperCase().trim() == m)) return message.channel.send(ErrorEmbed('Unknown Module!\nRun `module list` to see all possibilities!'))
 
-                var moduleToEnable = args[1].toUpperCase().trim()
+                moduleToEnable = modules[args[1].toUpperCase().trim()]
 
-                var currentModules = (await guildOptions.findOne({ guildId: message.guild.id }).exec()).activeModules
+                currentModules = (await guildOptions.findOne({ guildId: message.guild.id }).exec()).activeModules
 
                 message.channel.send(InfoEmbed('🛡 Module Status', `\`${args[1].toUpperCase()}\` is currently ${currentModules.includes(moduleToEnable)? "enabled" : "disabled"}!`))
 
@@ -62,7 +64,8 @@ module.exports = {
 
             case 'list':
 
-                message.channel.send(InfoEmbed("🛡 All Modules", Object.keys(guildOptions.modules).map(f => `\`${f}\`\n`).join("")))
+                const activeModules = (await guildOptions.findOne({ guildId: message.guild.id }).exec()).activeModules;
+                message.channel.send(InfoEmbed("🛡 All Modules", Object.keys(modules).map(f => `\`${f}\` -> ${activeModules.includes(modules[f]) ? "Enabled" : "Disabled"}\n`).join("")))
 
                 break;
 

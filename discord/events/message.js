@@ -14,7 +14,7 @@ module.exports = {
         if(message.author.bot) return;
         if(message.channel.type != "text") return;
 
-        var {prefix: _prefix, activeModules} = (await guildOptions.findOne({ guildId: message.guild.id }).exec())
+        let {prefix: _prefix, activeModules} = (await guildOptions.findOne({ guildId: message.guild.id }).exec())
 
         if(message.content.trim() == `<@!${client.user.id}>`) return message.channel.send(InfoEmbed('🤖 Bot Prefix', `The current prefix is \`${_prefix}\``))
         if(message.content.startsWith(`<@!${client.user.id}>`)) _prefix = `<@!${client.user.id}>`
@@ -27,7 +27,7 @@ module.exports = {
         let cmd = client.commands.get(command);
         if(!cmd) return
 
-        if(!activeModules.includes(getKeyByValue(guildOptions.modules, cmd.category)) && cmd.category != "configuration") return message.channel.send(ErrorEmbed("This module is disabled!"))
+        if(!activeModules.includes(cmd.category) && cmd.category != "configuration") return message.channel.send(ErrorEmbed("This module is disabled!"))
 
         statcord.postCommand(command, message.author.id)
 

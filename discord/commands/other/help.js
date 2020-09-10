@@ -1,6 +1,6 @@
 const Discord = require("discord.js")
+const GuildOptions = require("../../../database/models/GuildOptions")
 const { InfoEmbed, ErrorEmbed } = require("../../../utils/utils");
-const { prefix } = require("../../../config.json")
 
 module.exports = {
     /**
@@ -10,6 +10,7 @@ module.exports = {
      * @param {Discord.Client} client 
      */
     async run(message, args, client) {
+        const { prefix } = await GuildOptions.findOne({ guildId: message.guild.id }).exec()
         if(!args[0]) { 
             const fields = [];
 

@@ -20,8 +20,8 @@ module.exports = {
             const foundGuild = await GuildOptions.findOne({ guildId: guild.id.toString() })
             if(foundGuild) {
                 logger.debug(`Guild ${guild.name} found. Skipped.`)
-                return;
-            };
+                continue;
+            }
             const newGuildOptions = new GuildOptions({
                 guildId: guild.id.toString()
             });
