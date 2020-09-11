@@ -2,6 +2,8 @@ const Discord = require("discord.js")
 const { InfoEmbed } = require("../../../utils/utils")
 const botInfo = require("../../../botinfo.json")
 
+const uppercaseFirstLetter = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+
 module.exports = {
     /**
      * 
@@ -30,6 +32,15 @@ module.exports = {
         })
 
         const roles = guild.roles.cache.sort((a, b) => b.position - a.position).map(role => role === guild.roles.everyone ? role.name : `<@&${role.id}>`)
+
+        let characters = 0;
+        const formattedRoles = roles.join(" ").length > 1020? roles.map(value => {
+            if((characters + value.length + 1) > 1020) return ''
+            else {
+                characters + value.length + 1
+                return value + ' ';
+            }
+        }) : roles.join(" ")
         
         let teamInfo = []
         if(botInfo.guilds.main === guild.id) teamInfo.push("Octo's home")
@@ -40,14 +51,14 @@ module.exports = {
                         .setAuthor(guild.name, guild.iconURL())
                         .addField("Owner", `<@${guild.owner.id}>`, true)
                         .addField("Created at", guild.createdAt.toString().replace(/\d+:\d+:\d+.*/, ''), true)
-                        .addField("Region", guild.region, true)
+                        .addField("Region", uppercaseFirstLetter(guild.region), true)
                         .addField("Channel Categories", channelData.categories, true)
                         .addField("Text Channels", channelData.text, true)
                         .addField("Voice Channels", channelData.voice, true)
                         .addField("Members", guild.memberCount, true)
                         .addField("Humans", guild.members.cache.filter(m => !m.user.bot).size, true)
                         .addField("Bots", guild.members.cache.filter(m => m.user.bot).size, true)
-                        .addField(`Roles [${roles.length}]`, roles.join(" "))
+                        .addField(`Roles [${roles.length}]`, formattedRoles)
                         .setFooter("ID: " + guild.id)
                         .setTimestamp()
 

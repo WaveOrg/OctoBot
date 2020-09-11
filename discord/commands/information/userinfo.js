@@ -29,6 +29,14 @@ module.exports = {
         const isPremium = await userData.isPremium()
 
         const roles = member.roles.cache.filter(role => role !==  member.guild.roles.everyone).sort((a, b) => b.position - a.position).map(role => `<@&${role.id}>`)
+        let characters = 0;
+        const formattedRoles = roles.join(" ").length > 1020? roles.map(value => {
+            if((characters + value.length + 1) > 1020) return ''
+            else {
+                characters + value.length + 1
+                return value + ' ';
+            }
+        }) : roles.join(" ")
 
         const joinPosition = member.guild.members.cache.sort((a, b) => b.joinedTimestamp - a.joinedTimestamp).keyArray().reverse().indexOf(member.id) + 1
 
@@ -54,7 +62,7 @@ module.exports = {
                         .setFooter("ID: " + member.id)
                         .setTimestamp()
 
-        if(roles.length > 0) embed.addField(`Roles [${roles.length}]`, roles.join(" "), true)
+        if(roles.length > 0) embed.addField(`Roles [${roles.length}]`, formattedRoles, true)
         if(acknowledgements.length > 0) embed.addField("Acknowledgements", acknowledgements.join(", "), true)
         if(teamInfo.length > 0) embed.addField("Octo Team", teamInfo.join(", "))
 
