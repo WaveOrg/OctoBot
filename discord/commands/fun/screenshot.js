@@ -35,7 +35,7 @@ module.exports = {
             launchOptions: {
                 args: ['--proxy-server=http://ec2-52-14-24-237.us-east-2.compute.amazonaws.com:8443']
             }
-        }).then( img => {
+        }).then(img => {
                 const attachment = new Discord.MessageAttachment(img, 'website.png')
                 message.channel.send(InfoEmbed('📸 Website Screenshot', `Screenshot of \`${url}\``).setFooter("Premium users can take Full HD Pictures of websites!").attachFiles(attachment).setImage(`attachment://website.png`) );
         

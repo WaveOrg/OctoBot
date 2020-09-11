@@ -57,6 +57,6 @@ module.exports = {
         aliases: [],
         description: "Sets the bot's prefix",
         permissions: [],
-        usage: `prefix [set/reset]>`
+        usage: `prefix [set/reset]`
     }
 }
