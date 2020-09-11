@@ -265,10 +265,9 @@ class Player {
             const exists = this.isPlaying(voiceChannel.guild.id)
 
             if(!exists) {
-                this.queues = this.queues.filter((g) => {
-                    console.log(g)
-                    return g.guildID !== voiceChannel.id
-                })
+                this.queues = this.queues.filter((g) => 
+                    g.guildID !== voiceChannel.id
+                )
                 // Create a new guild with data
                 var queue = new Queue(voiceChannel.guild.id)
                 queue.voiceConnection = connection
@@ -865,7 +864,6 @@ class Player {
      * @returns {Promise<void>}
      */
     _playYTDLStream (queue, updateFilter) {
-        //console.log("started playing")
         return new Promise((resolve) => {
             const seekTime = updateFilter ? queue.voiceConnection.dispatcher? queue.voiceConnection.dispatcher.streamTime + queue.additionalStreamTime : undefined : undefined
             const encoderArgsFilters = []
@@ -926,6 +924,7 @@ class Player {
      * @param {Boolean} firstPlay Whether the function was called from the play() one
      */
     async _playTrack (guildID, firstPlay) {
+
         // Get guild queue
         const queue = this.queues.find((g) => g.guildID === guildID)
         // If there isn't any music in the queue
