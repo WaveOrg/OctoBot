@@ -1,11 +1,9 @@
 const Discord = require("discord.js")
 const { utils, logger } = require("../../../globals");
 const { InfoEmbed, ErrorEmbed, RedEmbed } = require('../../../utils/utils')
+const { userDataOf } = require("../../../utils/dbUtils")
 
 const captureWebsite = require('capture-website');
-const ms = require('ms')
-
-const cooldowns = new Map();
 
 module.exports = {
     /**
@@ -15,26 +13,23 @@ module.exports = {
      * @param {Discord.Client} client 
      */
     async run(message, args, client) {
-        if(cooldowns.get(message.author.id) > Date.now()) return message.channel.send(ErrorEmbed(`Please wait, this command is under cooldown! Please wait ${ms(cooldowns.get(message.author.id) - Date.now(), {long: true})}`).setFooter("Premium users can bypass the cooldown!"))
-
         if(!args[0]) {
             message.channel.send(ErrorEmbed(`Usage: \`${this.config.usage}\``));
             return;
         }
 
-        cooldowns.set(message.author.id, Date.now() + 60000)
-
         var url = (args.join(" ").startsWith('https://') || args.join(" ").startsWith('http://'))? args.join(' ') : `https://${args.join("  ")}`
         
         const sent = await message.channel.send(RedEmbed('<a:loading:752246174550982728> Taking a picture', '').setFooter("This may take up to 60 seconds."))
     
+        const isPremium = await userDataOf(message.author).isPremium()
 
         captureWebsite.buffer(url, {
-            width: 640,
-            height: 480,
+            width: isPremium ? 1920 : 640,
+            height: isPremium ? 1280 : 480/*,
             launchOptions: {
                 args: ['--proxy-server=http://ec2-52-14-24-237.us-east-2.compute.amazonaws.com:8443']
-            }
+            }*/
         }).then(img => {
                 const attachment = new Discord.MessageAttachment(img, 'website.png')
                 message.channel.send(InfoEmbed('📸 Website Screenshot', `Screenshot of \`${url}\``).setFooter("Premium users can take Full HD Pictures of websites!").attachFiles(attachment).setImage(`attachment://website.png`) );
@@ -60,6 +55,10 @@ module.exports = {
         aliases: ["sswebsite", "screenshotwebsite", "website", "ss"],
         description: "Screenshots a website",
         permissions: [],
-        usage: `ss <url>`
+        usage: `screenshot <url>`,
+        cooldown: {
+            time: 60000,
+            premiumBypassable: true
+        }
     }
 }

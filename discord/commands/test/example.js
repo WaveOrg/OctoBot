@@ -1,5 +1,6 @@
 const Discord = require("discord.js")
-const { utils, logger } = require("../../../globals");
+const { logger } = require("../../../globals");
+const utils = require("../../../utils/utils")
 
 module.exports = {
     /**

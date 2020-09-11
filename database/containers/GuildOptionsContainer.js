@@ -11,7 +11,7 @@ Array.prototype.betterPush = function(value) {
 };
 
 Array.prototype.remove = function(value) {
-    const index = activeModules.indexOf(module)
+    const index = this.indexOf(value)
     if(index > -1) {
         this.splice(index, 1);
     }

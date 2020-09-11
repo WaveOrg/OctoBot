@@ -12,8 +12,10 @@ module.exports = async (client) => {
     for(let file of eventsDir) {
         const event = require(`../events/${file}`);
 
-        if(!event.config || !event.config.name || !event.config.type || !event.run) {
-            logger.error(`${event.config.name || file} failed to load`);
+        const eventConfig = event.config;
+
+        if(!eventConfig || !eventConfig.name || !eventConfig.type || !event.run) {
+            logger.error(`${eventConfig.name || file} failed to load`);
             continue;
         }
 

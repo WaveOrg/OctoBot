@@ -12,7 +12,6 @@ module.exports = {
      * @param {Discord.Client} client 
      */
     async run(message, args, client) {
-        
         let member;
         if(!args[0]) member = message.member;
 

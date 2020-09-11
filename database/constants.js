@@ -10,8 +10,7 @@ module.exports = {
         TICKETS: "tickets",
         FUN: "fun",
         PERSISTENT_ROLES: "persistentRoles",
-        CUSTOM_COMMANDS: "cc",
-        OTHER: 'other'
+        CUSTOM_COMMANDS: "cc"
     },
     welcomeLeaveTypes: {
         TEXT: "text",
