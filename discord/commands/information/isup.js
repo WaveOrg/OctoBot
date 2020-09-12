@@ -14,9 +14,11 @@ module.exports = {
     async run(message, args, client) {
         if(!args[0]) return message.channel.send(ErrorEmbed("You need to specify a website URL"))
 
-        const loading = await message.channel.send(RedEmbed('<a:loading:752246174550982728> Checking status', '').setFooter("This may take up to 20 seconds."))
-
         const url = args[0].toLowerCase()
+
+        if(url.includes(":") || url.includes("@")) return message.channel.send(ErrorEmbed("The url must not include \`@\` or \`:\`"))
+
+        const loading = await message.channel.send(RedEmbed('<a:loading:752246174550982728> Checking status', '').setFooter("This may take up to 20 seconds."))
 
         fetch(`${isUpUrl}${url}`).then(res => res.json()).then(res => {
             const embed = InfoEmbed(`Website is ${res.isDown ? "Down" : "Up"}`, "")

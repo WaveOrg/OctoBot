@@ -31,8 +31,6 @@ module.exports = {
         cooldown.set(id, Date.now() + 60000)
 
         const xpToAdd = Math.floor(Math.random() * 10) + 10;
-
-        console.log(`Adding ${xpToAdd} to ${message.author.tag}`);
         
         const leveling = guildLevelingOf(message.guild, message.author)
         await leveling.addXp(xpToAdd)
