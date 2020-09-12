@@ -158,7 +158,7 @@ module.exports = class GuildLevelingContainer {
         return new Promise(async resolve => {
             const currentLevel = await this.getLevel()
             await this.setXp(0)
-            resolve(await this.setLevel(++currentLevel))
+            resolve(await this.setLevel(currentLevel + 1))
         })
     }
     
