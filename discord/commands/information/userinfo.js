@@ -38,7 +38,9 @@ module.exports = {
             }
         }) : roles.join(" ")
 
-        const joinPosition = member.guild.members.cache.sort((a, b) => b.joinedTimestamp - a.joinedTimestamp).keyArray().reverse().indexOf(member.id) + 1
+        const allMembers = await member.guild.members.fetch();
+
+        const joinPosition = allMembers.sort((a, b) => b.joinedTimestamp - a.joinedTimestamp).keyArray().reverse().indexOf(member.id) + 1
 
         const acknowledgements = []
         if(member.guild.owner === member) acknowledgements.push("Server Owner")

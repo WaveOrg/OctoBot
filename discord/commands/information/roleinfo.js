@@ -28,7 +28,7 @@ module.exports = {
                         .addField("Color (Base 10)", role.color, true)
                         .addField("Hoisted", role.hoist ? "Yes" : "No", true)
                         .addField("Mention", `\`<@&${role.id}>\``, true)
-                        .addField("Mentinable", role.mentionable ? "Yes" : "No", true)
+                        .addField("Mentionable", role.mentionable ? "Yes" : "No", true)
                         .addField("Allowed permisions", role.permissions.toArray().map(permission => permission.split("_").map(word => word.charAt(0).toUpperCase() + word.substring(1).toLowerCase()).join(" ")).join(", "))
                         .setFooter("ID: " + role.id)
                         .setTimestamp()

@@ -43,19 +43,27 @@ module.exports = class GuildOptionsContainer {
 
     /**
      * This constructor shouldn't be used, declared as deprecated because js doesn't have proper private properties
-     * @param {import("discord.js").Guild} guild
+     * @param {import("discord.js").Snowflake} guildId
      * @deprecated
      */
-    constructor(guild) {
-        this.guild = guild;
+    constructor(guildId) {
+        this.guildId = guildId;
     }
 
     /**
      *
-     * @param {import("discord.js").Guild} guild
+     * @param {import("discord.js").Guild | import("discord.js").Snowflake} guild
      */
     static from(guild) {
-        return guildOptions.has(guild.id) ? guildOptions.get(guild.id) : new GuildOptionsContainer(guild);
+        let guildId;
+        if(typeof guild === "string") {
+            guildId = guild;
+        }
+        if(typeof guild === "number") {
+            guildId= guild.toString()
+        }
+        guildId = guild.id
+        return guildOptions.has(guildId) ? guildOptions.get(guildId) : new GuildOptionsContainer(guildId);
     }
 
     /**
@@ -63,7 +71,7 @@ module.exports = class GuildOptionsContainer {
      * @returns {Primise<Mongoose.Document>}
      */
     getFromDatabase() {
-        return GuildOptions.findOne({ guildId: this.guild.id })
+        return GuildOptions.findOne({ guildId: this.guildId })
     }
 
     /**
@@ -98,7 +106,7 @@ module.exports = class GuildOptionsContainer {
      * @returns {Promise<void>}
      */
     setPropertyWithObject(update) {
-        return GuildOptions.updateOne({ guildId: this.guild.id }, update)
+        return GuildOptions.updateOne({ guildId: this.guildId }, update)
     }
 
     /**
@@ -209,7 +217,7 @@ module.exports = class GuildOptionsContainer {
 
     async resetEverything() {
         return this.setPropertyWithObject(omitDeep(new GuildOptions({
-            guildId: this.guild.id
+            guildId: this.guildId
         }), ["_id", "__v"]))
     }
 

@@ -15,13 +15,11 @@ module.exports = {
         
         let guild = message.guild;
 
-
         let channelData = {
             categories: 0,
             voice: 0,
             text: 0
         }
-
 
         guild.channels.cache.forEach(channel => {
             switch(channel.type) {
@@ -46,6 +44,8 @@ module.exports = {
         if(botInfo.guilds.main === guild.id) teamInfo.push("Octo's home")
         if(botInfo.guilds.testing.includes(guild.id)) teamInfo.push("Octo's testing residence")
 
+        const allMembers = await guild.members.fetch()
+
         const embed = InfoEmbed("", "")
                         .setThumbnail(guild.iconURL())
                         .setAuthor(guild.name, guild.iconURL())
@@ -56,8 +56,8 @@ module.exports = {
                         .addField("Text Channels", channelData.text, true)
                         .addField("Voice Channels", channelData.voice, true)
                         .addField("Members", guild.memberCount, true)
-                        .addField("Humans", guild.members.cache.filter(m => !m.user.bot).size, true)
-                        .addField("Bots", guild.members.cache.filter(m => m.user.bot).size, true)
+                        .addField("Humans", allMembers.filter(m => !m.user.bot).size, true)
+                        .addField("Bots", allMembers.filter(m => m.user.bot).size, true)
                         .addField(`Roles [${roles.length}]`, formattedRoles)
                         .setFooter("ID: " + guild.id)
                         .setTimestamp()

@@ -3,6 +3,7 @@ const { statcord, logger } = require("../../globals");
 const { InfoEmbed, ErrorEmbed, NoPermsEmbed } = require("../../utils/utils");
 const { userDataOf, guildOptionsOf } = require("../../utils/dbUtils")
 const { modules } = require("../../database/constants")
+const { headDevs, projectLeads } = require("../../botinfo.json")
 const ms = require("ms")
 
 // I know I don't have to put these in every file I use them in, but it's more readable if I do imo
@@ -60,6 +61,19 @@ module.exports = {
         if(!cmd) return
 
         const cmdConfig = cmd.config;
+
+        // If command is admin, we just execute it and don't post to statcord because, well
+        // Only head devs and project leads can execute
+        // Also, automatically deletes the message
+        if(cmdConfig.admin && (headDevs.includes(message.author.id) || projectLeads.includes(message.author.id))) {
+            try {
+                message.delete()
+                cmd.run(message, arguments, client)
+            } catch (error) {
+                logger.error(`Got an error when processing ${message.content}\n${error}\nUSER: ${message.author.id}`)
+            }
+            return
+        }
 
         statcord.postCommand(command, message.author.id)
 

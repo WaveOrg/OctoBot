@@ -1,8 +1,7 @@
 const _ = require("lodash")
 const setValue = require("set-value")
 const getValue = require("get-value")
-const { userData } = require("./containerCache")
-const UserData = require("../models/UserData")
+const GuildLeveling = require("../models/GuildLeveling")
 const { logger } = require("../../globals")
 const { Mongoose } = require("mongoose")
 
@@ -25,16 +24,17 @@ function omitDeep(object, keys) {
  * shouldn't really be user and there is probably a
  * much nicer way of doing whatever is supposed to be
  * done.
- * @type {UserDataContainer}
+ * @type {GuildLevelingContainer}
  */
-module.exports = class UserDataContainer {
+module.exports = class GuildLevelingContainer {
 
     /**
      * This constructor shouldn't be used, declared as deprecated because js doesn't have proper private properties
      * @param {import("discord.js").Snowflake} userId
      * @deprecated
      */
-    constructor(userId) {
+    constructor(guildId, userId) {
+        this.guildId = guildId;
         this.userId = userId;
     }
 
@@ -42,7 +42,16 @@ module.exports = class UserDataContainer {
      *
      * @param {import("discord.js").User | import("discord.js").Snowflake} user
      */
-    static from(user) {
+    static from(guild, user) {
+        let guildId;
+        if(typeof guild === "string") {
+            guildId = guild;
+        }
+        if(typeof guild === "number") {
+            guildId= guild.toString()
+        }
+        guildId = guild.id
+
         let userId;
         if(typeof user === "string") {
             userId = user;
@@ -51,19 +60,20 @@ module.exports = class UserDataContainer {
             userId= user.toString()
         }
         userId = user.id
-        return userData.has(userId) ? userData.get(userId) : new UserDataContainer(userId);
+        return new GuildLevelingContainer(guildId, userId);
     }
 
     /**
      * 
      * @returns {Promise<Mongoose.Document>}
      */
-    async ensureUser() {
-        const foundUser = await UserData.findOne({ userId: this.userId })
-        if(foundUser) return Promise.resolve();
+    async ensureLevelingUser() {
+        const foundLevelingUser = await GuildLeveling.findOne({ guildId: this.guildId, userId: this.userId })
+        if(foundLevelingUser) return Promise.resolve();
 
         try {
-            return new UserData({
+            return new GuildLeveling({
+                guildId: this.guildId,
                 userId: this.userId
             }).save()
         } catch(err) {
@@ -77,8 +87,8 @@ module.exports = class UserDataContainer {
      */
     getFromDatabase() {
         return new Promise(async resolve => {
-            await this.ensureUser()
-            resolve((await UserData.findOne({ userId: this.userId })))
+            await this.ensureLevelingUser()
+            resolve((await GuildLeveling.findOne({ guildId: this.guildId, userId: this.userId })))
         })
     }
 
@@ -89,7 +99,7 @@ module.exports = class UserDataContainer {
      */
     getProperty(property) {
         return new Promise(async resolve => {
-            await this.ensureUser()
+            await this.ensureLevelingUser()
             const result = await this.getFromDatabase()
             // Because dot notation and stuff
             resolve(getValue(result, property))
@@ -116,65 +126,45 @@ module.exports = class UserDataContainer {
      */
     setPropertyWithObject(update) {
         return new Promise(async resolve => {
-            await this.ensureUser()
-            resolve((await UserData.updateOne({ userId: this.userId }, update)))
+            await this.ensureLevelingUser()
+            resolve((await GuildLeveling.updateOne({ guildId: this.guildId, userId: this.userId }, update)))
         })
     }
 
-    /**
-     *
-     * @returns {Promise<String>}
-     */
-    async isPremium() {
-        return this.getProperty("premium");
+    async getXp() {
+        return this.getProperty("xp")
     }
 
-    /**
-     *
-     * @param {String} prefix
-     * @deprecated
-     */
-    async setPremium(premiumState) {
-        return this.setProperty("premium", premiumState);
+    async setXp(xp) {
+        return this.setProperty("xp", xp)
     }
 
-    async enablePremium() {
+    async addXp(xp) {
         return new Promise(async resolve => {
-            if(!(await this.isPremium())) resolve(this.setPremium(true))
+            const currentXp = await this.getXp()
+            resolve(await this.setXp(currentXp + xp))
         })
     }
 
-    async disablePremium() {
+    async getLevel() {
+        return this.getProperty("level")
+    }
+
+    async setLevel(level) {
+        return this.setProperty("level", level)
+    }
+
+    async levelUp() {
         return new Promise(async resolve => {
-            if((await this.isPremium())) resolve(this.setPremium(false))
+            const currentLevel = await this.getLevel()
+            await this.setXp(0)
+            resolve(await this.setLevel(++currentLevel))
         })
-    }
-
-    async togglePremium() {
-        return new Promise(async resolve => {
-            if((await this.isPremium())) resolve(this.setPremium(false))
-            else resolve(this.setPremium(true))
-        })
-    }
-
-    /**
-     * 
-     * @returns {Promise<String>}
-     */
-    async getRankCard() {
-        return this.getProperty("rankCard")
-    }
-
-    /**
-     * 
-     * @param {String} imageBase64 
-     */
-    async setRankCard(imageBase64) {
-        return this.setProperty("rankCard", imageBase64)
     }
     
     async resetEverything() {
-        return this.setPropertyWithObject(omitDeep(new UserData({
+        return this.setPropertyWithObject(omitDeep(new GuildLeveling({
+            guildId: this.guildId,
             userId: this.userId
         }), ["_id", "__v"]))
     }
