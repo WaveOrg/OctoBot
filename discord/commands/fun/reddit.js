@@ -33,7 +33,7 @@ module.exports = {
             )
         } catch (error) {
             sent.edit(
-                ErrorEmbed("Uh oh! I think a shark ate a cable, and caused an internal error. Please try your command again later. The shark has been reported to the ocean police.")
+                ErrorEmbed("Uh oh! I think a shark ate a cable, and caused an internal error. Please try your command again later. The shark has been reported to the life guards.")
             )
 
             logger.error(`Got error on ${message.content}\n${error}\nUSER: ${message.author.id}`)
