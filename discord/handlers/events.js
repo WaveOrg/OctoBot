@@ -20,6 +20,6 @@ module.exports = async (client) => {
         }
 
         client.on(event.config.type, (...args) => event.run(client, ...args));
-        logger.log(`${chalk.blueBright("[Discord]")} Loaded event: ${event.config.name}`)
+        if(client.shard.ids[0] === 0) logger.logDiscord(client, `Loaded event: ${event.config.name}`)
     }
 }

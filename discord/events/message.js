@@ -1,4 +1,5 @@
-const { statcord, logger } = require("../../globals");
+const { logger } = require("../../globals");
+const Statcord = require('statcord.js')
 
 const { InfoEmbed, ErrorEmbed, NoPermsEmbed } = require("../../utils/utils");
 const { userDataOf, guildOptionsOf } = require("../../utils/dbUtils")
@@ -78,7 +79,7 @@ module.exports = {
             return
         }
 
-        statcord.postCommand(command, message.author.id)
+        Statcord.ShardingClient.postCommand(command, message.author.id, client)
 
         if(cmdConfig.permissions && cmdConfig.permissions.filter(perm => message.member.hasPermission(perm)).length != cmdConfig.permissions.length) {
             return message.channel.send(NoPermsEmbed())

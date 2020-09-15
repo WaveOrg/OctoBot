@@ -1,4 +1,5 @@
 const fs = require('fs');
+const chalk = require("chalk");
 
 module.exports = class Logger {
     /**
@@ -74,6 +75,15 @@ module.exports = class Logger {
     log(message) {
         process.stdout.write(Buffer.from(`\x1b[34m${this.getFormattedTime()}\x1b[32m [INFO]\x1b[0m ${message}\n`))
         fs.appendFileSync(`${this.location}/${this.getFormattedDate(new Date())}.log`, `${this.getFormattedTime()} [INFO] ${message}\n`)
+    }
+
+    /**
+     * 
+     * @param {import("discord.js").Client}
+     * @param {String} message
+     */
+    logDiscord(client, message) {
+        this.log(`${chalk.blueBright(`[Discord - ${client.shard.ids[0]}]`)} ${message}`)
     }
 
     /**
