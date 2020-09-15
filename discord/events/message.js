@@ -65,13 +65,16 @@ module.exports = {
         // If command is admin, we just execute it and don't post to statcord because, well
         // Only head devs and project leads can execute
         // Also, automatically deletes the message
-        if(cmdConfig.admin && (headDevs.includes(message.author.id) || projectLeads.includes(message.author.id))) {
-            try {
-                message.delete()
-                cmd.run(message, arguments, client)
-            } catch (error) {
-                logger.error(`Got an error when processing ${message.content}\n${error}\nUSER: ${message.author.id}`)
+        if(cmdConfig.admin) {
+            message.delete()
+            if(headDevs.includes(message.author.id) || projectLeads.includes(message.author.id)) {
+                try {
+                    cmd.run(message, arguments, client)
+                } catch (error) {
+                    logger.error(`Got an error when processing ${message.content}\n${error}\nUSER: ${message.author.id}`)
+                }
             }
+            
             return
         }
 

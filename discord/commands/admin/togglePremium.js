@@ -11,7 +11,6 @@ module.exports = {
      * @param {Discord.Client} client 
      */
     async run(message, args, client) {
-        if(!config.devs.includes(message.author.id)) return;
         let user = message.mentions.users.first()
         if(!args[0]) return sendAdmin(message.channel, ErrorEmbed("Couldn't find that member"))
         if(!user) user = await client.users.fetch(args[0]).catch(() => { 
