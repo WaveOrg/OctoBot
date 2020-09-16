@@ -1,6 +1,18 @@
-const Discord = require("discord.js")
-const { guildLevelingOf } = require("../../../utils/dbUtils");
+const Discord = require("discord.js");
+const Jimp = require("jimp");
+const { guildLevelingOf, userDataOf } = require("../../../utils/dbUtils");
 const { InfoEmbed, ErrorEmbed } = require("../../../utils/utils");
+const fetch = require('node-fetch');
+const { logger } = require("../../../globals");
+
+var circleMask;
+Jimp.read('./discord/assets/circle.png').then(img => circleMask = img)
+
+var uniSansSmallBlue;
+Jimp.loadFont('./discord/assets/Fonts/Uni Sans Heavy Blue.fnt').then(loaded => uniSansSmallBlue = loaded)
+
+var uniSansLargeBlue;
+Jimp.loadFont('./discord/assets/Fonts/Uni Sans Heavy Blue Large.fnt').then(loaded => uniSansLargeBlue = loaded)
 
 module.exports = {
     /**
@@ -10,6 +22,7 @@ module.exports = {
      * @param {Discord.Client} client 
      */
     async run(message, args, client) {
+        /** @type {Discord.GuildMember} */
         let member;
         if(!args[0]) member = message.member;
 
@@ -22,14 +35,66 @@ module.exports = {
         if(!member) member = message.guild.members.cache.find(m => m.displayName.toLowerCase().startsWith(name))
         if(!member) return message.channel.send(ErrorEmbed(`I can't find a guild member that goes by \`${name}\``))
 
-        /*const userData = userDataOf(member.user)
+        // Debugging stuff
+        const startDB = Date.now()
 
-        const rankCard = await userData.getRankCard()
-        if(rankCard === "null") return message.channel.send(ErrorEmbed(`<@${member.id}> does not have a valid rank card.`))
+        const userData = userDataOf(member.user)
+        const levelingData = guildLevelingOf(message.guild, message.author);
 
-        message.channel.send(new Discord.MessageAttachment(Buffer.from(rankCard, "base64")))*/
-        const leveling = guildLevelingOf(message.guild, member.user)
-        message.channel.send(InfoEmbed(`Level: ${await leveling.getLevel()}`, `Xp: ${await leveling.getXp()}`))
+        var rankCardBase64 = await userData.getRankCard()
+
+        const endDB = Date.now();
+        logger.debug(`Took ${endDB - startDB}ms to get Database data.`)
+
+        Jimp.read(rankCardBase64 === "null"? './discord/assets/rankCardDefault.png' : Buffer.from(rankCardBase64, "base64")).then(async rankCard => {
+            const { width: cardWidth, height: cardHeight } = rankCard.bitmap;
+
+            const startRead = Date.now()
+
+            // User Avatar
+            const avatarURL = member.user.avatarURL({ format: 'png', size: 512 }) 
+                || "https://discordapp.com/assets/6debd47ed13483642cf09e832ed0bc1b.png"
+
+            const userAvatar = (await Jimp.read(avatarURL))
+                .mask(circleMask, 0, 0)
+                .resize(cardHeight * 0.8, cardHeight * 0.8)
+
+            const readImage = Date.now()
+
+            const { width: userWidth, height: userHeight } = userAvatar.bitmap
+
+            // Variables I use later
+            const AvatarXY = (cardHeight - userHeight) / 2
+
+            // Poor-man's shadow
+            const shadow = new Jimp(userWidth + 80, userHeight + 80, '#000000')
+            
+            shadow.circle({
+                radius: userWidth / 2,
+                x: userHeight / 2 + 40,
+                y: userHeight / 2 + 40
+            })
+
+            shadow.blur(20)
+
+            // Text
+            rankCard.print(uniSansLargeBlue, 
+                (AvatarXY * 2) + (cardWidth / 4), 
+                cardHeight / 8, member.user.tag)
+
+            rankCard.print(uniSansSmallBlue, 
+                (AvatarXY * 2) + (cardWidth / 4), 
+                cardHeight * 0.40, `Level ${await levelingData.getLevel()}`)
+
+            // Combine all layers
+            rankCard.composite(shadow, AvatarXY - 40, AvatarXY - 40)
+            rankCard.composite(userAvatar, AvatarXY, AvatarXY)
+
+            logger.debug(`Took ${readImage - startRead}ms to get profile picture from Discord.`)
+            logger.debug(`Image Editing took ${Date.now() - readImage}ms.`)
+            logger.debug(`Rank command took ${Date.now() - startDB}ms total.`)
+            message.channel.send(new Discord.MessageAttachment(await rankCard.getBufferAsync(Jimp.MIME_PNG)))
+        })
     },
 
     config: {

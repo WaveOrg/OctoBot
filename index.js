@@ -24,7 +24,6 @@ globals.statcord = new Statcord.ShardingClient({
     postCpuStatistics: true, /* Whether to post CPU statistics or not, defaults to true */
     postMemStatistics: true, /* Whether to post memory statistics or not, defaults to true */
     postNetworkStatistics: true, /* Whether to post network statistics or not, defaults to true */
-    autopost: true
 })
 
 globals.statcord.on("autopost-start", () => {
