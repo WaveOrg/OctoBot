@@ -38,6 +38,7 @@ module.exports = {
         aliases: ['makemyearshurt'],
         description: "Add earrape to the current song.",
         permissions: [],
-        usage: `earrape`
+        usage: `earrape`,
+        premium: true
     }
 }

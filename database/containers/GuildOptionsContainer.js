@@ -39,6 +39,7 @@ function omitDeep(object, keys) {
  * much nicer way of doing whatever is supposed to be
  * done.
  * @type {GuildOptionsContainer}
+ * @author Antony#9971
  */
 module.exports = class GuildOptionsContainer {
 
@@ -59,9 +60,6 @@ module.exports = class GuildOptionsContainer {
         let guildId;
         if(typeof guild === "string") {
             guildId = guild;
-        }
-        if(typeof guild === "number") {
-            guildId= guild.toString()
         }
         guildId = guild.id
         return guildOptions.has(guildId) ? guildOptions.get(guildId) : new GuildOptionsContainer(guildId);

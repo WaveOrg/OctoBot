@@ -9,7 +9,7 @@ module.exports = {
      * @param {Discord.Client} client 
      */
     async run(message, args, client) {
-        message.channel.send("hi")
+        console.log(message.guild.getOptions());
     },
 
     config: {

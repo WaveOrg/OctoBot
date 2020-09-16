@@ -26,6 +26,7 @@ function omitDeep(object, keys) {
  * much nicer way of doing whatever is supposed to be
  * done.
  * @type {UserDataContainer}
+ * @author Antony#9971
  */
 module.exports = class UserDataContainer {
 
@@ -46,9 +47,6 @@ module.exports = class UserDataContainer {
         let userId;
         if(typeof user === "string") {
             userId = user;
-        }
-        if(typeof user === "number") {
-            userId= user.toString()
         }
         userId = user.id
         return userData.has(userId) ? userData.get(userId) : new UserDataContainer(userId);

@@ -1,30 +1,22 @@
 const Log = require("./utils/logger");
-const Discord = require('discord.js')
-const Client = new Discord.Client()
-const { Player } = require("./utils/music/player");
+const { client, player } = require("./discord/bot")
 
-module.exports = {
-    /**
-     * Logger
-     */
-    logger: new Log(true),
+/**
+ * Logger
+ */
+module.exports.logger = new Log(true);
 
-    /**
-     * Common imports
-     */
-    utils: require("./utils/utils"),
+/**
+ * Common imports
+ */
+module.exports.utils = require("./utils/utils");
 
-    /**
-     * Discord related
-     */
-    client: Client,
-    statcord: null,
+/**
+ * Discord related
+ */
+module.exports.client = client;
 
-    /**
-     * Music Related
-     */
-    player: new Player(Client, {
-        leaveOnEnd: false,
-        leaveOnEmpty: false
-    })
-}
+/**
+ * Music Related
+ */
+module.exports.player = player;

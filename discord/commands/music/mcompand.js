@@ -34,6 +34,7 @@ module.exports = {
         aliases: [],
         description: "Add mcompand effect.",
         permissions: [],
-        usage: `mcompand`
+        usage: `mcompand`,
+        premium: true
     }
 }

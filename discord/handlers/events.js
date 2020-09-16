@@ -1,12 +1,13 @@
 const fs = require("fs").promises;
 const chalk = require("chalk");
-const { logger } = require("../../globals");
 
 /**
  * 
  * @param {import("discord.js").Client} client 
  */
 module.exports = async (client) => {
+    const { logger } = require("../../globals");
+
     let eventsDir = (await fs.readdir("./discord/events")).filter(file => file.endsWith(".js"));
     
     for(let file of eventsDir) {
@@ -20,6 +21,7 @@ module.exports = async (client) => {
         }
 
         client.on(event.config.type, (...args) => event.run(client, ...args));
+        
         if(client.shard.ids[0] === 0) logger.logDiscord(client, `Loaded event: ${event.config.name}`)
     }
 }

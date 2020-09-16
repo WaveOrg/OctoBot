@@ -85,6 +85,14 @@ module.exports = {
             return message.channel.send(NoPermsEmbed())
         }
 
+        const userData = userDataOf(message.author)
+
+        if(cmdConfig.premium) {
+            if(!(await userData.isPremium())) {
+                return message.channel.send(ErrorEmbed("This command is restricted to ***[Premium](https://octodev.xyz/premium)*** users only."))
+            }
+        }
+
         if(cooldowns.has(message.author.id)) {
             const entry = cooldowns.get(message.author.id).find(cooldownObject => cooldownObject.command === cmdConfig.command);
             if(entry) {
@@ -99,8 +107,6 @@ module.exports = {
         if(cmdConfig.requiresModules && cmdConfig.requiresModules.filter(module => activeModules.includes(module)).length !== cmdConfig.requiresModules.length) {
             return message.channel.send(ErrorEmbed(`Modules \`${cmdConfig.requiresModules.map(module => getKeyByValue(modules, module)).map(module => module.split("_").map(module => module.charAt(0).toUpperCase() + module.substring(1).toLowerCase()).join(" ")).join(",")}\` need to be enabled for this command to work`))
         }
-
-        const userData = userDataOf(message.author)
 
         if(cmdConfig.cooldown && cmdConfig.cooldown.time) {
             if(!cmdConfig.cooldown.premiumBypassable || !(await userData.isPremium())) {
