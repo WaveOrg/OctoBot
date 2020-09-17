@@ -34,7 +34,8 @@ module.exports = {
             .addField(`**Invite**`, `[Coming Soon]()`, true)
 
             .addField(`**Current Guilds**`, client.guilds.cache.size, true)
-            .addField(`**Website**`, `[octodev.xyz](https://octodev.xyz)`)
+            .addField(`**Shards**`, client.shard.fetchClientUtils())
+            .addField(`**Website**`, `[octodev.xyz](https://octodev.xyz)`, true)
 
         message.channel.send(info)
     },
