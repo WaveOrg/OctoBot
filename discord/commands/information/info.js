@@ -17,25 +17,32 @@ module.exports = {
         let seconds = Math.floor(totalseconds % 60)
 
         uptime += `Uptime: ${hours}h , ${minutes}m , ${seconds}sec`
-    
+
         const info = InfoEmbed("", "")
 
-        .setAuthor(client.user.username, client.user.displayAvatarURL())
-        .setFooter(uptime, client.user.displayAvatarURL())
-        .setTimestamp()
-    
+            .setAuthor(client.user.username, client.user.displayAvatarURL())
+            .setFooter(uptime, client.user.displayAvatarURL())
+            .setTimestamp()
 
-        .addField(`**Version**`, `Beta`, true)
-        .addField(`**Founder**`, `[MonkeyMax](https://github.com/ItzMonkeyMax)`, true)
-        .addField(`**Library**`, `[Discord.JS](https://discord.js.org/#/)`, true)
-        
-        .addField(`**Current Users**`, client.guilds.cache.reduce((a, b) => a + b.memberCount, 0), true)
-        .addField(`**Support**`, `[Join Now](https://discord.gg/z9nznDY)`, true)
-        .addField(`**Invite**`, `[Coming Soon]()`, true)
 
-        .addField(`**Current Guilds**`, client.guilds.cache.size, true)
-        .addField(`**Website**`, `[octodev.xyz](https://octodev.xyz)`)
+            .addField(`**Version**`, `Beta`, true)
+            .addField(`**Founder**`, `[MonkeyMax](https://github.com/ItzMonkeyMax)`, true)
+            .addField(`**Library**`, `[Discord.JS](https://discord.js.org/#/)`, true)
 
-        message.channel.send(info) 
+            .addField(`**Current Users**`, client.guilds.cache.reduce((a, b) => a + b.memberCount, 0), true)
+            .addField(`**Support**`, `[Join Now](https://discord.gg/z9nznDY)`, true)
+            .addField(`**Invite**`, `[Coming Soon]()`, true)
+
+            .addField(`**Current Guilds**`, client.guilds.cache.size, true)
+            .addField(`**Website**`, `[octodev.xyz](https://octodev.xyz)`)
+
+        message.channel.send(info)
+    },
+    config: {
+        command: "info",
+        aliases: ["botinfo"],
+        description: "Shows Bot info",
+        permissions: [],
+        usage: `info`,
     }
 }
