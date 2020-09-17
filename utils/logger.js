@@ -88,6 +88,15 @@ module.exports = class Logger {
 
     /**
      * 
+     * @param {import("discord.js").Client}
+     * @param {String} message
+     */
+    logBackend(message) {
+        this.log(`${chalk.blueBright(`[Backend]`)} ${message}`)
+    }
+
+    /**
+     * 
      * @param {String} message 
      */
     debug(message) {

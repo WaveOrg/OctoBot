@@ -1,6 +1,5 @@
 const Statcord = require('statcord.js')
-const Log = require("./utils/logger")
-const logger = new Log(true)
+const { logger } = require("./launcher.globals")
 const { ShardingManager } = require('discord.js');
 const manager = new ShardingManager('./discord/bot.js', 
     { 
@@ -16,6 +15,7 @@ manager.on('shardCreate',
 logger.log("Spawining shards.")
 manager.spawn().then(s => {
     logger.log(`Successfully spawned ${s.size} ${s.size > 1 ?  "shards" : "shard"}.`)
+    require("./backend/app.js")(manager)
 })
 
 const statcord = new Statcord.ShardingClient({
