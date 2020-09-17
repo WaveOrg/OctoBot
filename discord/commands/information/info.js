@@ -10,7 +10,7 @@ module.exports = {
      */
     async run(message, args, client) {
         let uptime = '';
-        let totalseconds = (this.bot.uptime / 1000)
+        let totalseconds = (client.uptime / 1000)
         let hours = Math.floor(totalseconds / 3600)
         totalseconds %= 3600
         let minutes = Math.floor(totalseconds / 60)
@@ -22,7 +22,6 @@ module.exports = {
 
         .setAuthor(client.user.username, client.user.displayAvatarURL())
         .setFooter(uptime, client.user.displayAvatarURL())
-        .setColor('DARK_BLUE')
         .setTimestamp()
     
 
