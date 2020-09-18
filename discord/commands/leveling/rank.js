@@ -42,7 +42,7 @@ module.exports = {
         if(!member) member = message.guild.members.cache.find(m => m.user.tag.toLowerCase() === name);
         if(!member) member = message.guild.members.cache.find(m => m.displayName.toLowerCase() === name);
         if(!member) member = message.guild.members.cache.find(m => m.displayName.toLowerCase().startsWith(name))
-        if(!member) return message.channel.send(ErrorEmbed(`I can't find a guild member that goes by \`${name}\``))
+        if(!member) return message.channel.send(ErrorEmbed(`This guild cannot be found in the database! If this error continues, contact support! \`${name}\``))
 
         const levelingData = guildLevelingOf(message.guild, message.author);
         

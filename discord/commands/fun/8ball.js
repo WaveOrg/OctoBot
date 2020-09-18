@@ -13,7 +13,7 @@ module.exports = {
      */
     async run(message, args, client) {
         if(!args[0]) {
-            message.channel.send(ErrorEmbed("You need to specify something"));
+            message.channel.send(ErrorEmbed("You need ot specify something."));
             return;
         }
 
