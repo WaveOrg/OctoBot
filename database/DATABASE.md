@@ -67,7 +67,47 @@ Types of containers:
         }
         ```
 ## Container methods and functions
-- ### GuildOptions
-    ```js
-    
-    ```
+- ### All - this is gonna container methods common to all containers
+    - ### `getFromDatabase()`
+        - Description: *Returns a whole response document from the database*
+        - Returns: *Promise<Mongoose.Document>*
+    - ### `getProperty(property: String)`
+        - Description: *Returns a specific property from the database*
+        - Returns: *Promise\<any>*
+    - ### `setProperty(property: String, newValue: any)`
+        - Description: *Sets a specific `property` to the `newValue`*
+        - Returns: *Promise*
+        - Note: *`property` supports dot notation*
+    - ### `setPropertyWithObject(update: Object)`
+        - Description: *Updates something in the database*
+        - Returns: *Promise*
+- ### GuildOptionsContainer
+    - ### `getPrefix()`
+        - Description: *Returns the guild prefix*
+        - Returns: *Promise\<String>*
+    - ### `setPrefix(prefix)`
+        - Description: *Sets the guild prefix*
+        - Returns: *Promise*
+    - ### `getActiveModules()`
+        - Description: *Returns all the active modules a guild has*
+        - Returns: *Promise<Array\<String>>*
+    - ### `setActiveModules(activeModules: Array<String>)`
+        - Description: *Sets the guild active modules*
+        - Note: *Use modules object from `/database/constants.js` for elements of the `activeModules` array. You can autocomplete and it's easy.*
+        - ***Deprecated** Use other module methods instead*
+    - ### `isModuleEnabled(module: String)`
+        - Description: *Checks if a supplied module is enabled in a guild*
+        - Returns: *Promise\<Boolean>*
+        - Note: *Use modules object from `/database/constants.js` as the `module`. You can autocomplete and it's easy.*
+    - ### `enableModule(module: String)`
+        - Description: *Enables a supplied module*
+        - Returns: *Promise*
+        - Note: *Use modules object from `/database/constants.js` as the `module`. You can autocomplete and it's easy.*
+    - ### `disableModule(module: String)`
+        - Description: *Disable a supplied module*
+        - Returns: *Promise*
+        - Note: *Use modules object from `/database/constants.js` as the `module`. You can autocomplete and it's easy.*
+    - ### `toggleModule(module: String)`
+        - Description: *Toggles a supplied module*
+        - Returns: *Promise*
+        - Note: *Use modules object from `/database/constants.js` as the `module`. You can autocomplete and it's easy.*

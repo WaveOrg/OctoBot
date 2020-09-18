@@ -17,6 +17,12 @@ Jimp.loadFont('./discord/assets/Fonts/Uni Sans Heavy Blue Large.fnt').then(loade
 var barBG;
 Jimp.read('./discord/assets/barbg.png').then(loaded => barBG = loaded)
 
+var barMask;
+Jimp.read('./discord/assets/barMask.png').then(loaded => barMask = loaded)
+
+var uniSansSmallGray;
+Jimp.loadFont('./discord/assets/Fonts/Uni Sans Heavy Small.fnt').then(loaded => uniSansSmallGray = loaded)
+
 module.exports = {
     /**
      * 
@@ -92,15 +98,32 @@ module.exports = {
             const bar = await Jimp.read('./discord/assets/bar.png')
 
             bar.cover(barWidth, bar.bitmap.height)
+            bar.mask(barMask, 0, 0)
 
             // Text
-            rankCard.print(uniSansLargeBlue, 
-                (AvatarXY * 2) + (cardWidth / 4), 
-                cardHeight / 8, member.user.tag)
+            if(member.user.username.length > 11) {
+                const parts = member.user.username.match(/.{1,21}/g)
+
+                rankCard.print(uniSansSmallBlue, 
+                    (AvatarXY * 2) + (cardWidth / 4), 
+                    cardHeight / 8, parts[0])
+
+                if(parts[1])  rankCard.print(uniSansSmallBlue, 
+                    (AvatarXY * 2) + (cardWidth / 4), 
+                    cardHeight / 3.75, parts[1])
+            } else {
+                rankCard.print(uniSansLargeBlue, 
+                    (AvatarXY * 2) + (cardWidth / 4), 
+                    cardHeight / 8, member.user.username)
+            }
 
             rankCard.print(uniSansSmallBlue, 
                 (AvatarXY * 2) + (cardWidth / 4), 
-                cardHeight * 0.40, `Level ${await levelingData.getLevel()}`)
+                cardHeight * 0.40, `Level ${currentLevel}`)
+
+            rankCard.print(uniSansSmallGray, 
+                (AvatarXY * 2) + (cardWidth / 4), 
+                cardHeight * 0.57, `${currentXP}/${xpRequired} XP`)
 
             // Combine all layers
             rankCard.composite(barBG, (AvatarXY * 2) + (cardWidth / 4), cardHeight * 0.70)

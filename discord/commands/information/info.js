@@ -26,15 +26,15 @@ module.exports = {
 
 
             .addField(`**Version**`, `Beta`, true)
-            .addField(`**Founder**`, `[MonkeyMax](https://github.com/ItzMonkeyMax)`, true)
-            .addField(`**Library**`, `[Discord.JS](https://discord.js.org/#/)`, true)
+            .addField(`**Founder**`, `[Derock](https://derock.dev/), [MonkeyMax](https://github.com/ItzMonkeyMax)`, true)
+            .addField(`**Language**`, `[Javascript](https://developer.mozilla.org/en-US/docs/Web/JavaScript)`, true)
 
-            .addField(`**Current Users**`, client.guilds.cache.reduce((a, b) => a + b.memberCount, 0), true)
+            .addField(`**Current Users**`, (await client.shard.fetchClientValues('users.cache.size')).reduce((a, b) => a + b, 0), true)
+            .addField(`**Current Guilds**`, (await client.shard.fetchClientValues('guilds.cache.size')).reduce((a, b) => a + b, 0), true)
+            .addField(`**Shards**`, client.shard.count, true)
+
             .addField(`**Support**`, `[Join Now](https://discord.gg/z9nznDY)`, true)
             .addField(`**Invite**`, `[Coming Soon]()`, true)
-
-            .addField(`**Current Guilds**`, client.guilds.cache.size, true)
-            .addField(`**Shards**`, client.shard.fetchClientUtils())
             .addField(`**Website**`, `[octodev.xyz](https://octodev.xyz)`, true)
 
         message.channel.send(info)
