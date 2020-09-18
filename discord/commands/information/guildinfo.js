@@ -31,14 +31,9 @@ module.exports = {
 
         const roles = guild.roles.cache.sort((a, b) => b.position - a.position).map(role => role === guild.roles.everyone ? role.name : `<@&${role.id}>`)
 
-        let characters = 0;
-        const formattedRoles = roles.join(" ").length > 1020? roles.map(value => {
-            if((characters + value.length + 1) > 1020) return ''
-            else {
-                characters + value.length + 1
-                return value + ' ';
-            }
-        }) : roles.join(" ")
+        const formattedRoles = roles.join(" ").length > 1000? roles.join(" ").substr(0, 1000).split(' ')
+            .reduce((acc, s) => acc.length + s.length < 1000? acc + ' ' + s : acc)
+            : roles.join(" ")
         
         let teamInfo = []
         if(botInfo.guilds.main === guild.id) teamInfo.push("Octo's home")
