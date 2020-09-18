@@ -1,6 +1,7 @@
 const Discord = require("discord.js")
 const { userDataOf } = require("../../../utils/dbUtils")
 const { ErrorEmbed, InfoEmbed } = require("../../../utils/utils")
+const config = require('../../../botinfo.json')
 
 module.exports = {
     /**
@@ -21,7 +22,7 @@ module.exports = {
 
         await userData.togglePremium();
         
-        sendAdmin(message.channel, InfoEmbed("Premium toggled", `<@${user.id}> is ${await userData.isPremium() ? "now" : "no longer"} a premium member`))
+        sendAdmin(message.channel, InfoEmbed("Premium toggled", `<@${user.id}> is ${await userData.isPremium() ? "now" : "no longer"} a premium member`));
     },
 
     config: {

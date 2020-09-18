@@ -1,6 +1,5 @@
-const { logger, statcord } = require("../../globals");
+const { logger } = require("../../globals");
 const GuildOptions = require("../../database/models/GuildOptions")
-const chalk = require("chalk")
 
 module.exports = {
     /**
@@ -9,10 +8,8 @@ module.exports = {
      * @param  {string[]} args 
      */
     async run(client, ...args) {
-        statcord.autopost();
-        logger.debug(`${chalk.blueBright("[Discord]")} StatCord auto-post started.`)
 
-        logger.debug(`${chalk.blueBright("[Discord]")} ${client.user.username} is ready! I am in ${client.guilds.cache.size} guilds with ${client.users.cache.size} users.`);
+        logger.logDiscord(client, `${client.user.username} is ready! I am in ${client.guilds.cache.size} guilds with ${client.users.cache.size} users.`);
         
         for(let guildArr of client.guilds.cache) {
             const guild = guildArr[1];

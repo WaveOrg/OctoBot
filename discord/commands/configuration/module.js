@@ -12,6 +12,7 @@ module.exports = {
      */
     async run(message, args, client) {
         const guildOptions = guildOptionsOf(message.guild);
+
         switch(args[0] ? args[0].toLowerCase() : null) {
             case 'enable':
                 if(!message.member.hasPermission("ADMINISTRATOR")) return message.channel.send(NoPermsEmbed())

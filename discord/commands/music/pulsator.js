@@ -34,6 +34,7 @@ module.exports = {
         aliases: [],
         description: "Add pulsator effect.",
         permissions: [],
-        usage: `pulsator`
+        usage: `pulsator`,
+        premium: true
     }
 }

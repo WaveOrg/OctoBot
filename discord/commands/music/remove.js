@@ -26,6 +26,7 @@ module.exports = {
         aliases: [],
         description: "Removes a song from queue.",
         permissions: [],
-        usage: `remove <0-200>`
+        usage: `remove <0-200>`,
+        premium: true
     }
 }

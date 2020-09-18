@@ -34,6 +34,7 @@ module.exports = {
         aliases: [],
         description: "Add reverse effect.",
         permissions: [],
-        usage: `reverse`
+        usage: `reverse`,
+        premium: true
     }
 }

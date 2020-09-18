@@ -25,6 +25,7 @@ function omitDeep(object, keys) {
  * much nicer way of doing whatever is supposed to be
  * done.
  * @type {GuildLevelingContainer}
+ * @author Antony#9971
  */
 module.exports = class GuildLevelingContainer {
 
@@ -40,6 +41,7 @@ module.exports = class GuildLevelingContainer {
 
     /**
      *
+     * @param {import("discord.js").Guild | import("discord.js").Snowflake} guild
      * @param {import("discord.js").User | import("discord.js").Snowflake} user
      */
     static from(guild, user) {
@@ -47,17 +49,11 @@ module.exports = class GuildLevelingContainer {
         if(typeof guild === "string") {
             guildId = guild;
         }
-        if(typeof guild === "number") {
-            guildId= guild.toString()
-        }
         guildId = guild.id
 
         let userId;
         if(typeof user === "string") {
             userId = user;
-        }
-        if(typeof user === "number") {
-            userId= user.toString()
         }
         userId = user.id
         return new GuildLevelingContainer(guildId, userId);

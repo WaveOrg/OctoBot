@@ -15,7 +15,7 @@ module.exports = {
             const fields = [];
 
             client.commands.forEach(command => {
-                if(command.category != "test") {
+                if(command.category != "test" && !command.config.admin) {
                     const uppercaseCate = command.category.charAt(0).toUpperCase() + command.category.slice(1);
 
                     if(!fields[uppercaseCate]) 

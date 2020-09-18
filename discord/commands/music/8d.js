@@ -34,6 +34,7 @@ module.exports = {
         aliases: [],
         description: "Add 8D audio.",
         permissions: [],
-        usage: `8d`
+        usage: `8d`,
+        premium: true
     }
 }

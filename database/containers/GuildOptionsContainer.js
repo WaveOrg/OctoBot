@@ -3,6 +3,7 @@ const setValue = require("set-value")
 const getValue = require("get-value")
 const { guildOptions } = require("./containerCache")
 const GuildOptions = require("../models/GuildOptions")
+const { client } = require("../../globals")
 
 // Normally Array.prototype.push() returns the length, so this betterPush returns the new array, allowing for a little cleaner code imo.
 Array.prototype.betterPush = function(value) {
@@ -38,6 +39,7 @@ function omitDeep(object, keys) {
  * much nicer way of doing whatever is supposed to be
  * done.
  * @type {GuildOptionsContainer}
+ * @author Antony#9971
  */
 module.exports = class GuildOptionsContainer {
 
@@ -59,16 +61,13 @@ module.exports = class GuildOptionsContainer {
         if(typeof guild === "string") {
             guildId = guild;
         }
-        if(typeof guild === "number") {
-            guildId= guild.toString()
-        }
         guildId = guild.id
         return guildOptions.has(guildId) ? guildOptions.get(guildId) : new GuildOptionsContainer(guildId);
     }
 
     /**
      * 
-     * @returns {Primise<Mongoose.Document>}
+     * @returns {Promise<Mongoose.Document>}
      */
     getFromDatabase() {
         return GuildOptions.findOne({ guildId: this.guildId })

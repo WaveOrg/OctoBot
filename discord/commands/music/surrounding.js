@@ -34,6 +34,7 @@ module.exports = {
         aliases: [],
         description: "Add surrounding effect.",
         permissions: [],
-        usage: `surrounding`
+        usage: `surrounding`,
+        premium: true
     }
 }
