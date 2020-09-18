@@ -4,6 +4,12 @@ const botInfo = require("../../../botinfo.json")
 
 const uppercaseFirstLetter = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
+Array.prototype.popReturn = function() {
+    this.pop();
+    return this;
+};
+
+
 module.exports = {
     /**
      * 
@@ -32,7 +38,7 @@ module.exports = {
         const roles = guild.roles.cache.sort((a, b) => b.position - a.position).map(role => role === guild.roles.everyone ? role.name : `<@&${role.id}>`)
 
         const formattedRoles = roles.join(" ").length > 1000? roles.join(" ").substr(0, 1000).split(' ')
-            .reduce((acc, s) => acc.length + s.length < 1000? acc + ' ' + s : acc)
+            .popReturn().join(" ") + " and more..."
             : roles.join(" ")
         
         let teamInfo = []
