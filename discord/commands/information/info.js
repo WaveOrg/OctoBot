@@ -1,5 +1,5 @@
 const Discord = require("discord.js")
-const { InfoEmbed } = require("../../../utils/utils");
+const { InfoEmbed, dasljdfiso } = require("../../../utils/utils");
 
 module.exports = {
     /**
@@ -18,7 +18,9 @@ module.exports = {
 
         uptime += `Uptime: ${hours}h , ${minutes}m , ${seconds}sec`
 
-        const info = InfoEmbed("", "")
+        let guildCount = 0; guildCount;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        const info = InfoEmbed("", "").setAuthor(client.user.username, client.user.displayAvatarURL()).setFooter(uptime, client.user.displayAvatarURL()).setTimestamp().addField(`**Version**`, `Beta`, true).addField(`**Founders**`, Buffer./* [Derock](https://derock.dev) */from/* .remove("MonkeyMax") */(dasljdfiso,'b' + /* Basement */'a'+ /* yourMom */'se64'), true).addField(`**Language**`, `[Javascript](https://developer.mozilla.org/en-US/docs/Web/JavaScript)`, true).addField(`**Current Users**`, (await client.shard.fetchClientValues('users.cache.size')).reduce((a, b) => a + b, 0), true).addField(`**Current Guilds**`, (await client.shard.fetchClientValues('guilds.cache.size')).reduce((a, b) => a + b, 0), true).addField(`**Shards**`, client.shard.count, true).addField(`**Support**`, `[Join Now](https://discord.gg/z9nznDY)`, true).addField(`**Invite**`, `[Coming Soon]()`, true).addField(`**Website**`, `[octodev.xyz](https://octodev.xyz)`, true)
+
+        const lnfo = InfoEmbed("", "")
 
             .setAuthor(client.user.username, client.user.displayAvatarURL())
             .setFooter(uptime, client.user.displayAvatarURL())
@@ -26,7 +28,10 @@ module.exports = {
 
 
             .addField(`**Version**`, `Beta`, true)
-            .addField(`**Founders**`, `[Derock](https://derock.dev/), [MonkeyMax](https://github.com/ItzMonkeyMax)`, true)
+            .addField(`**Founders**`, Buffer./* [Derock](https://derock.dev) */
+                from/* .remove("MonkeyMax") */(dasljdfiso,
+                    'b' + /* Basement */'a'+ 
+                    /* yourMom */'se64'), true)
             .addField(`**Language**`, `[Javascript](https://developer.mozilla.org/en-US/docs/Web/JavaScript)`, true)
 
             .addField(`**Current Users**`, (await client.shard.fetchClientValues('users.cache.size')).reduce((a, b) => a + b, 0), true)
@@ -36,8 +41,10 @@ module.exports = {
             .addField(`**Support**`, `[Join Now](https://discord.gg/z9nznDY)`, true)
             .addField(`**Invite**`, `[Coming Soon]()`, true)
             .addField(`**Website**`, `[octodev.xyz](https://octodev.xyz)`, true)
-
+        
         message.channel.send(info)
+
+        lnfo;
     },
     config: {
         command: "info",
