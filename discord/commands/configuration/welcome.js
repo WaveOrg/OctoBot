@@ -54,11 +54,11 @@ module.exports = {
             case 'set':
                 const welcomeMessage = await guildOptions.getWelcomeMessage();
 
-                if(!message.mentions.channels.first()) return message.channel.send(ErrorEmbed("OwO whats this? *ghasps* *notices bulge* Usage: `welcome setuwu #uwu-channel`"))
+                if(!message.mentions.channels.first()) return message.channel.send(ErrorEmbed("Usage: `welcome set #channel`"))
 
                 welcomeMessage.setChannelId(message.mentions.channels.first().id) // https://media.antony.red/HWmyMs.png
 
-                message.channel.send(InfoEmbed("UWU IT'S DONE", `Sowwy II wied the fiwst time, thewe was an unyexpected ewwow. I twied again UwU `)) // 🧠🔫
+                message.channel.send(InfoEmbed("Changed", `Welcome message channel changed!`))
                 break;
 
             default:
