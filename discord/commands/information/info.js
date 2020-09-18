@@ -42,7 +42,7 @@ module.exports = {
     config: {
         command: "info",
         aliases: ["botinfo"],
-        description: "Shows Bot info",
+        description: "Shows Bot's info",
         permissions: [],
         usage: `info`,
     }
