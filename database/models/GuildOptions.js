@@ -21,6 +21,10 @@ const guildOptionsSchema = new Mongoose.Schema({
         type: new Mongoose.Schema({
             welcome: {
                 type: new Mongoose.Schema({
+                    channelId: {
+                        type: String,
+                        required: true,
+                    },
                     dataType: {
                         type: String,
                         required: true,
@@ -35,6 +39,10 @@ const guildOptionsSchema = new Mongoose.Schema({
             },
             leave: {
                 type: new Mongoose.Schema({
+                    channelId: {
+                        type: String,
+                        required: true,
+                    },
                     dataType: {
                         type: String,
                         required: true,
@@ -51,10 +59,12 @@ const guildOptionsSchema = new Mongoose.Schema({
         required: true,
         default: {
             welcome: {
+                channelId: "null",
                 dataType: welcomeLeaveTypes.TEXT,
                 data: "Welcome to %server%, %member%"
             },
             leave: {
+                channelId: "null",
                 dataType: welcomeLeaveTypes.TEXT,
                 data: "Goodbye %member% from %server%"
             }

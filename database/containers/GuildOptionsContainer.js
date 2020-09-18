@@ -53,6 +53,23 @@ module.exports = class GuildOptionsContainer {
     }
 
     /**
+     * 
+     * @returns {Promise<Mongoose.Document>}
+     */
+    async ensureGuild() {
+        const foundGuild = await GuildOptions.findOne({ guildId: this.guildId })
+        if(foundGuild) return Promise.resolve();
+
+        try {
+            return new GuildOptions({
+                guildId: this.guildId
+            }).save()
+        } catch(err) {
+            logger.error(err)
+        }
+    }
+
+    /**
      *
      * @param {import("discord.js").Guild | import("discord.js").Snowflake} guild
      */
@@ -70,7 +87,10 @@ module.exports = class GuildOptionsContainer {
      * @returns {Promise<Mongoose.Document>}
      */
     getFromDatabase() {
-        return GuildOptions.findOne({ guildId: this.guildId })
+        return new Promise(async resolve => {
+            await this.ensureGuild();
+            resolve(GuildOptions.findOne({ guildId: this.guildId }))
+        })
     }
 
     /**
@@ -105,7 +125,10 @@ module.exports = class GuildOptionsContainer {
      * @returns {Promise<void>}
      */
     setPropertyWithObject(update) {
-        return GuildOptions.updateOne({ guildId: this.guildId }, update)
+        return new Promise(async resolve => {
+            await this.ensureGuild()
+            resolve(GuildOptions.updateOne({ guildId: this.guildId }, update))
+        })
     }
 
     /**
@@ -198,9 +221,7 @@ module.exports = class GuildOptionsContainer {
      * @returns {Promise<WelcomeLeaveMessageContainer>}
      */
     async getWelcomeMessage() {
-        return new Promise(async resolve => {
-            resolve(new WelcomeLeaveMessageContainer(this, "welcome", (await this.getProperty("messages.welcome"))))
-        })
+        return new Promise(async r => { r(new WelcomeLeaveMessageContainer(this, "welcome", (await this.getFromDatabase()))) })
     }
 
     /**
@@ -208,9 +229,7 @@ module.exports = class GuildOptionsContainer {
      * @returns {Promise<WelcomeLeaveMessageContainer>}
      */
     async getLeaveMessage() {
-        return new Promise(async resolve => {
-            resolve(new WelcomeLeaveMessageContainer(this, "leave", (await this.getProperty("messages.leave"))))
-        })
+        return new Promise(async r => { r(new WelcomeLeaveMessageContainer(this, "leave"), (await this.getFromDatabase())) })
     }
 
 
@@ -240,21 +259,38 @@ class WelcomeLeaveMessageContainer {
      *
      * @returns {String}
      */
+    getChannelId() {
+        return this.databaseResponse.messages[this.type].channelId;
+    }
+
+    /**
+     *
+     * @param {String} channelId
+     */
+    setChannelId(channelId) {
+        const current = this.databaseResponse;
+        current.messages[this.type].channelId = channelId;
+        current.markModified(`messages.${this.type}.channelId`);
+        return current.save()
+    }
+
+    /**
+     *
+     * @returns {String}
+     */
     getDataType() {
-        return this.databaseResponse.dataType;
+        return this.databaseResponse.messages[this.type].dataType;
     }
 
     /**
      *
      * @param {string} dataType
      */
-    async setDataType(dataType) {
-        return new Promise(async resolve => {
-            const current = await this.parentContainer.getFromDatabase();
-            current.messages[this.type].dataType = dataType;
-            current.markModified(`${this.type}.dataType`);
-            current.save()
-        })
+    setDataType(dataType) {
+        const current = this.databaseResponse;
+        current.messages[this.type].dataType = dataType;
+        current.markModified(`messages.${this.type}.dataType`);
+        return current.save()
     }
 
     /**
@@ -262,20 +298,18 @@ class WelcomeLeaveMessageContainer {
      * @returns {String}
      */
     getData() {
-        return this.databaseResponse.data;
+        return this.databaseResponse.messages[this.type].data;
     }
 
     /**
      *
      * @param {String} data
      */
-    async setData(data) {
-        return new Promise(async resolve => {
-            const current = await this.parentContainer.getFromDatabase();
-            current.messages[this.type].data = data;
-            current.markModified(`${this.type}.data`);
-            current.save()
-        })
+    setData(data) {
+        const current = this.databaseResponse;
+        current.messages[this.type].data = data;
+        current.markModified(`messages.${this.type}.data`);
+        return current.save()
     }
 
 }

@@ -76,7 +76,7 @@ module.exports = class UserDataContainer {
     getFromDatabase() {
         return new Promise(async resolve => {
             await this.ensureUser()
-            resolve((await UserData.findOne({ userId: this.userId })))
+            resolve(UserData.findOne({ userId: this.userId }))
         })
     }
 
@@ -87,7 +87,6 @@ module.exports = class UserDataContainer {
      */
     getProperty(property) {
         return new Promise(async resolve => {
-            await this.ensureUser()
             const result = await this.getFromDatabase()
             // Because dot notation and stuff
             resolve(getValue(result, property))
@@ -115,7 +114,7 @@ module.exports = class UserDataContainer {
     setPropertyWithObject(update) {
         return new Promise(async resolve => {
             await this.ensureUser()
-            resolve((await UserData.updateOne({ userId: this.userId }, update)))
+            resolve(UserData.updateOne({ userId: this.userId }, update))
         })
     }
 

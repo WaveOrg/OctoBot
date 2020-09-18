@@ -42,22 +42,13 @@ module.exports = {
         if(!member) member = message.guild.members.cache.find(m => m.user.tag.toLowerCase() === name);
         if(!member) member = message.guild.members.cache.find(m => m.displayName.toLowerCase() === name);
         if(!member) member = message.guild.members.cache.find(m => m.displayName.toLowerCase().startsWith(name))
-        if(!member) return message.channel.send(ErrorEmbed(`This guild cannot be found in the database! If this error continues, contact support! \`${name}\``))
+        if(!member) return message.channel.send(ErrorEmbed(`Unable to find a member named: \`${name}\``))
 
-        const levelingData = guildLevelingOf(message.guild, message.author);
+        const levelingData = guildLevelingOf(message.guild, member.user);
         
         const currentLevel = await levelingData.getLevel()
         const xpRequired = (currentLevel + 1) * 100;
         const currentXP = await levelingData.getXp()
-
-
-        // looks ugly so no 
-
-        // const tempMessage = await message.channel.send(InfoEmbed("", "")
-        //                                     .setAuthor(member.user.tag, member.user.avatarURL)
-        //                                     .addField("Level:", currentLevel, true)
-        //                                     .addField("Xp:", currentXP, true)
-        //                                     .addField("Required:", xpRequired, true))
 
         // Debugging stuff/
         const startDB = Date.now()

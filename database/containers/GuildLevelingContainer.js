@@ -95,7 +95,6 @@ module.exports = class GuildLevelingContainer {
      */
     getProperty(property) {
         return new Promise(async resolve => {
-            await this.ensureLevelingUser()
             const result = await this.getFromDatabase()
             // Because dot notation and stuff
             resolve(getValue(result, property))

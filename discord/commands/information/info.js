@@ -26,7 +26,7 @@ module.exports = {
 
 
             .addField(`**Version**`, `Beta`, true)
-            .addField(`**Founders**`, `[MonkeyMax](https://github.com/ItzMonkeyMax), [Derock](https://derock.dev/)`, true)
+            .addField(`**Founders**`, `[Derock](https://derock.dev/), [MonkeyMax](https://github.com/ItzMonkeyMax)`, true)
             .addField(`**Language**`, `[Javascript](https://developer.mozilla.org/en-US/docs/Web/JavaScript)`, true)
 
             .addField(`**Current Users**`, (await client.shard.fetchClientValues('users.cache.size')).reduce((a, b) => a + b, 0), true)
