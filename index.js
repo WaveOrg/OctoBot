@@ -29,3 +29,8 @@ const statcord = new Statcord.ShardingClient({
 statcord.on("autopost-start", () => {
     logger.log("Started autopost");
 });
+
+process.on('exit', () => {
+    logger.log("Exit detected, cleaning up...")
+    manager.shards.forEach(shard => shard.kill())
+})
