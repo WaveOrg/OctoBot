@@ -44,11 +44,11 @@ module.exports = {
         if(!member) member = message.guild.members.cache.find(m => m.displayName.toLowerCase().startsWith(name))
         if(!member) return message.channel.send(ErrorEmbed(`Unable to find a member named: \`${name}\``))
 
-        const levelingData = guildLevelingOf(message.guild, member.user);
+        const levelingData = member.user.bot ? null : guildLevelingOf(message.guild, member.user);
         
-        const currentLevel = await levelingData.getLevel()
-        const xpRequired = (currentLevel + 1) * 100;
-        const currentXP = await levelingData.getXp()
+        const currentLevel = member.user.bot ? "  INFINITY" : await levelingData.getLevel()
+        const xpRequired = member.user.bot ? null : (currentLevel + 1) * 100;
+        const currentXP = member.user.bot ? null : await levelingData.getXp()
 
         // Debugging stuff/
         const startDB = Date.now()
@@ -85,34 +85,34 @@ module.exports = {
             // Start by getting width for blue bar.
             // Gray bar width is 491 px.
             // 0-100 needs to become 0-491
-            const barWidth = scaleValue(currentXP, [0, xpRequired], [0, 491]);
+            const barWidth = member.user.bot ? 491 : scaleValue(currentXP, [0, xpRequired], [0, 491]);
             const bar = await Jimp.read('./discord/assets/bar.png')
 
             bar.cover(barWidth, bar.bitmap.height)
             bar.mask(barMask, 0, 0)
 
             // Text
-            if(member.user.username.length > 11) {
-                const parts = member.user.username.match(/.{1,21}/g)
+            if(member.displayName.length > 11) {
+                const parts = member.displayName.match(/.{1,21}/g)
 
                 rankCard.print(uniSansSmallBlue, 
-                    (AvatarXY * 2) + (cardWidth / 4), 
-                    cardHeight / 8, parts[0])
+                    (AvatarXY * 2) + (cardWidth / 4),
+                    cardHeight / 8 + (parts[1] ? -10 : 20), parts[0])
 
                 if(parts[1])  rankCard.print(uniSansSmallBlue, 
                     (AvatarXY * 2) + (cardWidth / 4), 
-                    cardHeight / 3.75, parts[1])
+                    cardHeight / 3.75 - 6, parts[1])
             } else {
                 rankCard.print(uniSansLargeBlue, 
                     (AvatarXY * 2) + (cardWidth / 4), 
-                    cardHeight / 8, member.user.username)
+                    cardHeight / 8 - 6, member.displayName)
             }
 
             rankCard.print(uniSansSmallBlue, 
                 (AvatarXY * 2) + (cardWidth / 4), 
-                cardHeight * 0.40, `Level ${currentLevel}`)
+                cardHeight * 0.40 + (member.user.bot ? 16 : 0), `Level ${currentLevel}`)
 
-            rankCard.print(uniSansSmallGray, 
+            if(!member.user.bot) rankCard.print(uniSansSmallGray, 
                 (AvatarXY * 2) + (cardWidth / 4), 
                 cardHeight * 0.57, `${currentXP}/${xpRequired} XP`)
 
