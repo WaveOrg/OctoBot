@@ -1,8 +1,7 @@
 const Discord = require("discord.js");
 const Jimp = require("jimp");
 const { guildLevelingOf, userDataOf } = require("../../../utils/dbUtils");
-const { InfoEmbed, ErrorEmbed } = require("../../../utils/utils");
-const fetch = require('node-fetch');
+const { ErrorEmbed } = require("../../../utils/utils");
 const { logger } = require("../../../globals");
 
 var circleMask;
@@ -66,8 +65,20 @@ module.exports = {
             const startRead = Date.now()
 
             // User Avatar
-            const avatarURL = member.user.avatarURL({ format: 'png', size: 256 }) 
+            let avatarURL = member.user.avatarURL({ format: "png", size: 256 })
                 || "https://discordapp.com/assets/6debd47ed13483642cf09e832ed0bc1b.png"
+                
+            /*if(!avatarURL.endsWith(".gif?size=256")) {
+                const split = avatarURL.split(/\./g);
+                avatarURL = avatarURL.substring(0, avatarURL.length - split[split.length - 1].length) + "png?size=256"
+            }*/
+
+            /*const buffer = await (await fetch(avatarURL)).buffer();
+            const finalRankCard = await GifWrap.GifUtil.read(buffer)
+            const userAvatar = GifWrap.GifUtil.copyAsJimp(Jimp, finalRankCard.frames[0])
+                                                .resize(256, 256)
+                                                .mask(circleMask, 0, 0)
+                                                .resize(cardHeight * 0.8, cardHeight * 0.8);*/
 
             const userAvatar = (await Jimp.read(avatarURL))
                 .resize(256, 256)
@@ -121,12 +132,26 @@ module.exports = {
             rankCard.composite(bar, (AvatarXY * 2) + (cardWidth / 4), cardHeight * 0.70)
             rankCard.composite(userAvatar, AvatarXY, AvatarXY)
 
+            // My failed attempt at doing this, the problem was it took waaay to long for it to quantize
+
+            /*for(let frame of finalRankCard.frames) {
+                const jimpFrame = GifWrap.GifUtil.shareAsJimp(Jimp, frame);
+                jimpFrame.resize(256, 256)
+                            .mask(circleMask, 0, 0)
+                            .resize(cardHeight * 0.8, cardHeight * 0.8)
+                const cloneCard = rankCard.clone();
+                cloneCard.composite(jimpFrame, AvatarXY, AvatarXY);
+                frame.bitmap = cloneCard.bitmap;
+                GifWrap.GifUtil.quantizeDekker(frame)
+            }*/
+
+
             logger.debug(`Took ${readImage - startRead}ms to get profile picture from Discord.`)
             logger.debug(`Took ${startRead - endDB}ms to get background image.`)
             logger.debug(`Image Editing took ${Date.now() - readImage}ms.`)
             logger.debug(`Rank command took ${Date.now() - startDB}ms total.`)
-            //await tempMessage.delete()
-            message.channel.send(new Discord.MessageAttachment(await rankCard.getBufferAsync(Jimp.MIME_PNG)))
+            //message.channel.send(new Discord.MessageAttachment((await new GifWrap.GifCodec().encodeGif(finalRankCard.frames)).buffer, "rankCard.gif"))
+            message.channel.send(new Discord.MessageAttachment(await rankCard.getBufferAsync(Jimp.MIME_PNG), "rankCard.png"))
         })
     },
 
