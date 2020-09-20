@@ -156,6 +156,20 @@ module.exports = class GuildLevelingContainer {
             resolve(await this.setLevel(currentLevel + 1))
         })
     }
+
+    async getAllFromGuild() {
+        return new Promise(async resolve => {
+            await this.ensureLevelingUser();
+            resolve(GuildLeveling.find({ guildId: this.guildId }))
+        })
+    }
+
+    async getAllFromUser() {
+        return new Promise(async resolve => {
+            await this.ensureLevelingUser();
+            resolve(GuildLeveling.find({ userId: this.userId }))
+        })
+    }
     
     async resetEverything() {
         return this.setPropertyWithObject(omitDeep(new GuildLeveling({

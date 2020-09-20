@@ -132,7 +132,7 @@ module.exports = {
             rankCard.composite(bar, (AvatarXY * 2) + (cardWidth / 4), cardHeight * 0.70)
             rankCard.composite(userAvatar, AvatarXY, AvatarXY)
 
-            // My failed attempt at doing this, the problem was it took waaay to long for it to quantize
+            // My failed attempt at doing gifs, the problem was it took waaay to long for it to quantize
 
             /*for(let frame of finalRankCard.frames) {
                 const jimpFrame = GifWrap.GifUtil.shareAsJimp(Jimp, frame);
