@@ -39,6 +39,7 @@
     "qs": "^6.9.4",
     "set-value": "^3.0.2",
     "statcord.js": "^3.0.8",
+    "systeminformation": "^4.27.5",
     "url-to-screenshot": "^3.0.0",
     "youtube-playlist": "^1.0.4",
     "youtube-query": "0.0.2",

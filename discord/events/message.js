@@ -4,7 +4,7 @@ const Statcord = require('statcord.js')
 const { InfoEmbed, ErrorEmbed, NoPermsEmbed } = require("../../utils/utils");
 const { userDataOf, guildOptionsOf } = require("../../utils/dbUtils")
 const { modules } = require("../../database/constants")
-const { headDevs, projectLeads } = require("../../botinfo.json")
+const { headDevs, projectLeads, devs } = require("../../botinfo.json")
 const ms = require("ms")
 
 // I know I don't have to put these in every file I use them in, but it's more readable if I do imo
@@ -68,7 +68,7 @@ module.exports = {
         // Also, automatically deletes the message
         if(cmdConfig.admin) {
             message.delete()
-            if(headDevs.includes(message.author.id) || projectLeads.includes(message.author.id)) {
+            if(headDevs.includes(message.author.id) || projectLeads.includes(message.author.id) || devs.includes(message.author.id)) {
                 try {
                     cmd.run(message, arguments, client)
                 } catch (error) {

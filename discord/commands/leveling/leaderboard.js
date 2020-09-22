@@ -12,7 +12,7 @@ module.exports = {
         const guildLeveling = guildLevelingOf(message.guild, message.author);
 
         const res = await guildLeveling.getAllFromGuild().sort((a, b) => {
-            
+
         });
         console.log(res);
     },
