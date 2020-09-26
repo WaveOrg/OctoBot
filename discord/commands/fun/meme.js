@@ -30,7 +30,7 @@ module.exports = {
             )
         } catch (error) {
             sent.edit(
-                ErrorEmbed("Uh oh! Something went wrong when sending your reddit post, please try again later!")
+                ErrorEmbed("Uh oh! Something went wrong, it seems the meme lord is down, please try again later!")
             )
         }
     },

@@ -34,6 +34,7 @@ module.exports = {
         aliases: [],
         description: "Adds a vapour effect to the current song.",
         permissions: [],
-        usage: `vaporwave`
+        usage: `vaporwave`,
+        premium: true
     }
 }

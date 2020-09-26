@@ -1,0 +1,3 @@
+JIMP only allows .FNT fonts!
+Use the included converter.jar to convert .otf or .ttf fonts to .fnt
+It wil export a FEW FILES. Make sure to move them ALL!

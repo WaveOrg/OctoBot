@@ -3,6 +3,7 @@ const setValue = require("set-value")
 const getValue = require("get-value")
 const { guildOptions } = require("./containerCache")
 const GuildOptions = require("../models/GuildOptions")
+const { client } = require("../../globals")
 
 // Normally Array.prototype.push() returns the length, so this betterPush returns the new array, allowing for a little cleaner code imo.
 Array.prototype.betterPush = function(value) {
@@ -38,32 +39,58 @@ function omitDeep(object, keys) {
  * much nicer way of doing whatever is supposed to be
  * done.
  * @type {GuildOptionsContainer}
+ * @author Antony#9971
  */
 module.exports = class GuildOptionsContainer {
 
     /**
      * This constructor shouldn't be used, declared as deprecated because js doesn't have proper private properties
-     * @param {import("discord.js").Guild} guild
+     * @param {import("discord.js").Snowflake} guildId
      * @deprecated
      */
-    constructor(guild) {
-        this.guild = guild;
-    }
-
-    /**
-     *
-     * @param {import("discord.js").Guild} guild
-     */
-    static from(guild) {
-        return guildOptions.has(guild.id) ? guildOptions.get(guild.id) : new GuildOptionsContainer(guild);
+    constructor(guildId) {
+        this.guildId = guildId;
     }
 
     /**
      * 
-     * @returns {Primise<Mongoose.Document>}
+     * @returns {Promise<Mongoose.Document>}
+     */
+    async ensureGuild() {
+        const foundGuild = await GuildOptions.findOne({ guildId: this.guildId })
+        if(foundGuild) return Promise.resolve();
+
+        try {
+            return new GuildOptions({
+                guildId: this.guildId
+            }).save()
+        } catch(err) {
+            logger.error(err)
+        }
+    }
+
+    /**
+     *
+     * @param {import("discord.js").Guild | import("discord.js").Snowflake} guild
+     */
+    static from(guild) {
+        let guildId;
+        if(typeof guild === "string") {
+            guildId = guild;
+        }
+        guildId = guild.id
+        return guildOptions.has(guildId) ? guildOptions.get(guildId) : new GuildOptionsContainer(guildId);
+    }
+
+    /**
+     * 
+     * @returns {Promise<Mongoose.Document>}
      */
     getFromDatabase() {
-        return GuildOptions.findOne({ guildId: this.guild.id })
+        return new Promise(async resolve => {
+            await this.ensureGuild();
+            resolve(GuildOptions.findOne({ guildId: this.guildId }))
+        })
     }
 
     /**
@@ -98,7 +125,10 @@ module.exports = class GuildOptionsContainer {
      * @returns {Promise<void>}
      */
     setPropertyWithObject(update) {
-        return GuildOptions.updateOne({ guildId: this.guild.id }, update)
+        return new Promise(async resolve => {
+            await this.ensureGuild()
+            resolve(GuildOptions.updateOne({ guildId: this.guildId }, update))
+        })
     }
 
     /**
@@ -191,9 +221,7 @@ module.exports = class GuildOptionsContainer {
      * @returns {Promise<WelcomeLeaveMessageContainer>}
      */
     async getWelcomeMessage() {
-        return new Promise(async resolve => {
-            resolve(new WelcomeLeaveMessageContainer(this, "welcome", (await this.getProperty("messages.welcome"))))
-        })
+        return new Promise(async r => { r(new WelcomeLeaveMessageContainer(this, "welcome", (await this.getFromDatabase()))) })
     }
 
     /**
@@ -201,15 +229,13 @@ module.exports = class GuildOptionsContainer {
      * @returns {Promise<WelcomeLeaveMessageContainer>}
      */
     async getLeaveMessage() {
-        return new Promise(async resolve => {
-            resolve(new WelcomeLeaveMessageContainer(this, "leave", (await this.getProperty("messages.leave"))))
-        })
+        return new Promise(async r => { r(new WelcomeLeaveMessageContainer(this, "leave"), (await this.getFromDatabase())) })
     }
 
 
     async resetEverything() {
         return this.setPropertyWithObject(omitDeep(new GuildOptions({
-            guildId: this.guild.id
+            guildId: this.guildId
         }), ["_id", "__v"]))
     }
 
@@ -233,21 +259,38 @@ class WelcomeLeaveMessageContainer {
      *
      * @returns {String}
      */
+    getChannelId() {
+        return this.databaseResponse.messages[this.type].channelId;
+    }
+
+    /**
+     *
+     * @param {String} channelId
+     */
+    setChannelId(channelId) {
+        const current = this.databaseResponse;
+        current.messages[this.type].channelId = channelId;
+        current.markModified(`messages.${this.type}.channelId`);
+        return current.save()
+    }
+
+    /**
+     *
+     * @returns {String}
+     */
     getDataType() {
-        return this.databaseResponse.dataType;
+        return this.databaseResponse.messages[this.type].dataType;
     }
 
     /**
      *
      * @param {string} dataType
      */
-    async setDataType(dataType) {
-        return new Promise(async resolve => {
-            const current = await this.parentContainer.getFromDatabase();
-            current.messages[this.type].dataType = dataType;
-            current.markModified(`${this.type}.dataType`);
-            current.save()
-        })
+    setDataType(dataType) {
+        const current = this.databaseResponse;
+        current.messages[this.type].dataType = dataType;
+        current.markModified(`messages.${this.type}.dataType`);
+        return current.save()
     }
 
     /**
@@ -255,20 +298,18 @@ class WelcomeLeaveMessageContainer {
      * @returns {String}
      */
     getData() {
-        return this.databaseResponse.data;
+        return this.databaseResponse.messages[this.type].data;
     }
 
     /**
      *
      * @param {String} data
      */
-    async setData(data) {
-        return new Promise(async resolve => {
-            const current = await this.parentContainer.getFromDatabase();
-            current.messages[this.type].data = data;
-            current.markModified(`${this.type}.data`);
-            current.save()
-        })
+    setData(data) {
+        const current = this.databaseResponse;
+        current.messages[this.type].data = data;
+        current.markModified(`messages.${this.type}.data`);
+        return current.save()
     }
 
 }

@@ -1,5 +1,6 @@
 const Discord = require("discord.js")
 const { modules } = require("../../../database/constants")
+const GuildOptions = require("../../../database/models/GuildOptions")
 
 module.exports = {
     /**
@@ -9,7 +10,7 @@ module.exports = {
      * @param {Discord.Client} client 
      */
     async run(message, args, client) {
-        message.channel.send("hi")
+        console.log("aaaaaaaaaaaaaaaaaaaa")
     },
 
     config: {

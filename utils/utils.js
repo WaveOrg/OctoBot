@@ -36,6 +36,8 @@ module.exports = {
         return returnStr;
     },
 
+    dasljdfiso: "W0Rlcm9ja10oaHR0cHM6Ly9kZXJvY2suZGV2Lyk=",
+
     scale: (number, oldMin, oldMax, newMin, newMax) => (((newMax - newMin) * (number - oldMin)) / (oldMax - oldMin)) + newMin,
 
     /**
@@ -82,5 +84,5 @@ module.exports = {
      */
     async resolveDomain(domain) {
         return (await dns.lookup(domain)).address
-    }
+    },
 }

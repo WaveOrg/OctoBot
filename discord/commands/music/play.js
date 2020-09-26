@@ -20,15 +20,19 @@ module.exports = {
         if(!perms.has("SPEAK")) return message.channel.send(ErrorEmbed("I play music in the voice channel because I am missing the `Speak` permission."))
         if(!args[0]) return message.channel.send(ErrorEmbed("Incorrect Usage. `play <keyword/url>`"));
 
+        const wasPlayingBefore = await player.isPlaying(message.guild.id)
+
         const sent = await message.channel.send(new Discord.MessageEmbed().setDescription("🔍 Searching the waves for `" + (args.join(" ").length > 1000? args.join(" ").substr(0, 1000) : args.join(" ")) + '`').setTitle(" ").setColor("12cad6"))
 
         const track = await player.play(message.member.voice.channel, args.join(" "), message.member.user.tag);
 
-        player.getQueue(message.guild.id).on('end', () => {
-            message.channel.send(ErrorEmbed("<:no:750451799609311412> All songs have been played!").setTitle(""))
-        }).on('trackChanged', (old, newt) => {
-            message.channel.send(InfoEmbed("▶ Now Playing", `Now playing ${newt.name}`).setThumbnail(newt.thumbnail))
-        })
+        if(!wasPlayingBefore) {
+            player.getQueue(message.guild.id).on('end', () => {
+                message.channel.send(ErrorEmbed("<:no:750451799609311412> All songs have been played!").setTitle(""))
+            }).on('trackChanged', (_old, newt) => {
+                message.channel.send(InfoEmbed("▶ Now Playing", `Now playing ${newt.name}`).setThumbnail(newt.thumbnail))
+            })
+        }
 
         sent.edit(InfoEmbed(`🎵 Added to queue!`, `${track.name} has been added!`).setThumbnail(track.thumbnail))
     },

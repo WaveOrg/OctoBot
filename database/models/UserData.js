@@ -15,7 +15,6 @@ const userDataSchema = new Mongoose.Schema({
         required: true,
         default: "null" // null because Mongoose doesn't like empty strings
     },
-
 }, { collection: "userData" })
 
 module.exports = Mongoose.model("userData", userDataSchema);

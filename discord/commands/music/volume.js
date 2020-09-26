@@ -26,6 +26,7 @@ module.exports = {
         aliases: ["thismusicistooloud", "thismusicistooquiet"],
         description: "Sets the volume.",
         permissions: [],
-        usage: `volume <0-200>`
+        usage: `volume <0-200>`,
+        premium: true
     }
 }

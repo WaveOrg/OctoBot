@@ -34,6 +34,7 @@ module.exports = {
         aliases: [],
         description: "Add the nightcore effect.",
         permissions: [],
-        usage: `nightcore`
+        usage: `nightcore`,
+        premium: true
     }
 }

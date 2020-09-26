@@ -37,6 +37,7 @@ module.exports = {
         aliases: ["bass"],
         description: "Add bassboost effect.",
         permissions: [],
-        usage: `bassboost <boost in dB>`
+        usage: `bassboost <boost in dB>`,
+        premium: true
     }
 }

@@ -26,24 +26,30 @@ function omitDeep(object, keys) {
  * much nicer way of doing whatever is supposed to be
  * done.
  * @type {UserDataContainer}
+ * @author Antony#9971
  */
 module.exports = class UserDataContainer {
 
     /**
      * This constructor shouldn't be used, declared as deprecated because js doesn't have proper private properties
-     * @param {import("discord.js").User} user
+     * @param {import("discord.js").Snowflake} userId
      * @deprecated
      */
-    constructor(user) {
-        this.user = user;
+    constructor(userId) {
+        this.userId = userId;
     }
 
     /**
      *
-     * @param {import("discord.js").User} user
+     * @param {import("discord.js").User | import("discord.js").Snowflake} user
      */
     static from(user) {
-        return userData.has(user.id) ? userData.get(user.id) : new UserDataContainer(user);
+        let userId;
+        if(typeof user === "string") {
+            userId = user;
+        }
+        userId = user.id
+        return userData.has(userId) ? userData.get(userId) : new UserDataContainer(userId);
     }
 
     /**
@@ -51,12 +57,12 @@ module.exports = class UserDataContainer {
      * @returns {Promise<Mongoose.Document>}
      */
     async ensureUser() {
-        const foundUser = await UserData.findOne({ userId: this.user.id })
+        const foundUser = await UserData.findOne({ userId: this.userId })
         if(foundUser) return Promise.resolve();
 
         try {
             return new UserData({
-                userId: this.user.id
+                userId: this.userId
             }).save()
         } catch(err) {
             logger.error(err)
@@ -70,7 +76,7 @@ module.exports = class UserDataContainer {
     getFromDatabase() {
         return new Promise(async resolve => {
             await this.ensureUser()
-            resolve((await UserData.findOne({ userId: this.user.id })))
+            resolve(UserData.findOne({ userId: this.userId }))
         })
     }
 
@@ -81,7 +87,6 @@ module.exports = class UserDataContainer {
      */
     getProperty(property) {
         return new Promise(async resolve => {
-            await this.ensureUser()
             const result = await this.getFromDatabase()
             // Because dot notation and stuff
             resolve(getValue(result, property))
@@ -109,7 +114,7 @@ module.exports = class UserDataContainer {
     setPropertyWithObject(update) {
         return new Promise(async resolve => {
             await this.ensureUser()
-            resolve((await UserData.updateOne({ userId: this.user.id }, update)))
+            resolve(UserData.updateOne({ userId: this.userId }, update))
         })
     }
 
@@ -167,7 +172,7 @@ module.exports = class UserDataContainer {
     
     async resetEverything() {
         return this.setPropertyWithObject(omitDeep(new UserData({
-            userId: this.user.id
+            userId: this.userId
         }), ["_id", "__v"]))
     }
 

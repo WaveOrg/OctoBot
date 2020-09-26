@@ -1,4 +1,11 @@
 {
-    "prefix": "o!",
-    "token": "TOKEN HERE"
+    "prefix": "PREFIX",
+    "token": "TOKEN",
+    "mongo": {
+        "user": "USER",
+        "password": "PASS",
+        "host": "HOSTNAME",
+        "port": PORT,
+        "database": "DATABASE"
+    }
 }

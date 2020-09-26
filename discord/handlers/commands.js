@@ -27,7 +27,7 @@ module.exports = async (client) => {
             command.config.aliases.forEach(alias => {
                 client.commands.set(alias, command);
             });
-            logger.log(`${chalk.blueBright("[Discord]")} Loaded command: ${folder} » ${command.config.command}`);
+            if(client.shard.ids[0] === 0) logger.logDiscord(client, `Loaded command: ${folder} » ${command.config.command}`);
         }
     }
 }

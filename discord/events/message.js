@@ -1,8 +1,10 @@
-const { statcord, logger } = require("../../globals");
+const { logger } = require("../../globals");
+const Statcord = require('statcord.js')
 
 const { InfoEmbed, ErrorEmbed, NoPermsEmbed } = require("../../utils/utils");
 const { userDataOf, guildOptionsOf } = require("../../utils/dbUtils")
 const { modules } = require("../../database/constants")
+const { headDevs, projectLeads, devs } = require("../../botinfo.json")
 const ms = require("ms")
 
 // I know I don't have to put these in every file I use them in, but it's more readable if I do imo
@@ -61,10 +63,34 @@ module.exports = {
 
         const cmdConfig = cmd.config;
 
-        statcord.postCommand(command, message.author.id)
+        // If command is admin, we just execute it and don't post to statcord because, well
+        // Only head devs and project leads can execute
+        // Also, automatically deletes the message
+        if(cmdConfig.admin) {
+            message.delete()
+            if(headDevs.includes(message.author.id) || projectLeads.includes(message.author.id) || devs.includes(message.author.id)) {
+                try {
+                    cmd.run(message, arguments, client)
+                } catch (error) {
+                    logger.error(`Got an error when processing ${message.content}\n${error}\nUSER: ${message.author.id}`)
+                }
+            }
+            
+            return
+        }
+
+        Statcord.ShardingClient.postCommand(command, message.author.id, client)
 
         if(cmdConfig.permissions && cmdConfig.permissions.filter(perm => message.member.hasPermission(perm)).length != cmdConfig.permissions.length) {
             return message.channel.send(NoPermsEmbed())
+        }
+
+        const userData = userDataOf(message.author)
+
+        if(cmdConfig.premium) {
+            if(!(await userData.isPremium())) {
+                return message.channel.send(ErrorEmbed("This command is restricted to ***[Premium](https://octodev.xyz/premium)*** users only."))
+            }
         }
 
         if(cooldowns.has(message.author.id)) {
@@ -81,8 +107,6 @@ module.exports = {
         if(cmdConfig.requiresModules && cmdConfig.requiresModules.filter(module => activeModules.includes(module)).length !== cmdConfig.requiresModules.length) {
             return message.channel.send(ErrorEmbed(`Modules \`${cmdConfig.requiresModules.map(module => getKeyByValue(modules, module)).map(module => module.split("_").map(module => module.charAt(0).toUpperCase() + module.substring(1).toLowerCase()).join(" ")).join(",")}\` need to be enabled for this command to work`))
         }
-
-        const userData = userDataOf(message.author)
 
         if(cmdConfig.cooldown && cmdConfig.cooldown.time) {
             if(!cmdConfig.cooldown.premiumBypassable || !(await userData.isPremium())) {

@@ -34,6 +34,7 @@ module.exports = {
         aliases: [],
         description: "Add karaoke effect.",
         permissions: [],
-        usage: `karaoke`
+        usage: `karaoke`,
+        premium: true
     }
 }
