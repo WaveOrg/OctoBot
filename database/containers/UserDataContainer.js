@@ -120,7 +120,7 @@ module.exports = class UserDataContainer {
 
     /**
      *
-     * @returns {Promise<String>}
+     * @returns {Promise<Boolean>}
      */
     async isPremium() {
         return this.getProperty("premium");
@@ -128,7 +128,7 @@ module.exports = class UserDataContainer {
 
     /**
      *
-     * @param {String} prefix
+     * @param {Boolean} premiumState
      * @deprecated
      */
     async setPremium(premiumState) {
@@ -159,7 +159,10 @@ module.exports = class UserDataContainer {
      * @returns {Promise<String>}
      */
     async getRankCard() {
-        return this.getProperty("rankCard")
+        return new Promise(async r => {
+            const rankCard = await this.getProperty("rankCard")
+            r(rankCard === "null" ? null : rankCard)
+        })
     }
 
     /**
@@ -167,7 +170,7 @@ module.exports = class UserDataContainer {
      * @param {String} imageBase64 
      */
     async setRankCard(imageBase64) {
-        return this.setProperty("rankCard", imageBase64)
+        return this.setProperty("rankCard", !imageBase64 ? "null" : imageBase64)
     }
     
     async resetEverything() {

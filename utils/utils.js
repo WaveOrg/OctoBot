@@ -3,19 +3,19 @@ const dns = require("dns").promises;
 const { logger } = require("../globals");
 
 module.exports = {
-    InfoEmbed(title, desc) {
+    InfoEmbed: function(title, desc) {
         return new discord.MessageEmbed().setTitle(title).setDescription(desc).setColor("12cad6")
     },
 
-    ErrorEmbed(desc) {
+    ErrorEmbed: function(desc) {
         return new discord.MessageEmbed().setDescription("<:no:750451799609311412> " + desc).setColor("f04747")
     },
 
-    RedEmbed(title, desc) {
+    RedEmbed: function(title, desc) {
         return new discord.MessageEmbed().setTitle(title).setDescription(desc).setColor("f04747")
     },
 
-    NoPermsEmbed() {
+    NoPermsEmbed: function() {
         return new discord.MessageEmbed().setTitle("<:no:750451799609311412> Insufficient Permissions").setDescription("You do not have permission to run this command!").setColor("fa1616")
     },
 
@@ -26,7 +26,7 @@ module.exports = {
      * @param {string?} text
      * @returns {string}
      */
-    generateProgressBar(progress, total, text) {
+    generateProgressBar: function(progress, total, text) {
         let returnStr = '['
         for(const {} of Array(progress).keys()) returnStr += '▰';
         for(const {} of Array(total - progress).keys()) returnStr += '▱';
@@ -45,7 +45,7 @@ module.exports = {
      * @param {string} string 
      * @param {number} characterLimit 
      */
-    cutStringButAtNewLineUnderCharacterLimit(string, characterLimit) {
+    cutStringButAtNewLineUnderCharacterLimit: function(string, characterLimit) {
 
         console.log(typeof string)
         console.log(string.length)
@@ -80,9 +80,9 @@ module.exports = {
     /**
      * 
      * @param {String} domain
-     * @returns {String} IP address corresponding to the domain 
+     * @returns {Promise<String>} IP address corresponding to the domain 
      */
-    async resolveDomain(domain) {
+    resolveDomain: async function(domain) {
         return (await dns.lookup(domain)).address
     },
 }

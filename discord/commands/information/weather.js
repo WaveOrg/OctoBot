@@ -3,7 +3,7 @@ const { logger } = require("../../../globals");
 const utils = require("../../../utils/utils")
 const weather = require('weather-js');
 
-const { ErrorEmbed } = require("../../../utils/utils");
+const { ErrorEmbed, InfoEmbed, RedEmbed } = require("../../../utils/utils");
 module.exports = {
     /**
      * 
@@ -28,6 +28,8 @@ module.exports = {
         //check if there was a second arg
         if (!args[1]) return message.channel.send(ErrorEmbed("Enter a location to search for."));
 
+        const loading = await message.channel.send(RedEmbed('<a:loading:752246174550982728> Taking a picture', '').setFooter("This may take up to 60 seconds."))
+
         //search for the location and specify degree type
         weather.find({ search: args[1], degreeType: degree }, function (err, result) {
             try {
@@ -45,7 +47,7 @@ module.exports = {
                     .addField("**Feels like:**", `${result[0].current.feelslike}°${result[0].location.degreetype}`, true)
                     .addField("**Humidity:**", `${result[0].current.humidity}%`, true)
                     .addField("**Wind:**", `${result[0].current.winddisplay}`, true)
-                message.channel.send(embed);
+                loading.edit(embed);
             } catch (err) {
                 console.log(err); //log an error to the console if one occurs
 
@@ -56,11 +58,11 @@ module.exports = {
 
     },
 
-config: {
-    command: "weather",
+    config: {
+        command: "weather",
         aliases: ["w"],
-            description: "View your weather in your location",
-                permissions: [],
-                    usage: `weather`,
+        description: "View your weather in your location",
+        permissions: [],
+        usage: `weather`,
     }
 }

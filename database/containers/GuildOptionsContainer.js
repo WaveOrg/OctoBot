@@ -260,7 +260,8 @@ class WelcomeLeaveMessageContainer {
      * @returns {String}
      */
     getChannelId() {
-        return this.databaseResponse.messages[this.type].channelId;
+        const channelId = this.databaseResponse.messages[this.type].channelId
+        r(channelId === "null" ? null : channelId)
     }
 
     /**
@@ -269,7 +270,7 @@ class WelcomeLeaveMessageContainer {
      */
     setChannelId(channelId) {
         const current = this.databaseResponse;
-        current.messages[this.type].channelId = channelId;
+        current.messages[this.type].channelId = !channelId ? "null" : channelId;
         current.markModified(`messages.${this.type}.channelId`);
         return current.save()
     }

@@ -126,14 +126,26 @@ module.exports = class GuildLevelingContainer {
         })
     }
 
+    /**
+     * 
+     * @returns {Promise<Number>}
+     */
     async getXp() {
         return this.getProperty("xp")
     }
 
+    /**
+     * 
+     * @param {Number} xp 
+     */
     async setXp(xp) {
         return this.setProperty("xp", xp)
     }
 
+    /**
+     * 
+     * @param {Number} xp 
+     */
     async addXp(xp) {
         return new Promise(async resolve => {
             const currentXp = await this.getXp()
@@ -141,10 +153,18 @@ module.exports = class GuildLevelingContainer {
         })
     }
 
+    /**
+     * 
+     * @returns {Promise<Number>}
+     */
     async getLevel() {
         return this.getProperty("level")
     }
 
+    /**
+     * 
+     * @param {Number} level 
+     */
     async setLevel(level) {
         return this.setProperty("level", level)
     }

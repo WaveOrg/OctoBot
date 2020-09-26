@@ -13,8 +13,8 @@ module.exports = {
         CUSTOM_COMMANDS: "cc"
     },
     welcomeLeaveTypes: {
-        TEXT: "text",
-        JSON_EMBED: "embed",
-        IMAGE_BASE64: "image"
+        TEXT: "text", // Normal text
+        JSON_EMBED: "embed", // Embed, stored as json string
+        IMAGE_BASE64: "image" // Image encoded in base64
     }
 }

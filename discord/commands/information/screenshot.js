@@ -28,7 +28,7 @@ module.exports = {
             width: isPremium ? 1920 : 640,
             height: isPremium ? 1280 : 480,
             launchOptions: {
-                args: ['--proxy-server=http://ec2-52-14-24-237.us-east-2.compute.amazonaws.com:8443']
+                //args: ['--proxy-server=http://ec2-52-14-24-237.us-east-2.compute.amazonaws.com:8443']
             }
         }).then(img => {
                 const attachment = new Discord.MessageAttachment(img, 'website.png')
