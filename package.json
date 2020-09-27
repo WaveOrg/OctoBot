@@ -34,7 +34,7 @@
     "lodash": "^4.17.20",
     "mongoose": "^5.10.2",
     "ms": "^2.1.2",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.1",
     "node-opus": "^0.3.3",
     "qs": "^6.9.4",
     "set-value": "^3.0.2",
