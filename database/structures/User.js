@@ -3,7 +3,7 @@ const UserDataContainer = require("../containers/UserDataContainer")
 const GuildLevelingContainer = require("../containers/GuildLevelingContainer")
 
 Discord.Structures.extend("User", GuildMember => {
-    class DatabaseGuild extends GuildMember {
+    class DatabaseUser extends GuildMember {
 
         /**
          * 
@@ -29,5 +29,5 @@ Discord.Structures.extend("User", GuildMember => {
 
     }
 
-    return DatabaseGuild;
+    return DatabaseUser;
 });

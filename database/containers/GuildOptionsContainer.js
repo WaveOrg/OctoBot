@@ -261,7 +261,7 @@ class WelcomeLeaveMessageContainer {
      */
     getChannelId() {
         const channelId = this.databaseResponse.messages[this.type].channelId
-        r(channelId === "null" ? null : channelId)
+        return channelId === "null" ? null : channelId
     }
 
     /**

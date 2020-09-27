@@ -59,7 +59,7 @@ module.exports = {
         const endDB = Date.now();
         logger.debug(`Took ${endDB - startDB}ms to get Database data.`)
 
-        Jimp.read(rankCardBase64 === "null"? './discord/assets/rankCardDefault.png' : Buffer.from(rankCardBase64, "base64")).then(async rankCard => {
+        Jimp.read(!rankCardBase64 ? './discord/assets/rankCardDefault.png' : Buffer.from(rankCardBase64, "base64")).then(async rankCard => {
             const { width: cardWidth, height: cardHeight } = rankCard.bitmap;
 
             const startRead = Date.now()

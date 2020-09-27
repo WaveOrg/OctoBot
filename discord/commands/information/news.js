@@ -42,10 +42,10 @@ module.exports = {
     },
 
     config: {
-    command: "news",
+        command: "news",
         aliases: [],
-            description: "Check the latest news in the world",
-                permissions: [],
-                    usage: `news`,
+        description: "Check the latest news in the world",
+        permissions: [],
+        usage: `news`,
     }
 }

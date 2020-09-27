@@ -47,18 +47,12 @@ module.exports = {
      */
     cutStringButAtNewLineUnderCharacterLimit: function(string, characterLimit) {
 
-        console.log(typeof string)
-        console.log(string.length)
-
         var lines = string.split(/\n/g); 
         var returnArr = [""];
         var index = 0;
 
         for(let i = 0; i < characterLimit; ) {
             const line = lines.shift()
-
-            console.log(`index: ${index} | length: ${i}`)
-            console.log(line)
 
             if(line) {
                 i += line.length;
