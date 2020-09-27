@@ -63,6 +63,6 @@ module.exports = {
         aliases: ["w"],
         description: "View your weather in your location",
         permissions: [],
-        usage: `weather`,
+        usage: `weather [C/F] [Location]`,
     }
 }
