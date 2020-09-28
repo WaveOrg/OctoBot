@@ -30,11 +30,11 @@ module.exports = {
             .addField(`**Language**`, `[Javascript](https://developer.mozilla.org/en-US/docs/Web/JavaScript)`, true)
 
             .addField(`**Current Users**`, (await client.shard.fetchClientValues('users.cache.size')).reduce((a, b) => a + b, 0), true)
-            .addField(`**Current Guilds**`, (await client.shard.fetchClientValues('guilds.cache.size')).reduce((a, b) => a + b, 0), true)
-            .addField(`**Shards**`, client.shard.count, true)
-
             .addField(`**Support**`, `[Join Now](https://discord.gg/z9nznDY)`, true)
             .addField(`**Invite**`, `[Coming Soon]()`, true)
+
+            .addField(`**Current Guilds**`, (await client.shard.fetchClientValues('guilds.cache.size')).reduce((a, b) => a + b, 0), true)
+            .addField(`**Shards**`, client.shard.count, true)
             .addField(`**Website**`, `[octodev.xyz](https://octodev.xyz)`, true)
 
         message.channel.send(info)
