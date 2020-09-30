@@ -28,7 +28,7 @@ module.exports = {
 
         if(!wasPlayingBefore) {
             player.getQueue(message.guild.id).on('end', () => {
-                message.channel.send(ErrorEmbed("<:no:750451799609311412> All songs have been played!").setTitle(""))
+                message.channel.send(ErrorEmbed("All songs have been played!").setTitle(""))
             }).on('trackChanged', (_old, newt) => {
                 message.channel.send(InfoEmbed("▶ Now Playing", `Now playing ${newt.name}`).setThumbnail(newt.thumbnail))
             })
