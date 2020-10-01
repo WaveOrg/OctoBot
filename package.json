@@ -38,6 +38,7 @@
     "node-opus": "^0.3.3",
     "qs": "^6.9.4",
     "set-value": "^3.0.2",
+    "socket.io": "^2.3.0",
     "statcord.js": "^3.0.8",
     "systeminformation": "^4.27.5",
     "url-to-screenshot": "^3.0.0",

@@ -2,15 +2,16 @@
 
 require("dotenv").config()
 
-const Express = require("express");
-const cors = require("cors");
-const BodyParser = require("body-parser");
 const fs = require("fs").promises;
 const path = require("path");
-const app = Express();
+const io = require("socket.io")({
+    path: "/ws"
+});
 
 const { logger } = require("../launcher.globals");
 const utils = require("./utils/utils")
+
+const routes = [];
 
 let shardingManager = null;
 
@@ -18,23 +19,26 @@ module.exports = (manager) => {
     shardingManager = manager
 } 
 
-app.use(cors());
-app.use(BodyParser.json())
-
 loadRouteDir().then(() => {
-    app.use((req, res) => {
-        utils.sendBadRequest(res, { message: "Invalid request" })
-    })
+    // app.use((req, res) => {
+    //     utils.sendBadRequest(res, { message: "Invalid request" })
+    // })
 })
 
-app.use((req, res, next) => {
-    logger.logBackend(`${req.method} on ${req.path}`)
-    next();
+// app.use((req, res, next) => {
+//     logger.logBackend(`${req.method} on ${req.path}`)
+//     next();
+// })
+
+io.on("connection", socket => {
+    logger.logBackend(`Connection from ${socket.handshake.address}`)
+    routes.forEach(route => { socket.on(route.path, (...args) => {
+        route.handler(socket, ...args)
+    }); console.log("Added route " + route.path )})
 })
 
-const listener = app.listen(process.env.EXPRESS_PORT || 8080, () => {
-    logger.logBackend(`Now listening on ${listener.address().port}`)
-})
+io.listen(8080)
+logger.logBackend(`Now listening on ${8080}`)
 
 /**
  * 
@@ -49,9 +53,7 @@ async function loadRouteDir() {
                 return loadRouteDir(`${dir}/${file}`);
             } else if(file.endsWith(".js")) {
                 const route = require(path.resolve(`${dir}/${file}`))
-                if(route.router && route.path) {
-                    app.use(route.path, route.router)
-                }
+                if(route.handler && route.path) routes.push(route);
             }
         }
     }).catch(err => {

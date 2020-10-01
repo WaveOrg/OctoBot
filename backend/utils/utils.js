@@ -14,7 +14,7 @@ module.exports = {
      * @param {Boolean} time
      * @returns  {String} Formatted Date
      */
-    formatDate(date, time) {
+    formatDate: function(date, time) {
         if(time) {
             let hour = date.getHours();
             let minute = date.getMinutes();
@@ -38,7 +38,7 @@ module.exports = {
      * @param  {...JSON} json
      * @returns {JSON} Final concatinated JSON
      */
-    concatJson(...jsons) {
+    concatJson: function(...jsons) {
         let finalJson = {};
 
         for(let json of jsons) for(let key in json) finalJson[key] = json[key]
@@ -51,7 +51,7 @@ module.exports = {
      * @param {Express.Response} res 
      * @param {...JSON} data
      */
-    sendBadRequest(res, ...data) {
+    sendBadRequest: function(res, ...data) {
         res.status(400).json(this.concatJson({
             status: 400,
             message: "Bad Request"
@@ -63,7 +63,7 @@ module.exports = {
      * @param {Express.Response} res 
      * @param {...JSON} data
      */
-    sendUnauthorized(res, ...data) {
+    sendUnauthorized: function(res, ...data) {
         res.status(401).json(this.concatJson({
             status: 401,
             message: "Unauthorized"
@@ -75,7 +75,7 @@ module.exports = {
      * @param {Express.Response} res
      * @param {JSON} data
      */
-    sendOk(res, ...data) {
+    sendOk: function(res, ...data) {
         res.status(200).json(this.concatJson({
             status: 200
         }, ...data))
@@ -86,7 +86,7 @@ module.exports = {
      * @param {Express.Response} res
      * @param {JSON} data
      */
-    sendCreated(res, ...data) {
+    sendCreated: function(res, ...data) {
         res.status(201).json(this.concatJson({
             status: 201
         }, ...data))
@@ -98,7 +98,7 @@ module.exports = {
      * @param  {...String} values
      * @returns {Boolean}
      */
-    dataContains(data, ...values) {
+    dataContains: function(data, ...values) {
         for(let value of values) if(!data.hasOwnProperty(value)) return false
         
         return true;
@@ -109,7 +109,7 @@ module.exports = {
      * @param {Mongoose.Model} model
      * @returns {JSON}
      */
-    async modelValid(model) {
+    modelValid: async function(model) {
         let options = _.mapValues(model.schema.paths, value => value.options)
 
         let json = {}
@@ -160,7 +160,7 @@ module.exports = {
      * @param {String} domain
      * @returns {String} IP address corresponding to the domain 
      */
-    async resolveDomain(domain) {
+    resolveDomain: async function(domain) {
         return (await dns.lookup(domain)).address
     },
 
@@ -169,7 +169,7 @@ module.exports = {
      * @param {String} plain
      * @returns {String} BCrypt hashed version of plain 
      */
-    async hashBCrypt(plain) {
+    hashBCrypt: async function(plain) {
         return await bcrypt.hash(plain, 10)
     },
 
@@ -179,7 +179,7 @@ module.exports = {
      * @param {String} hash 
      * @returns {Boolean} Returns true if fields match, false if not
      */
-    async compareBCryptHash(plain, hash) {
+    compareBCryptHash: async function(plain, hash) {
         return await bcrypt.compare(plain, hash)
     },
 
@@ -188,7 +188,7 @@ module.exports = {
      * @param {Mongoose.Model} user 
      * @returns {String} JWT Token for user
      */
-    generateJWT(user) {
+    generateJWT: function(user) {
         return jwt.sign({
             id: user._id,
             username: user.username,
@@ -201,7 +201,7 @@ module.exports = {
      * @param {String} token
      * @returns {JSON} Token data if valid 
      */
-    validateToken(token) {
+    validateToken: function(token) {
         try {
             return this.concatJson({ valid: true }, jwt.verify(token, "jy1J8jpuJn1Q9Mrb1HjQc0GqezmwwASydEDMMc4c3GsOkfbXLpTH0feYdVSSqPFB"))
         } catch (err) {
