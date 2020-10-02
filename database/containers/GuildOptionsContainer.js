@@ -3,7 +3,6 @@ const setValue = require("set-value")
 const getValue = require("get-value")
 const { guildOptions } = require("./containerCache")
 const GuildOptions = require("../models/GuildOptions")
-const { client } = require("../../globals")
 
 // Normally Array.prototype.push() returns the length, so this betterPush returns the new array, allowing for a little cleaner code imo.
 Array.prototype.betterPush = function(value) {
@@ -77,8 +76,9 @@ module.exports = class GuildOptionsContainer {
         let guildId;
         if(typeof guild === "string") {
             guildId = guild;
+        } else {
+            guildId = guild.id
         }
-        guildId = guild.id
         return guildOptions.has(guildId) ? guildOptions.get(guildId) : new GuildOptionsContainer(guildId);
     }
 

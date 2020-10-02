@@ -2,7 +2,6 @@ const _ = require("lodash")
 const setValue = require("set-value")
 const getValue = require("get-value")
 const GuildLeveling = require("../models/GuildLeveling")
-const { logger } = require("../../globals")
 const { Mongoose } = require("mongoose")
 
 /**
@@ -48,14 +47,17 @@ module.exports = class GuildLevelingContainer {
         let guildId;
         if(typeof guild === "string") {
             guildId = guild;
+        } else {
+            guildId = guild.id
         }
-        guildId = guild.id
 
         let userId;
         if(typeof user === "string") {
             userId = user;
+        } else {
+            userId = user.id
         }
-        userId = user.id
+        
         return new GuildLevelingContainer(guildId, userId);
     }
 
@@ -73,7 +75,8 @@ module.exports = class GuildLevelingContainer {
                 userId: this.userId
             }).save()
         } catch(err) {
-            logger.error(err)
+            // Don't use logger, it breaks things
+            console.error(err)
         }
     }
 

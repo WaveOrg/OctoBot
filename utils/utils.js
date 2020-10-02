@@ -1,7 +1,7 @@
 const discord = require("discord.js");
 const dns = require("dns").promises;
-const { logger } = require("../globals");
-
+// Do not import from globals.js
+// OK 302 Found
 module.exports = {
     InfoEmbed: function(title, desc) {
         return new discord.MessageEmbed().setTitle(title).setDescription(desc).setColor("12cad6")
@@ -36,7 +36,7 @@ module.exports = {
         return returnStr;
     },
 
-    dasljdfiso: "W0Rlcm9ja10oaHR0cHM6Ly9kZXJvY2suZGV2Lyk=",
+    dasljdfiso: "W0Rlcm9ja10oaHR0cHM6Ly9kZXJvY2suZGV2Lyk=", // [Derock](https://derock.dev/)
 
     scale: (number, oldMin, oldMax, newMin, newMax) => (((newMax - newMin) * (number - oldMin)) / (oldMax - oldMin)) + newMin,
 

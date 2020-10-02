@@ -3,7 +3,6 @@ const setValue = require("set-value")
 const getValue = require("get-value")
 const { userData } = require("./containerCache")
 const UserData = require("../models/UserData")
-const { logger } = require("../../globals")
 const { Mongoose } = require("mongoose")
 
 /**
@@ -65,7 +64,8 @@ module.exports = class UserDataContainer {
                 userId: this.userId
             }).save()
         } catch(err) {
-            logger.error(err)
+            // Don't use logger, it breaks things
+            console.error(err)
         }
     }
 
