@@ -103,6 +103,8 @@ class Player {
 
         this.bassBoost = 0;
 
+        this.isEmpty = false;
+
         // Listener to check if the channel is empty
         client.on('voiceStateUpdate', (oldState, newState) => this._handleVoiceStateUpdate(oldState, newState))
     }
@@ -849,20 +851,30 @@ class Player {
      * @param {Discord.VoiceState} newState
      */
     _handleVoiceStateUpdate (oldState, newState) {
-        if (!this.options.leaveOnEmpty) return
-        // If the member leaves a voice channel
-        if (!oldState.channelID || newState.channelID) return
-        // Search for a queue for this channel
-        const queue = this.queues.find((g) => g.voiceConnection.channel.id === oldState.channelID)
-        if (queue) {
-            // If the channel is not empty
-            if (queue.voiceConnection.channel.members.size > 1) return
-            // Disconnect from the voice channel
-            queue.voiceConnection.channel.leave()
-            // Delete the queue
-            this.queues = this.queues.filter((g) => g.guildID !== queue.guildID)
-            // Emit end event
-            queue.emit('channelEmpty')
+        if(!this.isEmpty) {
+            // filter so only channel join
+            if (!oldState.channelID || newState.channelID) return
+            // Search for a queue for this channel
+            const queue = this.queues.find((g) => g.voiceConnection.channel.id === oldState.channelID)
+            if (queue) {
+                // If the channel is not empty
+                if (queue.voiceConnection.channel.members.size > 1) return
+                // Emit end event
+                queue.emit('channelEmpty')
+                this.isEmpty = true;
+            }
+        } else {
+            // filter so only channel leave
+            if (oldState.channelID || !newState.channelID) return;
+
+            const queue = this.queues.find((g) => g.voiceConnection.channel.id === newState.channelID)
+            if (queue) {
+                // If the channel is not empty
+                if (queue.voiceConnection.channel.members.size <= 1) return
+                // Emit end event
+                queue.emit('channelNoLongerEmpty')
+                this.isEmpty = false;
+            }
         }
     }
 

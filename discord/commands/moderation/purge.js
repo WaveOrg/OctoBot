@@ -40,8 +40,10 @@ module.exports = {
                 }
     
                 const messagesToDelete = await (await message.channel.messages.fetch({ limit: toDelete + 1 }).catch(e)).filter(msg => msg.id != sent.id)
-                const deleted = await message.channel.bulkDelete(messagesToDelete).catch(e);
-                totalDeleted += deleted.size
+                const deleted = await message.channel.bulkDelete(messagesToDelete).catch(err => {
+                    if(!err.includes('under 14 days old')) e(err)
+                });
+                totalDeleted += deleted.size || 0;
                 sent.edit(RedEmbed("<a:loading:752246174550982728> Deleting Messages", `Current Status: ${totalDeleted}/${args[0]}`))
 
                 if(remainingAmount <= 0) r()

@@ -24,7 +24,7 @@ module.exports = {
 
         const sent = await message.channel.send(new Discord.MessageEmbed().setDescription("🔍 Searching the waves for `" + (args.join(" ").length > 1000? args.join(" ").substr(0, 1000) : args.join(" ")) + '`').setTitle(" ").setColor("12cad6"))
 
-        player.play(message.member.voice.channel, args.join(" "), message.member.user.tag)
+        player.play(message.member.voice.channel, args.join(" "), message.member.user)
             .catch(err => {
                 if(err = "Not found") {
                     message.channel.send(ErrorEmbed("I couldn't find a song by that name!"))
@@ -40,6 +40,10 @@ module.exports = {
                         message.channel.send(InfoEmbed("▶ Now Playing", `Now playing ${newt.name}`).setThumbnail(newt.thumbnail))
                     }).on('voiceDisconnect', (queue) => {
                         player.pause(queue.guildID)
+                    }).on('channelEmpty', () => {
+                        player.pause(message.guild.id)
+                    }).on('channelNoLongerEmpty', () => {
+                        player.resume(message.guild.id)
                     })
                 }
         

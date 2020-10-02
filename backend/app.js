@@ -55,7 +55,7 @@ Mongoose.connect(`mongodb://${mongo.user}:${mongo.password}@${mongo.host}:${mong
     }).catch(console.error);
 
 io.listen(8080)
-app.listen(80)
+app.listen(8000)
 logger.logBackend(`Now listening on ${8080}`)
 
 /**
