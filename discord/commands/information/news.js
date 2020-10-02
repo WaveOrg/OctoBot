@@ -2,7 +2,6 @@ const Discord = require("discord.js")
 const { Menu: menu } = require('../../../utils/menu')
 const fetch = require('node-fetch');
 const { InfoEmbed, ErrorEmbed } = require("../../../utils/utils");
-const { logger } = require("../../../globals");
 
 module.exports = {
     /**
@@ -26,20 +25,33 @@ module.exports = {
         }
         /** @type {Object[]} */
         const articleArr = response.articles;
+        
+        var doubles = []
 
         new menu(message.channel, message.author.id, 
-            articleArr.map((article, index) => { 
+            articleArr.filter(article => {
+                console.log(articleArr.filter(articlee => articlee.title == article.title).length)
+                if(articleArr.filter(articlee => articlee.title == article.title).length > 1 && doubles.includes(article.title)) return false;
+                else {
+                    doubles.push(article.title)
+                    return true;
+                }
+            }).map((article, index, arr) => {
                 return {
                     name: index,
                     content: InfoEmbed(article.title || "No Title", article.description)
                         .setURL(article.url)
-                        .setAuthor(article.author || "Unknown")
+                        .setAuthor(typeof article.author == "string"? 
+                            article.author : 
+                            typeof article.author == "object"? 
+                            article.author.name
+                            : "Unknown")
                         .setThumbnail(article.urlToImage)
                         .setTimestamp(article.publishedAt || message.createdTimestamp)
                         .setFooter("Use reactions to control where to go!"),
                     reactions: index == 0? {
                         "761393981984604211": "next",
-                    } : index == articleArr.length - 1? {
+                    } : index == arr.length - 1? {
                         "761393971733463090": "previous"
                     } : {
                         "761393971733463090": "previous",

@@ -11,8 +11,15 @@ const { TextChannel } = require('discord.js');
  */
 
 module.exports.Menu = class {
+    /**
+     * 
+     * @param {TextChannel} channel 
+     * @param {string} userID 
+     * @param {Array} pages 
+     */
     constructor(channel, userID, pages) {
         this.channel = channel;
+        this.lastPage = null;
         this.userID = userID;
         this.pages = pages;
         this.currentPage = pages[0];
@@ -24,16 +31,24 @@ module.exports.Menu = class {
             this.awaitReactions();
         });
     }
-    setPage(page = 0) {
+
+    setPage(page, userID, reaction) {
         this.page = page;
-        this.currentPage = this.pages[this.page];
+        this.lastPage = this.currentPage;
+        this.currentPage = this.pages[page];
 
         this.menu.edit(this.currentPage.content);
-        
-        this.menu.reactions.removeAll();
-        this.reactionCollector.stop();
-        this.react();
-        this.awaitReactions();
+
+        if(this.lastPage && JSON.stringify(this.lastPage.reactions) != JSON.stringify(this.currentPage.reactions)) {
+            this.menu.reactions.removeAll();
+            this.reactionCollector.stop();
+            this.react();
+            this.awaitReactions();
+        } else {
+            this.menu.reactions.resolve(reaction).users.remove(userID)
+            this.reactionCollector.stop();
+            this.awaitReactions();
+        }
     }
     react() {
         for(const reaction in this.currentPage.reactions) {
@@ -41,28 +56,26 @@ module.exports.Menu = class {
         }
     }
     awaitReactions() {
-        this.reactionCollector = this.menu.createReactionCollector((reaction, user) => user.id == this.userID, {time: 180000});
+        this.reactionCollector = this.menu.createReactionCollector((reaction, user) => user.id == this.userID && !user.bot, {time: 180000});
         this.reactionCollector.on('collect', (reaction, user) => {
             if (this.currentPage.reactions.hasOwnProperty(reaction.emoji.id)) {
-
-                //reaction.users.remove(user.id)
 
                 let destination = this.currentPage.reactions[reaction.emoji.id];
                 switch (destination) {
                     case "first":
-                        this.setPage(0);
+                        this.setPage(0, user.id, reaction);
                         break;
                     case "last":
-                        this.setPage(this.pages.length - 1);
+                        this.setPage(this.pages.length - 1, user.id, reaction);
                         break;
                     case "previous":
                         if (this.page > 0) {
-                            this.setPage(this.page - 1);
+                            this.setPage(this.page - 1, user.id, reaction);
                         }
                         break;
                     case "next":
                         if (this.page < this.pages.length - 1) {
-                            this.setPage(this.page + 1);
+                            this.setPage(this.page + 1, user.id, reaction);
                         }
                         break;
                     case "stop":
@@ -70,7 +83,7 @@ module.exports.Menu = class {
                         this.menu.delete();
                         break;
                     default:
-                        this.setPage(this.pages.findIndex(p => p.name == destination));
+                        this.setPage(this.pages.findIndex(p => p.name == destination), user.id, reaction);
                         break;
                 }
             }
