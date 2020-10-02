@@ -11,7 +11,7 @@ const { TextChannel } = require('discord.js');
  */
 
 module.exports.Menu = class {
-    constructor(channel = new TextChannel(), userID, pages = [{name: "main", content: new MessageEmbed().setTitle("Discord.js-Menu Default Page").setLink("https://npm.im/discord.js-menu"), reactions: {"⏹": "stop"}}]) {
+    constructor(channel, userID, pages) {
         this.channel = channel;
         this.userID = userID;
         this.pages = pages;

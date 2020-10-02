@@ -24,17 +24,27 @@ module.exports = {
 
         const sent = await message.channel.send(new Discord.MessageEmbed().setDescription("🔍 Searching the waves for `" + (args.join(" ").length > 1000? args.join(" ").substr(0, 1000) : args.join(" ")) + '`').setTitle(" ").setColor("12cad6"))
 
-        const track = await player.play(message.member.voice.channel, args.join(" "), message.member.user.tag);
-
-        if(!wasPlayingBefore) {
-            player.getQueue(message.guild.id).on('end', () => {
-                message.channel.send(ErrorEmbed("All songs have been played!").setTitle(""))
-            }).on('trackChanged', (_old, newt) => {
-                message.channel.send(InfoEmbed("▶ Now Playing", `Now playing ${newt.name}`).setThumbnail(newt.thumbnail))
+        player.play(message.member.voice.channel, args.join(" "), message.member.user.tag)
+            .catch(err => {
+                if(err = "Not found") {
+                    message.channel.send(ErrorEmbed("I couldn't find a song by that name!"))
+                } else {
+                    message.channel.send(ErrorEmbed("I couldn't get any results: " + err))
+                }
             })
-        }
-
-        sent.edit(InfoEmbed(`🎵 Added to queue!`, `${track.name} has been added!`).setThumbnail(track.thumbnail))
+            .then(track => {
+                if(!wasPlayingBefore) {
+                    player.getQueue(message.guild.id).on('end', () => {
+                        message.channel.send(ErrorEmbed("All songs have been played!").setTitle(""))
+                    }).on('trackChanged', (_old, newt) => {
+                        message.channel.send(InfoEmbed("▶ Now Playing", `Now playing ${newt.name}`).setThumbnail(newt.thumbnail))
+                    }).on('voiceDisconnect', (queue) => {
+                        player.pause(queue.guildID)
+                    })
+                }
+        
+                sent.edit(InfoEmbed(`🎵 Added to queue!`, `${track.name} has been added!`).setThumbnail(track.thumbnail))
+            })  
     },
 
     config: {

@@ -270,6 +270,10 @@ class Player {
                 )
                 // Create a new guild with data
                 var queue = new Queue(voiceChannel.guild.id)
+
+                // emit 
+                connection.on('closing', queue.emit.bind('voiceDisconnect', queue, null))
+
                 queue.voiceConnection = connection
                 queue.filters = {}
                 Object.keys(this.filters).forEach((f) => {
@@ -282,7 +286,8 @@ class Player {
                     // Add the track to the queue
                     queue.tracks.push(track)
                 } else if (typeof track === 'string') {
-                    const results = await this.searchTracks(track).catch(() => {
+                    const results = await this.searchTracks(track).catch(err => {
+                        console.log(err)
                         return reject(new Error('Not found'))
                     })
                     if (!results) return
@@ -382,6 +387,7 @@ class Player {
     /**
      * Resume the current track
      * @param {Discord.Snowflake} guildID The ID of the guild where the current track should be resumed
+     * @param {Discord.VoiceConnection} voiceConn
      * @returns {Promise<Track>} The resumed track
      *
      * @example
@@ -397,13 +403,18 @@ class Player {
      *
      * });
      */
-    resume (guildID) {
+    resume (guildID, voiceConn) {
         return new Promise((resolve, reject) => {
             // Get guild queue
             const queue = this.queues.find((g) => g.guildID === guildID)
             if (!queue) return reject(new Error('Not playing'))
             // Pause the dispatcher
-            queue.voiceConnection.dispatcher.resume()
+            if(voiceConn) queue.voiceConnection = voiceConn;
+            if(queue.voiceConnection.dispatcher) 
+                queue.voiceConnection.dispatcher.resume()
+            else
+                this._playYTDLStream(queue, false, false)
+            
             queue.paused = false
             // Resolve the guild queue
             resolve(queue.playing)

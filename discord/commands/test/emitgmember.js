@@ -1,5 +1,4 @@
 const Discord = require("discord.js")
-const { modules } = require("../../../database/constants")
 
 module.exports = {
     /**
@@ -9,11 +8,11 @@ module.exports = {
      * @param {Discord.Client} client 
      */
     async run(message, args, client) {
-        client.emit("guildMemberAdd", message.mentions.members.first())
+        client.emit("guildMemberRemove", message.mentions.members.first())
     },
 
     config: {
-        command: "emitguildmemberadd",
+        command: "emit",
         aliases: [],
         description: " test",
         usage: `cool`,
