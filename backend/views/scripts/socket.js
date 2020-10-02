@@ -12,6 +12,7 @@ var socket = {
     request: function(path, payload) {
         return new Promise((resolve, _) => {
             const handler = (response) =>{
+                console.log(response)
                 if(response._path !== path || JSON.stringify(response._payload) !== JSON.stringify(payload)) return;
                 backend.removeListener(path, handler);
 

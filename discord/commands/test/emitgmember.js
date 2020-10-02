@@ -8,6 +8,7 @@ module.exports = {
      * @param {Discord.Client} client 
      */
     async run(message, args, client) {
+        client.emit("guildMemberAdd", message.mentions.members.first())
         client.emit("guildMemberRemove", message.mentions.members.first())
     },
 

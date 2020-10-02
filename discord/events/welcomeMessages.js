@@ -24,7 +24,11 @@ module.exports = {
 
         if(!channel) return;
 
-        if(type == welcomeLeaveTypes.TEXT) channel.send(msg.replace(/%member%/g, member.user.username).replace(/%tag%/g, member.user.tag).replace(/%mention%/g, `<@${member.id}>`))
+        if(type == welcomeLeaveTypes.TEXT) channel.send(msg
+            .replace(/%member%/g, member.user.username)
+            .replace(/%tag%/g, member.user.tag)
+            .replace(/%mention%/g, `<@${member.id}>`)
+            .replace(/%server%/g, member.guild.name))
         .catch(err => { logger.error(err) })
 
         // TODO: SEND

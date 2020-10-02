@@ -10,6 +10,7 @@ const io = require("socket.io")({
 
 const { logger } = require("../launcher.globals");
 const utils = require("./utils/utils")
+const SocketRequest = require("./core/SocketRequest")
 
 const routes = [];
 
@@ -32,9 +33,7 @@ loadRouteDir().then(() => {
 
 io.on("connection", socket => {
     logger.logBackend(`Connection from ${socket.handshake.address}`)
-    routes.forEach(route => { socket.on(route.path, (...args) => {
-        route.handler(socket, ...args)
-    }); console.log("Added route " + route.path )})
+    routes.forEach(route => socket.on(route.path, (payload) => route.handler(new SocketRequest(socket, route.path, JSON.parse(JSON.stringify(payload))))))
 })
 
 io.listen(8080)

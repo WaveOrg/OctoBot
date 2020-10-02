@@ -229,7 +229,7 @@ module.exports = class GuildOptionsContainer {
      * @returns {Promise<WelcomeLeaveMessageContainer>}
      */
     async getLeaveMessage() {
-        return new Promise(async r => { r(new WelcomeLeaveMessageContainer(this, "leave"), (await this.getFromDatabase())) })
+        return new Promise(async r => { r(new WelcomeLeaveMessageContainer(this, "leave", (await this.getFromDatabase()))) })
     }
 
 

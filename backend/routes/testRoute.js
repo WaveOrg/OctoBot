@@ -1,15 +1,13 @@
 module.exports = {
-    handler(socket, payload) {
-        respond(socket, payload, { message: "Welcome", yourPayload: payload })
+
+    /**
+     * 
+     * @param {import("socket.io").Socket} socket 
+     * @param {import("../core/SocketRequest")} request 
+     */
+    handler(request) {
+        request.respondOk({ message: "Welcome", yourPayload: request.payload })
     },
 
     path: "/testRoute"
-}
-
-function respond(socket, _payload, payload) {
-    socket.emit("/testRoute", {
-        _path: "/testRoute",
-        _payload,
-        ...payload
-    })
 }
