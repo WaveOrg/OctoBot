@@ -1,5 +1,13 @@
 <template>
     <div>
+        <div class="alert alert-danger" role="alert" v-if="error">
+            {{ error }}
+        </div>
+
+        <div class="alert alert-success" role="alert" v-if="success">
+            {{ success }}
+        </div>
+
         <form v-if="guildInfo">
             <img :src="guildInfo.discordInfo.iconURL" alt="Server Icon" class="mb-2 mr-4" style="display: inline-block; float: left; width: 64px; height: 64px;">
             <h5 class="mb-2 p-4">{{ guildInfo.discordInfo.name }}</h5>
@@ -21,42 +29,65 @@ export default {
     name: "ManageGuild",
     data: () => ({
         guildInfo: null,
-        prefix: ""
+        prefix: "",
+        error: null,
+        success: null
     }),
     methods: {
         init() {
-            util.connect(this).then(async () => {
-                this.guildInfo = (await util.request(this, "/gqlGuild", { query: `
-                {
-                    guild(id: "${this.$route.params.guildId}") {
-                        id,
-                        prefix
-                        discordInfo {
-                            name,
-                            iconURL
+            return new Promise(r => {
+                util.connect(this).then(async () => {
+                    this.guildInfo = (await util.request(this, "/gqlGuild", { query: `
+                    {
+                        guild(id: "${this.$route.params.guildId}") {
+                            id,
+                            prefix
+                            discordInfo {
+                                name,
+                                iconURL
+                            }
                         }
                     }
-                }
-                ` })).data.guild
+                    ` })).data.guild
+                    r()
+                })
             })
+            
         },
         update() {
-            //const instance = this;
+            this.error = null;
+            this.success = null;
+            const prefix = this.prefix ? this.prefix.trim() : ""
+            if(prefix.length > 32) {
+                this.error = "Prefix length above 32"
+                return
+            }
 
+
+            if(prefix === "") {
+                return
+            }
+
+            this.$store.state.loading = true;
             util.connect(this).then(async () => {
                 util.request(this, "/gqlGuild", { query: `
                 mutation {
-                    setGuildPrefix(guildId: "${this.guildInfo.id}", prefix: "${this.prefix}")
+                    setGuildPrefix(guildId: "${this.guildInfo.id}", prefix: "${prefix}")
                 }
-                ` }).then(() => {
-                    this.init();
-                    alert("Changes Saved");
+                ` }).then(async () => {
+                    await this.init();
+                    this.prefix = ""
+                    this.$store.state.loading = false;
+                    this.success = "Changes have been saved";
                 })
             })
         }
     },
     mounted() {
-        this.init();
+        this.$store.state.loading = true;
+        this.init().then(() => {
+            this.$store.state.loading = false;
+        });
     }
 }
 </script>

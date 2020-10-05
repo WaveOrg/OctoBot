@@ -19,6 +19,7 @@ export default {
         guilds: []
     }),
     mounted() {
+        this.$store.state.loading = true;
         util.connect(this).then(async () => {
             this.guilds = (await util.request(this, "/gqlGuild", { query: `
             {
@@ -31,6 +32,7 @@ export default {
                 }
             }
             ` })).data.guilds.filter(it => !!it["discordInfo"] && !!it["discordInfo"].iconURL);
+            this.$store.state.loading = false;
         })
     }
 }
