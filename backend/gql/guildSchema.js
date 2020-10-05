@@ -1,6 +1,7 @@
 const { buildSchema } = require("graphql")
 const { guildOptionsOf } = require("../../utils/dbUtils")
 const GuildOptions = require("../../database/models/GuildOptions")
+let { shardingManager } = require("../../launcher.globals")
 
 module.exports.schema = buildSchema(`
 type Query {
@@ -34,6 +35,12 @@ type Guild {
     prefix: String
     activeModules: [String]
     messages(type: String): GuildMessages
+    discordInfo: DiscordGuildInfo
+}
+
+type DiscordGuildInfo {
+    name: String,
+    iconURL: String
 }
 
 type GuildMessages {
@@ -47,13 +54,13 @@ module.exports.root = {
     guild: async ({ id }) => {
         const guildOptions = guildOptionsOf(id);
         const databaseResponse = await guildOptions.getFromDatabase()
-        return parseGuild(databaseResponse)
+        return await parseGuild(databaseResponse)
     },
     guilds: async () => {
         const all = await GuildOptions.find({})
         
         const guilds = []
-        for(let databaseResponse of all) guilds.push(parseGuild(databaseResponse))
+        for(let databaseResponse of all) guilds.push(await parseGuild(databaseResponse))
         
         return guilds;
     },
@@ -133,8 +140,10 @@ module.exports.root = {
     }
 }
 
-function parseGuild(databaseResponse) {
+async function parseGuild(databaseResponse) {
     const guildOptions = guildOptionsOf(databaseResponse.guildId)
+    const shardingManager = require("../../launcher.globals").shardingManager;
+    const discordInfo = (await shardingManager.broadcastEval(`this.guilds.resolve("${databaseResponse.guildId}")`)).filter(it => !!it)[0];
     return {
         id: databaseResponse.guildId,
         prefix: databaseResponse.prefix,
@@ -156,6 +165,7 @@ function parseGuild(databaseResponse) {
                 dataType: messageContainer.getDataType(),
                 data: messageContainer.getData()
             }
-        }
+        },
+        discordInfo,
     }
 }

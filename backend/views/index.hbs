@@ -1,0 +1,11 @@
+<div>
+    {{#each guilds }}
+        <div class="card p-2 m-2" style="width: 16rem; float: left; background-color: ghostwhite;">
+            <img class="card-img-top mx-auto d-block" src="{{ this.discordInfo.iconURL }}" alt="Server Icon" style="background-color: darkgrey; height: 100px; width: 100px">
+            <div class="card-body">
+                <h5 class="card-title text-center">{{ this.discordInfo.name }}</h5>
+                <a href="/{{ this.guildId }}" class="btn btn-primary" style="width: 100%">Manage</a>
+            </div>
+        </div>
+    {{/each}}
+</div>
