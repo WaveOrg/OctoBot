@@ -3,8 +3,8 @@
     "token": "NzUxMDk5MzAzNjMxNTE5ODY1.X1EJvA.IwL33Sqr5AGGhTy8d_OzYWJI8d4",
     "mongo": {
         "user": "octodev",
-        "password": "i5k8QBVjLkDBbchA",
-        "host": "51.195.139.188",
+        "password": "q84d01OTwL458S6X",
+        "host": "51.81.96.174",
         "port": 27017,
         "database": "octodev"
     }
