@@ -30,7 +30,7 @@ module.exports = {
     },
 
     config: {
-        command: "vapourwave",
+        command: "vaporwave",
         aliases: [],
         description: "Adds a vaporwave effect to the current song.",
         permissions: [],
