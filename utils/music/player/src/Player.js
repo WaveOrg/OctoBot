@@ -274,7 +274,7 @@ class Player {
                 var queue = new Queue(voiceChannel.guild.id)
 
                 // emit 
-                connection.on('closing', queue.emit.bind('voiceDisconnect', queue, null))
+                if(connection.listeners('closing').length == 0) connection.on('closing', queue.emit.bind('voiceDisconnect', queue, null))
 
                 queue.voiceConnection = connection
                 queue.filters = {}
@@ -582,7 +582,7 @@ class Player {
                 } else if (results[0]) {
                     result = results[0]
                 } else {
-                    return reject(new Error('Not found'))
+                    return reject('Not found')
                 }
                 results.forEach((i) => {
                     i.requestedBy = user

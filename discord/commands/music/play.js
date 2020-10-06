@@ -26,7 +26,7 @@ module.exports = {
 
         player.play(message.member.voice.channel, args.join(" "), message.member.user)
             .catch(err => {
-                if(err = "Not found") {
+                if(err == "Not found") {
                     message.channel.send(ErrorEmbed("I couldn't find a song by that name!"))
                 } else {
                     message.channel.send(ErrorEmbed("I couldn't get any results: " + err))
