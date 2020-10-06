@@ -25,7 +25,7 @@ module.exports = {
             player.setFilters(message.guild.id, currentFilters)
         }
 
-        message.channel.send(InfoEmbed("", `<:yes:752247197436870666> Vaporwave has been ${currentFilters["vaporwave"]? "enabled" : "disabled"}`))
+        msg.edit(InfoEmbed("", `<:yes:752247197436870666> Vaporwave has been ${currentFilters["vaporwave"]? "enabled" : "disabled"}`))
 
     },
 
