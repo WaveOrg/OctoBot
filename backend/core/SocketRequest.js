@@ -38,15 +38,15 @@ module.exports = class SocketRequest {
     }
 
     respondForbidden(error) {
-        this.respond(400, { error: error || "Forbidden" })
+        this.respond(403, { error: error || "Forbidden" })
     }
 
     respondUnauthorized (error) {
-        this.respond(400, { error: error || "Unauthorized" })
+        this.respond(401, { error: error || "Unauthorized" })
     }
 
     respondNotFound(error) {
-        this.respond(400, { error: error || "Not Found" })
+        this.respond(404, { error: error || "Not Found" })
     }
 
     respondOk(data, spread = true) {

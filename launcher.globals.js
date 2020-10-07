@@ -5,4 +5,8 @@ const Log = require("./utils/logger");
  */
 module.exports.logger = new Log(true, './weblogs')
 
+/**
+ * 
+ * @type {import("discord.js").ShardingManager}
+ */
 module.exports.shardingManager = null;

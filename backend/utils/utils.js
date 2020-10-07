@@ -1,6 +1,6 @@
 const dns = require("dns").promises;
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+const fs = require("fs").promises;
+const path = require("path")
 
 /**
  * 
@@ -35,124 +35,34 @@ module.exports = {
 
     /**
      * 
-     * @param  {...JSON} json
-     * @returns {JSON} Final concatinated JSON
+     * @param {String} rootPath 
+     * @param {Function} cb 
      */
-    concatJson: function(...jsons) {
-        let finalJson = {};
-
-        for(let json of jsons) for(let key in json) finalJson[key] = json[key]
-        
-        return finalJson
-    },
-
-    /**
-     * 
-     * @param {Express.Response} res 
-     * @param {...JSON} data
-     */
-    sendBadRequest: function(res, ...data) {
-        res.status(400).json(this.concatJson({
-            status: 400,
-            message: "Bad Request"
-        }, ...data))
-    },
-
-    /**
-     * 
-     * @param {Express.Response} res 
-     * @param {...JSON} data
-     */
-    sendUnauthorized: function(res, ...data) {
-        res.status(401).json(this.concatJson({
-            status: 401,
-            message: "Unauthorized"
-        }, ...data))
-    },
-
-    /**
-     * 
-     * @param {Express.Response} res
-     * @param {JSON} data
-     */
-    sendOk: function(res, ...data) {
-        res.status(200).json(this.concatJson({
-            status: 200
-        }, ...data))
-    },
-
-    /**
-     * 
-     * @param {Express.Response} res
-     * @param {JSON} data
-     */
-    sendCreated: function(res, ...data) {
-        res.status(201).json(this.concatJson({
-            status: 201
-        }, ...data))
+    scanFolderJs: async function(rootPath, cb) {
+        await fs.readdir(rootPath).then(async files => {
+            for(let file of files) {
+                const stat = await fs.stat(`${rootPath}/${file}`)
+                if(stat.isDirectory()) {
+                    return this.scanFolderJs(`${rootPath}/${file}`, cb);
+                } else if(file.endsWith(".js")) {
+                    cb(require(path.resolve(`${rootPath}/${file}`)));
+                }
+            }
+        }).catch(err => {
+            console.error(err)
+        })
     },
 
     /**
      * 
      * @param {Object} data
-     * @param  {...String} values
+     * @param  {...String} proprs
      * @returns {Boolean}
      */
-    dataContains: function(data, ...values) {
-        for(let value of values) if(!data.hasOwnProperty(value)) return false
+    dataContains: function(data, ...props) {
+        for(let prop of props) if(!data.hasOwnProperty(prop)) return false
         
         return true;
-    },
-
-    /**
-     * 
-     * @param {Mongoose.Model} model
-     * @returns {JSON}
-     */
-    modelValid: async function(model) {
-        let options = _.mapValues(model.schema.paths, value => value.options)
-
-        let json = {}
-
-        for(let [key, value] of Object.entries(options)) {
-            if(key.startsWith("_")) continue;
-
-            if(value.required) {
-                if(!model[key]) {
-                    if(!json["missing"]) json["missing"] = []
-                    json["missing"].push(key)
-                    continue;
-                }
-            }
-
-            if(value.unique) {
-                let field = key; 
-                let criteria = {}; criteria[field] = model[field]
-                let item = await model.constructor.findOne(criteria).exec()
-
-                if(item) {
-                    if(!json["notUnique"]) json["notUnique"] = []
-                    json["notUnique"].push(field)
-                }
-            }
-
-            if(value.min) {
-                if(model[key].length < value.min) {
-                    if(!json["tooLow"]) json["tooLow"] = []
-                    json["tooLow"].push(key)
-                }
-            }
-
-            if(value.max) {
-                if(model[key].length > value.max) {
-                    if(!json["tooHigh"]) json["tooHigh"] = []
-                    json["tooHigh"].push(key)
-                }
-            }
-        }
-
-        json["valid"] = _.isEmpty(json)
-        return json
     },
 
     /**
@@ -162,51 +72,6 @@ module.exports = {
      */
     resolveDomain: async function(domain) {
         return (await dns.lookup(domain)).address
-    },
-
-    /**
-     * 
-     * @param {String} plain
-     * @returns {String} BCrypt hashed version of plain 
-     */
-    hashBCrypt: async function(plain) {
-        return await bcrypt.hash(plain, 10)
-    },
-
-    /**
-     * 
-     * @param {String} plain 
-     * @param {String} hash 
-     * @returns {Boolean} Returns true if fields match, false if not
-     */
-    compareBCryptHash: async function(plain, hash) {
-        return await bcrypt.compare(plain, hash)
-    },
-
-    /**
-     * 
-     * @param {Mongoose.Model} user 
-     * @returns {String} JWT Token for user
-     */
-    generateJWT: function(user) {
-        return jwt.sign({
-            id: user._id,
-            username: user.username,
-            email: user.email
-        }, "jy1J8jpuJn1Q9Mrb1HjQc0GqezmwwASydEDMMc4c3GsOkfbXLpTH0feYdVSSqPFB", { expiresIn: "48h" })
-    },
-
-    /**
-     * 
-     * @param {String} token
-     * @returns {JSON} Token data if valid 
-     */
-    validateToken: function(token) {
-        try {
-            return this.concatJson({ valid: true }, jwt.verify(token, "jy1J8jpuJn1Q9Mrb1HjQc0GqezmwwASydEDMMc4c3GsOkfbXLpTH0feYdVSSqPFB"))
-        } catch (err) {
-            return { valid: false }
-        }
     }
 
 }
