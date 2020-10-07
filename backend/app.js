@@ -17,8 +17,14 @@ const io = require("socket.io")({
 
 const routes = [];
 
+/**
+ * 
+ * @param {import("discord.js").ShardingManager} manager 
+ */
 module.exports = (manager) => {
     globals.shardingManager = manager;
+
+    manager.shards.forEach(shard => shard.setMaxListeners(100))
     
     scanFolderJs("./backend/routes", (route) => {
         if(!route.handler || !route.path) return;

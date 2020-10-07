@@ -52,4 +52,8 @@ module.exports = class SocketRequest {
     respondOk(data, spread = true) {
         this.respond(200, spread && data ? { ...data } : { data: data || "Ok" })
     }
+
+    respondNotOk(error) {
+        this.respondBadRequest(data);
+    }
 }
