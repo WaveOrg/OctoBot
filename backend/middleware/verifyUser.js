@@ -13,5 +13,8 @@ module.exports = (req, next) => {
     if(!verifiedToken.valid) return req.respondUnauthorized("Invalid token")
 
     req.user = verifiedToken;
+    delete req.user["valid"];
+    delete req.user["iat"];
+    delete req.user["exp"];
     next()
 }

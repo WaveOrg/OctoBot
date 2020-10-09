@@ -10,13 +10,8 @@ module.exports = {
      * @param {import("../core/SocketRequest")} req 
      */
     async handler(req) {
-        delete req.user["valid"];
-        delete req.user["iat"];
-        delete req.user["exp"];
-        
         getAllGuilds(req.user.access_token, req.user.token_type).then(async guilds => {
             guilds = guilds.map(guild => {
-
                 const isAdmin = new Permissions(parseInt(guild.permissions))
                     .has("ADMINISTRATOR")
 
