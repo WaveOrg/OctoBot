@@ -16,5 +16,15 @@ module.exports = {
         TEXT: "text", // Normal text
         JSON_EMBED: "embed", // Embed, stored as json string
         IMAGE_BASE64: "image" // Image encoded in base64
-    }
+    },
+
+    unimplementedModules: [
+        "moderation",
+        "userVerification",
+        "autoRespond",
+        "autoRole",
+        "tickets",
+        "persistentRoles",
+        "cc"
+    ]
 }

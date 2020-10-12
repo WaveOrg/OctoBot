@@ -21,8 +21,10 @@ module.exports = {
             categories: 0,
             channel: 0,
         }
+    
+        const channels = await shardingManager.shards.get(req.shardId).eval(`this.guilds.resolve("${guild.id}").channels.cache`);
 
-        guild.channels.forEach(channel => {
+        channels.forEach(channel => {
             switch(channel.type) {
                 case "category": channelData.categories++; break;
                 default: channelData.channel++; break;
@@ -32,12 +34,12 @@ module.exports = {
         const prefix = await guildOptionsOf(guild.id).getPrefix()
 
         req.respondOk({
-            region: guild.region,
-            userCount: guild.members.size,
+            region: guild.region.charAt(0).toUpperCase() + guild.region.slice(1).toLowerCase(),
+            memberCount: guild.memberCount,
             channelCount: channelData.channel,
             categoryCount: channelData.categories,
-            nickname: await shardingManager.shards.get(req.shardId).eval(`this.guilds.resolve("${guild.id}").me.nickname`),
-            prefix
+            nickname: "OctoBot",
+            prefix,
         })
     },
 
