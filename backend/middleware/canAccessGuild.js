@@ -39,6 +39,6 @@ module.exports = (req, next) => {
         next()
     }).catch(err => {
         console.log(err)
-        req.respondBadRequest(err);
+        req.respondForbidden(err);
     })
 }

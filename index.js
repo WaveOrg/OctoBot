@@ -8,12 +8,16 @@ const manager = new ShardingManager('./discord/bot.js',
     }
 );
 
+const promiseFunc = () => {
+    return new Promise(r => setTimeout(() => { r("Promise Done.") }, 600))
+}
+
 manager.on('shardCreate', 
     shard => logger.log(`Launched shard ${shard.id}`));
 
 
 logger.log("Spawining shards.")
-manager.spawn().then(s => {
+manager.spawn().then(async s => {
     logger.log(`Successfully spawned ${s.size} ${s.size > 1 ?  "shards" : "shard"}.`)
     require("./backend/app.js")(manager)
 })

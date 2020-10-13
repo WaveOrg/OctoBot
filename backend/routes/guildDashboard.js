@@ -38,7 +38,7 @@ module.exports = {
             memberCount: guild.memberCount,
             channelCount: channelData.channel,
             categoryCount: channelData.categories,
-            nickname: "OctoBot",
+            nickname: await shardingManager.shards.get(req.shardId).eval(`this.guilds.resolve("${guild.id}").me.displayName`),
             prefix,
         })
     },
