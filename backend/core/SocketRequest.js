@@ -49,6 +49,10 @@ module.exports = class SocketRequest {
         this.respond(404, { error: error || "Not Found" })
     }
 
+    respondRateLimited(retryAfter) {
+        this.respond(429, { retryAfter })
+    }
+
     respondOk(data, spread = true) {
         this.respond(200, spread && data ? { ...data } : { data: data || "Ok" })
     }

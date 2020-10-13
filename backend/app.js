@@ -37,6 +37,7 @@ io.on("connection", socket => {
     logger.logBackend(`Connection from ${socket.handshake.address}`)
     routes.forEach(route => {
         socket.on(route.path, async (payload) => {
+            logger.debug(`Request on /${route.path}`)
             const request = new SocketRequest(socket, route.path, JSON.parse(JSON.stringify(payload)));
             const handlers = [route.handler]
             if(route.middleware) handlers.unshift(...route.middleware)

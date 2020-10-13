@@ -12,8 +12,10 @@ module.exports = (req, next) => {
     if(!req.payload.guildId) return req.respondBadRequest("Invalid request.")
 
     getAllGuilds(req.user.access_token, req.user.token_type).then(async guilds => {
+        if(guilds.message && guilds.message.includes("rate limit")) {
+            return req.respondRateLimited(guilds.message.retry_after);
+        }
         guilds = guilds.map(guild => {
-
             const isAdmin = new Permissions(parseInt(guild.permissions))
                 .has("ADMINISTRATOR")
 

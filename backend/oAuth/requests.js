@@ -49,6 +49,7 @@ module.exports = {
                     "Authorization": fullToken
                 }
             }).then(res => res.json()).then(res => {
+                if(res.message && res.message.includes("rate limit")) return resolve(res);
                 res.lastCached = Date.now();
                 userGuilds.set(fullToken, res);
                 resolve(res);
