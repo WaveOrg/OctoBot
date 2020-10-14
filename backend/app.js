@@ -10,10 +10,14 @@ const { scanFolderJs } = require("./utils/utils");
 const { mongo } = require("../config.json")
 const globals = require("../launcher.globals");
 const { logger } = globals;
+const socketIo = require("socket.io");
+const https = require("https");
+const { ssl } = require("./constants")
 
-const io = require("socket.io")({
+const httpsServer = https.createServer(ssl)
+const io = socketIo(httpsServer, {
     path: "/ws"
-});
+})
 
 const routes = [];
 
@@ -65,5 +69,6 @@ Mongoose.connect(`mongodb://${mongo.user}:${mongo.password}@${mongo.host}:${mong
         logger.logBackend(`Connected to MongoDB at ${chalk.green(mongo.host)} (${chalk.gray(await util.resolveDomain(mongo.host))}). Using database ${chalk.green(mongo.database)}.`)
     }).catch(console.error);
 
-io.listen(8080)
-logger.logBackend(`Now listening on ${8080}`)
+httpsServer.listen(8443, () => {
+    logger.logBackend(`Now listening on ${8443}. Bound to HTTPS Server.`)
+})
