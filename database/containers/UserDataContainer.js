@@ -46,8 +46,9 @@ module.exports = class UserDataContainer {
         let userId;
         if(typeof user === "string") {
             userId = user;
+        } else {
+            userId = user.id
         }
-        userId = user.id
         return userData.has(userId) ? userData.get(userId) : new UserDataContainer(userId);
     }
 

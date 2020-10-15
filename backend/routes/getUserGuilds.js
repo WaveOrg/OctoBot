@@ -33,13 +33,16 @@ module.exports = {
                 sharedGuilds.push(...(await shardingManager.shards.get(shardId).eval(`this.guilds.cache.filter(g => [${shardGuilds.map(g => `"${g.id}"`).join(", ")}].includes(g.id))`)))
             }
 
-            sharedGuilds = sharedGuilds.map(guild => ({
+            let shardsValues = []
+            Array.from(shards.values()).forEach(it => shardsValues = shardsValues.concat(it))
+            const userGuilds = shardsValues.map(guild => ({
                 id: guild.id,
                 icon: guild.icon,
                 name: guild.name,
+                botIn: !!sharedGuilds.find(it => it.id === guild.id)
             }))
 
-            req.respondOk({ user: req.user, guilds: sharedGuilds });
+            req.respondOk({ user: req.user, guilds: userGuilds });
         }).catch(err => {
             console.log(err)
             req.respondBadRequest(err);
