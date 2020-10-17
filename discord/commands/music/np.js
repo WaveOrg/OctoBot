@@ -14,12 +14,11 @@ module.exports = {
         
         if(!player.isPlaying(message.guild.id)) return message.channel.send(ErrorEmbed("Nothing is playing!"))
 
-        const progressbar = player.createProgressBar(message.guild.id);
-        const np = await player.nowPlaying(message.guild.id);
+        const queue = player.getQueue(message.guild.id);
+        const progressbar = queue.progressBar();
+        const np = queue.np;
 
-        message.channel.send(InfoEmbed("🎧 Now Playing", `\`${progressbar.bar}\` **${ms(progressbar.time)}/${ms(np.durationMS)}**\n \n__Song Information:__\nCurrently playing [\`${np.name}\`](${np.url})\nSong Author: \`${np.author}\`\nDuration: \`${np.duration}\`\n \n__Requested By:__ \`${np.requestedBy.tag}\``).setThumbnail(np.thumbnail)
-        )
-
+        message.channel.send(InfoEmbed("🎧 Now Playing", `\`${progressbar}\` **${ms(Date.now() - queue.start)}/${ms(np.lengthMS)}**\n \n__Song Information:__\nCurrently playing [\`${np.title}\`](${np.link})\nSong Author: \`${np.author}\`\nDuration: \`${np.formattedLength}\`\n \n__Requested By:__ ${!np.requestedBy.id ? "`Unknown`" : `<@${np.requestedBy.id}>`}`))
     },
 
     config: {

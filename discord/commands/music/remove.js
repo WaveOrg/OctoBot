@@ -15,10 +15,15 @@ module.exports = {
         if(!player.isPlaying(message.guild.id)) return message.channel.send(ErrorEmbed("Nothing is playing!"))
         if(!args[0] || isNaN(args[0])) return message.channel.send(ErrorEmbed("Usage: " + this.config.usage))
 
-        const removed = await player.remove(message.guild.id, parseInt(args[0]));
+        try {
+            const song = player.getQueue(message.guild.id).tracks[parseInt(args[0]) - 1];
+            player.getQueue(message.guild.id).tracks.splice(parseInt(args[0]) - 1, 1);
 
-        if(!removed) return message.channel.send(ErrorEmbed("<:no:750451799609311412> Couldn't find that song!").setTitle(""))
-        message.channel.send(InfoEmbed("✂ Removed from Queue", `${removed.name} was removed from the queue.`).setThumbnail(removed.thumbnail))
+            message.channel.send(InfoEmbed("✂ Removed from Queue", `${song.title} has been removed from the queue.`))
+        } catch (error) {
+            return message.channel.send(ErrorEmbed("<:no:750451799609311412> Couldn't find that song!").setTitle(""))
+        }
+        
     },
 
     config: {

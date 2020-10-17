@@ -22,7 +22,7 @@ module.exports = {
 
         const wasPlayingBefore = player.isPlaying(message.guild.id)
 
-        const tracks = await player.search("ytsearch", args.join(" "), message.author);
+        const tracks = await player.search(player.detectType(args.join(" ")), args.join(" "), message.author);
         const track = tracks[0];
         
         if(!track) return message.channel.send(ErrorEmbed("I couldn't find a song by that name!"))
@@ -46,36 +46,6 @@ module.exports = {
                     ]))
             })
         }
-
-        /*const wasPlayingBefore = await player.isPlaying(message.guild.id)
-
-        const sent = await message.channel.send(new Discord.MessageEmbed().setDescription("🔍 Searching the waves for `" + (args.join(" ").length > 1000? args.join(" ").substr(0, 1000) : args.join(" ")) + '`').setTitle(" ").setColor("12cad6"))
-
-        player.play(message.member.voice.channel, args.join(" "), message.member.user)
-            .catch(err => {
-                if(err == "Not found") {
-                    message.channel.send(ErrorEmbed("I couldn't find a song by that name!"))
-                } else {
-                    message.channel.send(ErrorEmbed("I couldn't get any results: " + err))
-                }
-            })
-            .then(track => {
-                if(!wasPlayingBefore) {
-                    player.getQueue(message.guild.id).on('end', () => {
-                        message.channel.send(ErrorEmbed("All songs have been played!").setTitle(""))
-                    }).on('trackChanged', (_old, newt) => {
-                        message.channel.send(InfoEmbed("▶ Now Playing", `Now playing ${newt.name}`).setThumbnail(newt.thumbnail))
-                    }).on('voiceDisconnect', (queue) => {
-                        player.pause(queue.guildID)
-                    }).on('channelEmpty', () => {
-                        player.pause(message.guild.id)
-                    }).on('channelNoLongerEmpty', () => {
-                        player.resume(message.guild.id)
-                    })
-                }
-        
-                sent.edit(InfoEmbed(`🎵 Added to queue!`, `${track.name} has been added!`).setThumbnail(track.thumbnail))
-            })*/
     },
 
     config: {

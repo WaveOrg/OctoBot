@@ -13,7 +13,7 @@ module.exports = {
         
         if(!player.isPlaying(message.guild.id)) return message.channel.send(ErrorEmbed("Nothing is playing!"))
 
-        player.pause(message.guild.id);
+        player.setPause(true, message.guild.id);
 
         message.channel.send(InfoEmbed("⏸ Music Paused", `I have paused the music!`))
 

@@ -12,18 +12,20 @@ module.exports = {
     async run(message, args, client) {
         
         if(!player.isPlaying(message.guild.id)) return message.channel.send(ErrorEmbed("Nothing is playing!"))
+        if(!message.member.voice.channel) return message.channel.send(ErrorEmbed("You must be in a Voice Channel!"))
 
-        player.getQueue(message.guild.id).player.resume()
+        const queue = player.getQueue(message.guild.id);
+        queue.player.switchChannel(message.member.voice.channel.id, { selfdeaf: true });
+        player.setPause(false, message.guild.id);
 
         message.channel.send(InfoEmbed("▶ Music Started", `I have resumed the music!`))
-
     },
 
     config: {
-        command: "resume",
-        aliases: [],
-        description: "Resumes the current playing song.",
+        command: "rejoin",
+        aliases: ['comeback'],
+        description: "Rejoins and resumes the current playing song.",
         permissions: [],
-        usage: `resume`
+        usage: `rejoin`
     }
 }

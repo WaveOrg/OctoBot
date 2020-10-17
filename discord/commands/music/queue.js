@@ -17,7 +17,7 @@ module.exports = {
         const queue = player.getQueue(message.guild.id);
 
         message.channel.send(InfoEmbed("📜 Current Queue", (queue.tracks.map((track, i) => {
-            return `${i === 0 ? 'Current' : `#${i+1}`} - ${track.name} | ${track.author}`;
+            return `#${i+1} - ${track.title} | ${track.author}`;
         }).join('\n'))));
 
     },

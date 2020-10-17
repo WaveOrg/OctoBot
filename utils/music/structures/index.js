@@ -42,7 +42,7 @@ module.exports = class Player extends EventEmitter {
     
     /**
      * 
-     * @param {('ytsearch')} source 
+     * @param {('ytsearch'|'ytlink'|'soundcloud'|'website')} source 
      * @param {String} searchTerms 
      * @param {discord.User} requestedBy
      * @returns {Promise<Track[]>}
@@ -51,7 +51,9 @@ module.exports = class Player extends EventEmitter {
         const node = this.manager.idealNodes[0];
 
         const param = new URLSearchParams();
-        param.append("identifier", `${source}:${searchTerms}`)
+        
+        if(source == 'ytsearch') param.append("identifier", `${source}:${searchTerms}`)
+            else param.append("identifier", `${searchTerms}`)
 
         const tracks = await fetch(`http://${node.host}:${node.port}/loadtracks?${param}`, {
             headers: {
@@ -72,9 +74,12 @@ module.exports = class Player extends EventEmitter {
     async play(track, voiceChannel, textChannel, guild) {
         const guildID = guild.id
         if(this.queues.has(guildID)) {
+
             const queue = this.queues.get(guildID);
-            if(Array.isArray(track)) return track.forEach(theTrack => queue.addToQueue(theTrack))
+            if(Array.isArray(track)) track.forEach(theTrack => queue.addToQueue(theTrack))
+            else queue.addToQueue(track)
         } else {
+
             const player = await this.manager.join({
                 guild: guildID,
                 channel: voiceChannel.id,
@@ -82,8 +87,6 @@ module.exports = class Player extends EventEmitter {
             }, {
                 selfdeaf: true
             });
-
-            player.volume(100);
 
             player.on('end', change => {
                 if(change.reason === "REPLACED") return; // ignore skip
@@ -93,9 +96,9 @@ module.exports = class Player extends EventEmitter {
             const queue = new Queue(guildID, textChannel, voiceChannel, Array.isArray(track) ? track : [track], player);
             
             this.queues.set(guildID, queue);
-        }
 
-        this._playTrack(guildID);
+            this._playTrack(guildID);
+        }
 
         return this.queues.get(guildID)
     }
@@ -107,16 +110,32 @@ module.exports = class Player extends EventEmitter {
     _playTrack(guildID) {
         const queue = this.queues.get(guildID);
         const song = queue.getNextSong();
-        
+
         if(!song) {
-            queue.emit('end');
             this.manager.leave(guildID);
             this.queues.delete(guildID);
             return;
         }
 
+        queue.startSong()
         queue.emit('trackChange', song);
         queue.player.play(song.lavalinkID);
+    }
+
+    /**
+     * 
+     * @param {String} input
+     * @returns {('ytsearch'|'ytlink'|'soundcloud'|'website')} 
+     */
+    detectType(input) {
+        if(/^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/.test(input))
+            return 'ytlink';
+        else if(/^https?:\/\/(soundcloud\.com|snd\.sc)\/(.*)$/.test(input))
+            return 'soundcloud';
+        else if(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/.test(input))
+            return 'website';
+        else 
+            return 'ytsearch';
     }
 
     /**
@@ -131,10 +150,45 @@ module.exports = class Player extends EventEmitter {
 
     /**
      * 
+     * @param {('toggle'|boolean)} toggle
+     * @param {String} guildID
+     * @returns {Promise<Boolean>}
+     */
+    async setPause(toggle, guildID) {
+        const queue = this.queues.get(guildID);
+
+        if(toggle == "toggle") {
+            const currentState = queue.player.paused;
+            await queue.player.pause(!currentState);
+        } else {
+            await queue.player.pause(toggle);
+        }
+
+        return queue.player.paused;
+    }        
+
+    /**
+     * 
      * @param {String} guildID 
      */
     isPlaying(guildID) {
         return this.queues.has(guildID);
+    }
+
+    /**
+     * 
+     * @param {String} guildID 
+     */
+    getQueue(guildID) {
+        return this.queues.get(guildID)
+    }
+
+    /**
+     * 
+     * @param {String} guildID 
+     */
+    skip(guildID) {
+        
     }
 
 }
