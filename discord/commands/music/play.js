@@ -20,7 +20,34 @@ module.exports = {
         if(!perms.has("SPEAK")) return message.channel.send(ErrorEmbed("I play music in the voice channel because I am missing the `Speak` permission."))
         if(!args[0]) return message.channel.send(ErrorEmbed("Incorrect Usage. `play <keyword/url>`"));
 
-        const wasPlayingBefore = await player.isPlaying(message.guild.id)
+        const wasPlayingBefore = player.isPlaying(message.guild.id)
+
+        const tracks = await player.search("ytsearch", args.join(" "), message.author);
+        const track = tracks[0];
+        
+        if(!track) return message.channel.send(ErrorEmbed("I couldn't find a song by that name!"))
+
+        const queue = await player.play(track, message.member.voice.channel, message.channel, message.guild);
+
+        message.channel.send(InfoEmbed("🎵 Added to queue!", `${track.title}`)
+            .addFields([
+                { name: "Duration", value: track.formattedLength, inline: true },
+                { name: "Author", value: track.author, inline: true },
+                { name: "Requested By", value: `<@${track.requestedBy.id}>`, inline: true }
+            ]));
+        
+        if(!wasPlayingBefore) {
+            queue.on('trackChange', song => {
+                message.channel.send(InfoEmbed("▶ Now Playing:", `${song.title}`)
+                    .addFields([
+                        { name: "Duration", value: song.formattedLength, inline: true },
+                        { name: "Author", value: song.author, inline: true },
+                        { name: "Requested By", value: `<@${song.requestedBy.id}>`, inline: true }
+                    ]))
+            })
+        }
+
+        /*const wasPlayingBefore = await player.isPlaying(message.guild.id)
 
         const sent = await message.channel.send(new Discord.MessageEmbed().setDescription("🔍 Searching the waves for `" + (args.join(" ").length > 1000? args.join(" ").substr(0, 1000) : args.join(" ")) + '`').setTitle(" ").setColor("12cad6"))
 
@@ -48,7 +75,7 @@ module.exports = {
                 }
         
                 sent.edit(InfoEmbed(`🎵 Added to queue!`, `${track.name} has been added!`).setThumbnail(track.thumbnail))
-            })  
+            })*/
     },
 
     config: {

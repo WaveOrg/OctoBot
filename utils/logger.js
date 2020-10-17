@@ -97,6 +97,15 @@ module.exports = class Logger {
 
     /**
      * 
+     * @param {import("discord.js").Client}
+     * @param {String} message
+     */
+    logLavalink(message) {
+        this.log(`${chalk.blueBright(`[LavaLink]`)} ${message}`)
+    }
+
+    /**
+     * 
      * @param {String} message 
      */
     debug(message) {
