@@ -45,6 +45,9 @@ module.exports = {
                         { name: "Requested By", value: `<@${song.requestedBy.id}>`, inline: true }
                     ]))
             })
+            queue.on('end', () => {
+                message.channel.send(ErrorEmbed("<:no:750451799609311412> All songs have been played!"))
+            })
         }
     },
 

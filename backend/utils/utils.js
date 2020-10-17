@@ -43,7 +43,7 @@ module.exports = {
             for(let file of files) {
                 const stat = await fs.stat(`${rootPath}/${file}`)
                 if(stat.isDirectory()) {
-                    return this.scanFolderJs(`${rootPath}/${file}`, cb);
+                    //return this.scanFolderJs(`${rootPath}/${file}`, cb);
                 } else if(file.endsWith(".js")) {
                     cb(require(path.resolve(`${rootPath}/${file}`)));
                 }

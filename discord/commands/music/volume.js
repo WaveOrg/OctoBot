@@ -15,7 +15,7 @@ module.exports = {
         if(!player.isPlaying(message.guild.id)) return message.channel.send(ErrorEmbed("Nothing is playing!"))
         if(!args[0] || isNaN(args[0]) || parseInt(args[0]) > 200 || parseInt(args[0]) < 0) return message.channel.send(ErrorEmbed("Usage: " + this.config.usage))
 
-        player.setVolume(message.guild.id, parseInt(args[0]));
+        player.changeVolume(message.guild.id, parseInt(args[0]));
 
         message.channel.send(InfoEmbed("🔊 Volume Set", `The volume is now ${args[0]}!`))
 

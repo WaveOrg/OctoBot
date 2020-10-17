@@ -30,11 +30,14 @@ module.exports = (manager) => {
 
     manager.shards.forEach(shard => shard.setMaxListeners(100))
     
-    scanFolderJs("./backend/routes", (route) => {
-        if(!route.handler || !route.path) return;
-        routes.push(route);
-        logger.logBackend(`Loaded route ${route.path}${route.middleware ? ` with ${route.middleware.length} middleware` : ""}`)
-    })
+    const routeDirs = ["routes", "routes/modules"]
+    for(const dir of routeDirs) {
+        scanFolderJs(`./backend/${dir}`, (route) => {
+            if(!route.handler || !route.path) return;
+            routes.push(route);
+            logger.logBackend(`Loaded route ${route.path}${route.middleware ? ` with ${route.middleware.length} middleware` : ""}`)
+        })
+    }
 }
 
 io.on("connection", socket => {

@@ -15,7 +15,7 @@ module.exports = {
         if(!player.isPlaying(message.guild.id)) return message.channel.send(ErrorEmbed("Nothing is playing!"))
 
         if(player.getQueue(message.guild.id).volume > 200) {
-            player.setVolume(message.guild.id, 100)
+            player.changeVolume(message.guild.id, 100)
 
             message.channel.send(InfoEmbed("", `<:yes:752247197436870666> Earrape has been disabled.`))
         } else {
@@ -26,7 +26,7 @@ module.exports = {
             const reactions = await msg.awaitReactions((a,u) => a.emoji.name == '✅' && !u.bot, { max: 1, time: 10000 })
 
             if(reactions.first().emoji.name == '✅') {
-                player.setVolume(message.guild.id, 100000)
+                player.changeVolume(message.guild.id, 100000)
                 message.channel.send(InfoEmbed("", `<:yes:752247197436870666> Earrape has been enabled.`))
             } 
         }

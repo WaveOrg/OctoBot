@@ -10,7 +10,7 @@ module.exports = {
         TICKETS: "tickets",
         FUN: "fun",
         PERSISTENT_ROLES: "persistentRoles",
-        CUSTOM_COMMANDS: "cc"
+        CUSTOM_COMMANDS: "customCommands"
     },
     welcomeLeaveTypes: {
         TEXT: "text", // Normal text
@@ -25,6 +25,6 @@ module.exports = {
         "autoRole",
         "tickets",
         "persistentRoles",
-        "cc"
+        "customCommands"
     ]
 }

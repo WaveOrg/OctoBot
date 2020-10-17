@@ -144,7 +144,6 @@ module.exports = class Player extends EventEmitter {
      * @param {number} newVolume 
      */
     changeVolume(guildID, newVolume) {
-        if(newVolume > 200 || newVolume < 0) return new Error("Volume out of range.");
         this.queues.get(guildID).player.volume(newVolume);
     }
 
@@ -188,7 +187,8 @@ module.exports = class Player extends EventEmitter {
      * @param {String} guildID 
      */
     skip(guildID) {
-        
+        //this.queues.get(guildID).player.stop();
+        this._playTrack(guildID)
     }
 
 }
