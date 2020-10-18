@@ -1,6 +1,7 @@
 const Discord = require("discord.js")
 const { utils, logger, audioPlayers, player } = require("../../../globals");
 const { InfoEmbed, ErrorEmbed } = require("../../../utils/utils");
+const { modules } = require("../../../database/constants")
 const ms = require('ms')
 
 module.exports = {
@@ -32,6 +33,7 @@ module.exports = {
         description: "Removes a song from queue.",
         permissions: [],
         usage: `remove <0-200>`,
-        premium: true
+        premium: true,
+        requiresModules: [modules.MUSIC]
     }
 }

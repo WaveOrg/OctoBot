@@ -1,6 +1,7 @@
 const Discord = require("discord.js")
 const { player } = require("../../../globals");
 const { InfoEmbed, ErrorEmbed } = require("../../../utils/utils");
+const { modules } = require("../../../database/constants")
 
 module.exports = {
     /**
@@ -25,6 +26,7 @@ module.exports = {
         aliases: ["repeat"],
         description: "Loops the current queue.",
         permissions: [],
-        usage: `loop`
+        usage: `loop`,
+        requiresModules: [modules.MUSIC]
     }
 }

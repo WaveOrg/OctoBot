@@ -1,7 +1,8 @@
 const Discord = require("discord.js")
-const { utils, logger, audioPlayers, player } = require("../../../globals");
+const { player } = require("../../../globals");
 const { InfoEmbed, ErrorEmbed } = require("../../../utils/utils");
 const ms = require('ms')
+const { modules } = require("../../../database/constants")
 
 module.exports = {
     /**
@@ -16,7 +17,7 @@ module.exports = {
 
         const queue = player.getQueue(message.guild.id);
 
-        message.channel.send(InfoEmbed("📜 Current Queue", (queue.tracks.map((track, i) => {
+        message.channel.send(InfoEmbed("📜 Current Queue", `Playing: ${queue.np.title} | ${queue.np.author}\n` + (queue.tracks.map((track, i) => {
             return `#${i+1} - ${track.title} | ${track.author}`;
         }).join('\n'))));
 
@@ -27,6 +28,7 @@ module.exports = {
         aliases: ["whatsongsaregoingtobeplaying"],
         description: "Shows the current queue.",
         permissions: [],
-        usage: `queue`
+        usage: `queue`,
+        requiresModules: [modules.MUSIC]
     }
 }

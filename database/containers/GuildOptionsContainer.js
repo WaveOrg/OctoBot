@@ -3,6 +3,8 @@ const setValue = require("set-value")
 const getValue = require("get-value")
 const { guildOptions } = require("./containerCache")
 const GuildOptions = require("../models/GuildOptions")
+const { findMissing } = require("../../utils/dbUtils");
+const { ReactionUserManager } = require("discord.js")
 
 // Normally Array.prototype.push() returns the length, so this betterPush returns the new array, allowing for a little cleaner code imo.
 Array.prototype.betterPush = function(value) {
@@ -24,7 +26,6 @@ Array.prototype.remove = function(value) {
  * @param {Array<String>} keys 
  */
 function omitDeep(object, keys) {
-
     return _.cloneDeepWith(object, (it) => {
         if(it && typeof it === "object") for(let key of keys) delete it[key]
     })
@@ -57,6 +58,7 @@ module.exports = class GuildOptionsContainer {
      */
     async ensureGuild() {
         const foundGuild = await GuildOptions.findOne({ guildId: this.guildId })
+
         if(foundGuild) return Promise.resolve();
 
         try {
@@ -214,6 +216,52 @@ module.exports = class GuildOptionsContainer {
         } else {
             return this.setActiveModules(activeModules.remove(module))
         }
+    }
+
+    /**
+     * 
+     * @returns {Promise<Boolean>}
+     */
+    async isAutoRoleEnabled() {
+        return (await this.getProperty("autoRole")).enabled;
+    }
+
+    /**
+     * 
+     * @returns {Promise<Stirng>}
+     */
+    async getAutoRoleId() {
+        return (await this.getProperty("autoRole.roleId"));
+    }
+
+    async enableAutoRole(roleId = null) {
+        roleId = !roleId ? "null" : roleId;
+        const document = this.getFromDatabase();
+        document.autoRole["enabled"] = true;
+        document.autoRole["roleId"] = roleId;
+        document.markModified("autoRole.roleId");
+        document.markModified("autoRole.enabled");
+        await document.save();
+        return;
+    }
+
+    async disableAutoRole() {
+        const document = await this.getFromDatabase();
+        document.autoRole["enabled"] = false;
+        document.autoRole["roleId"] = "null";
+        document.markModified("autoRole.roleId");
+        document.markModified("autoRole.enabled");
+        await document.save();
+        return;
+    }
+
+    async toggleAutoRole(roleId = null) {
+        roleId = !roleId ? "null" : roleId;
+        if(!(await this.isAutoRoleEnabled())) {
+            return this.enableAutoRole(roleId);
+        }
+
+        return this.disableAutoRole();
     }
 
     /**

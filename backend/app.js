@@ -27,8 +27,24 @@ const routes = [];
  */
 module.exports = (manager) => {
     globals.shardingManager = manager;
+    
+    const { emitToListeners } = require("./routes/modules/musicListener")
+    
+    manager.shards.forEach(shard => {
+        shard.setMaxListeners(100)
+        shard.on("message", (message) => {
+            if(!message._shardEvent) return
 
-    manager.shards.forEach(shard => shard.setMaxListeners(100))
+            switch(message._shardEvent) {
+                case "emitMusicToListeners":
+                    if(!message.guildId) return;
+                    emitToListeners(message.guildId);
+                    break;
+                default:
+                    break;
+            }
+        })
+    })
     
     const routeDirs = ["routes", "routes/modules"]
     for(const dir of routeDirs) {

@@ -1,7 +1,7 @@
 const Discord = require("discord.js");
 const mongoConnection = require("../database/mongo")
 const { token } = require("../config.json");
-const Player = require("../utils/music/structures");
+const Player = require("./music/structures/Player");
 const { logger } = require("../launcher.globals")
 //const { Player } = require("../utils/music/player");
 

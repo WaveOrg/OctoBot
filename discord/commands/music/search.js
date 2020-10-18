@@ -3,6 +3,7 @@ const { utils, logger, player } = require("../../../globals");
 const { InfoEmbed, ErrorEmbed } = require("../../../utils/utils");
 const ytlist = require('youtube-playlist');
 const moment = require("moment");
+const { modules } = require("../../../database/constants")
 
 // const Youtube = require('youtube-query');
 // const search = new Youtube('AIzaSyAHet6xGRuEfMAtaDty_Px0DqZ7PQA9hrQ');
@@ -63,28 +64,6 @@ module.exports = {
                     })
                 }
             })
-
-        /*if(!track) return message.channel.send(ErrorEmbed("I couldn't find a song by that name!"))
-
-        const queue = await player.play(track, message.member.voice.channel, message.channel, message.guild);
-
-        message.channel.send(InfoEmbed("🎵 Added to queue!", `${track.title}`)
-            .addFields([
-                { name: "Duration", value: track.formattedLength, inline: true },
-                { name: "Author", value: track.author, inline: true },
-                { name: "Requested By", value: `<@${track.requestedBy.id}>`, inline: true }
-            ]));
-        
-        if(!wasPlayingBefore) {
-            queue.on('trackChange', song => {
-                message.channel.send(InfoEmbed("▶ Now Playing:", `${song.title}`)
-                    .addFields([
-                        { name: "Duration", value: song.formattedLength, inline: true },
-                        { name: "Author", value: song.author, inline: true },
-                        { name: "Requested By", value: `<@${song.requestedBy.id}>`, inline: true }
-                    ]))
-            })
-        }*/
     },
 
     config: {
@@ -92,6 +71,7 @@ module.exports = {
         aliases: [],
         description: "Search for a song",
         permissions: [],
-        usage: `search <keyword>`
+        usage: `search <keyword>`,
+        requiresModules: [modules.MUSIC]
     }
 }

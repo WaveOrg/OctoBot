@@ -2,6 +2,7 @@ const Discord = require("discord.js")
 const { utils, logger, audioPlayers, player } = require("../../../globals");
 const { InfoEmbed, ErrorEmbed } = require("../../../utils/utils");
 const ms = require('ms')
+const { modules } = require("../../../database/constants")
 
 module.exports = {
     /**
@@ -35,6 +36,7 @@ module.exports = {
         description: "Add karaoke effect.",
         permissions: [],
         usage: `karaoke`,
-        premium: true
+        premium: true,
+        requiresModules: [modules.MUSIC]
     }
 }

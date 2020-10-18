@@ -1,6 +1,7 @@
 const Discord = require("discord.js")
 const { player } = require("../../../globals");
 const { InfoEmbed, ErrorEmbed } = require("../../../utils/utils");
+const { modules } = require("../../../database/constants")
 
 module.exports = {
     /**
@@ -23,6 +24,7 @@ module.exports = {
         aliases: ["removeeveryfuckingsong", "clearqueue"],
         description: "Clears the entire queue.",
         permissions: [],
-        usage: `clear`
+        usage: `clear`,
+        requiresModules: [modules.MUSIC]
     }
 }

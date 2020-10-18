@@ -2,6 +2,7 @@ const Discord = require("discord.js");
 const { utils, logger, player } = require("../../../globals");
 const { InfoEmbed, ErrorEmbed } = require("../../../utils/utils");
 const ytlist = require('youtube-playlist');
+const { modules } = require("../../../database/constants")
 
 // const Youtube = require('youtube-query');
 // const search = new Youtube('AIzaSyAHet6xGRuEfMAtaDty_Px0DqZ7PQA9hrQ');
@@ -56,6 +57,7 @@ module.exports = {
         aliases: ["music", "search"],
         description: "Play a song",
         permissions: [],
-        usage: `play <url/keyword>`
+        usage: `play <url/keyword>`,
+        requiresModules: [modules.MUSIC]
     }
 }

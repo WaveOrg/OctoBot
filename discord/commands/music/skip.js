@@ -1,6 +1,7 @@
 const Discord = require("discord.js")
 const { player } = require("../../../globals");
 const { InfoEmbed, ErrorEmbed } = require("../../../utils/utils");
+const { modules } = require("../../../database/constants")
 
 module.exports = {
     /**
@@ -24,6 +25,7 @@ module.exports = {
         aliases: [],
         description: "Skips the current song.",
         permissions: [],
-        usage: `skip`
+        usage: `skip`,
+        requiresModules: [modules.MUSIC]
     }
 }

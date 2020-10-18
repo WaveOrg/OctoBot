@@ -1,6 +1,7 @@
-const track = require('./track')
+const track = require('./Track')
 const { Player } = require('lavacord')
 const { EventEmitter } = require('events');
+const { reset: resetBands } = require("./Bands");
 
 module.exports = class Queue extends EventEmitter {
     /**
@@ -19,7 +20,23 @@ module.exports = class Queue extends EventEmitter {
         this.tracks = initialTracks || [];
         this.player = player;
 
-        this.start = Date.now();
+        this.startTime = Date.now();
+        this.lastPaused = -1;
+
+        this.filter = null;
+    }
+
+    get start() {
+        if(this.lastPaused > 0) {
+            this.startTime += Date.now() - this.lastPaused;
+            this.lastPaused = Date.now();
+        }
+        
+        return this.startTime;
+    }
+
+    set start(value) {
+        this.startTime = value;
     }
 
     /**
@@ -55,9 +72,28 @@ module.exports = class Queue extends EventEmitter {
 
     startSong() {
         this.start = Date.now();
+        this.lastPaused = -1;
+    }
+
+    /**
+     * @param {Object} bands
+     * @param {String} bands.name
+     * @param {Array} bands.bands
+     * 
+     */
+    async toggleFilter(bands) {
+        if(this.filter !== bands.name) {
+            this.filter = bands.name;
+            await this.player.equalizer(bands.bands);
+            return true;
+        }
+
+        this.filter = null;
+        await this.player.equalizer(resetBands.bands);
+        return false;
     }
 }
 
 function convertRange( value, r1, r2 ) { 
-    return ( value - r1[ 0 ] ) * ( r2[ 1 ] - r2[ 0 ] ) / ( r1[ 1 ] - r1[ 0 ] ) + r2[ 0 ];
+    return (value - r1[0]) * (r2[1] - r2[0]) / (r1[1] - r1[0]) + r2[0];
 }

@@ -1,6 +1,7 @@
 const Discord = require("discord.js")
 const { player } = require("../../../globals");
 const { InfoEmbed, ErrorEmbed } = require("../../../utils/utils");
+const { modules } = require("../../../database/constants")
 
 module.exports = {
     /**
@@ -26,6 +27,7 @@ module.exports = {
         aliases: ['comeback'],
         description: "Rejoins and resumes the current playing song.",
         permissions: [],
-        usage: `rejoin`
+        usage: `rejoin`,
+        requiresModules: [modules.MUSIC]
     }
 }

@@ -2,10 +2,8 @@ const Discord = require("discord.js");
 const verifyUser = require("../../middleware/verifyUser");
 const canAccessGuild = require("../../middleware/canAccessGuild");
 const { guildOptionsOf } = require("../../../utils/dbUtils");
-const { modules, unimplementedModules } = require("../../../database/constants");
+const { modules } = require("../../../database/constants");
 const { shardingManager } = require("../../../launcher.globals");
-
-const listeners = [];
 
 module.exports = {
 
@@ -14,11 +12,11 @@ module.exports = {
      * @param {import("../../core/SocketRequest")} req 
      */
     async handler(req) {
+
         /**
          * 
          * @type {Discord.Guild}
          */
-
         const guild = req.guild;
 
         const guildOptions = guildOptionsOf(guild.id);

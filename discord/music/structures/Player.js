@@ -1,9 +1,9 @@
 const { Manager } = require('lavacord');
 const discord = require('discord.js');
 const { EventEmitter } = require('events');
-const Queue = require('./queue');
+const Queue = require('./Queue');
 const fetch = require('node-fetch');
-const Track = require('./track');
+const Track = require('./Track');
 
 module.exports = class Player extends EventEmitter {
     /**
@@ -14,6 +14,7 @@ module.exports = class Player extends EventEmitter {
     constructor(nodes, client) {
         super();
         
+        this.client = client;
         client.on('ready', () => {
             /** @type {Map<string, Queue>} */
             this.queues = new Map();
@@ -100,6 +101,7 @@ module.exports = class Player extends EventEmitter {
             this._playTrack(guildID);
         }
 
+        this._emitToListeners(guildID);
         return this.queues.get(guildID)
     }
 
@@ -108,6 +110,7 @@ module.exports = class Player extends EventEmitter {
      * @param {String} guildID
      */
     _playTrack(guildID) {
+        this._emitToListeners(guildID);
         const queue = this.queues.get(guildID);
         const song = queue.getNextSong();
 
@@ -145,6 +148,7 @@ module.exports = class Player extends EventEmitter {
      */
     changeVolume(guildID, newVolume) {
         this.queues.get(guildID).player.volume(newVolume);
+        this._emitToListeners(guildID);
     }
 
     /**
@@ -163,6 +167,12 @@ module.exports = class Player extends EventEmitter {
             await queue.player.pause(toggle);
         }
 
+        this._emitToListeners(guildID);
+        if(queue.player.paused) queue.lastPaused = Date.now();
+        else {
+            queue.start;
+            queue.lastPaused = -1
+        };
         return queue.player.paused;
     }        
 
@@ -189,6 +199,10 @@ module.exports = class Player extends EventEmitter {
     skip(guildID) {
         //this.queues.get(guildID).player.stop();
         this._playTrack(guildID)
+    }
+
+    async _emitToListeners(guildId) {
+        this.client.shard.send({ _shardEvent: "emitMusicToListeners", guildId })
     }
 
 }
