@@ -25,11 +25,9 @@ module.exports = {
                 break;
 
             case "view":
-                if(await guildOptions.isAutoRoleEnabled()) {
-                    message.channel.send(`Auto role is enabled`, `Auto Role is set to <@&${await guildOptions.getAutoRoleId()}`)
-                }
+                if(await guildOptions.isAutoRoleEnabled()) return message.channel.send(InfoEmbed(`Auto role is enabled`, `Auto Role is set to <@&${await guildOptions.getAutoRoleId()}>`))
 
-                message.channel.send(`Auto role is disabled`, "")
+                message.channel.send(InfoEmbed(`Auto role is disabled`, ""))
                 break;
 
             case 'disable':

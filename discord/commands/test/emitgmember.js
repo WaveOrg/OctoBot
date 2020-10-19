@@ -15,8 +15,8 @@ module.exports = {
     config: {
         command: "emit",
         aliases: [],
-        description: " test",
-        usage: `cool`,
+        description: "test",
+        usage: `emit`,
         admin: true
     }
 }

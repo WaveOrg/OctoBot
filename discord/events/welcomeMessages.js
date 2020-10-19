@@ -31,7 +31,6 @@ module.exports = {
             .replace(/%server%/g, member.guild.name))
         .catch(err => { logger.error(err) })
 
-        // TODO: SEND
     },
     config: {
         name: "Welcome Messages",

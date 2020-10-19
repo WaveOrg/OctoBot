@@ -236,7 +236,7 @@ module.exports = class GuildOptionsContainer {
 
     async enableAutoRole(roleId = null) {
         roleId = !roleId ? "null" : roleId;
-        const document = this.getFromDatabase();
+        const document = await this.getFromDatabase();
         document.autoRole["enabled"] = true;
         document.autoRole["roleId"] = roleId;
         document.markModified("autoRole.roleId");
