@@ -14,10 +14,16 @@ module.exports = {
         
         if(!player.isPlaying(message.guild.id)) return message.channel.send(ErrorEmbed("Nothing is playing!"))
 
-        const mode = player.getQueue(message.guild.id).repeatMode || false;
-        player.setRepeatMode(message.guild.id, !mode)
+        if(!args[0] || !['off', 'current', 'queue'].includes(args[0].toLowerCase())) return message.channel.send(ErrorEmbed("Usage: `loop <off/current/queue>`"));
 
-        message.channel.send(InfoEmbed("🔁 Loop", `Songs in the queue will ${!mode ? "now loop" : "no longer loop"}!`))
+        const mode = args[0].toLowerCase() == "off" ? false : args[0].toLowerCase();
+        player.getQueue(message.guild.id).setLoop(mode);
+
+        message.channel.send(InfoEmbed("🔁 Loop", 
+            mode == "current" ? "The current song will continue to play" 
+            : mode == "queue" ? "The songs in the queue will now loop" 
+            : "Looping disabled"
+        ))
 
     },
 

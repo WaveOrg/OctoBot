@@ -201,6 +201,14 @@ module.exports = class Player extends EventEmitter {
         this._playTrack(guildID)
     }
 
+    /**
+     * 
+     * @param {String} guildID
+     */
+    stop(guildID) {
+        return this.queues.get(guildID).player.stop()
+    }
+
     async _emitToListeners(guildId) {
         this.client.shard.send({ _shardEvent: "emitMusicToListeners", guildId })
     }

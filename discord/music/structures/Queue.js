@@ -24,6 +24,9 @@ module.exports = class Queue extends EventEmitter {
         this.lastPaused = -1;
 
         this.filter = null;
+        
+        /** @type {false|'queue'|'current'} */
+        this.loop = false;
     }
 
     get start() {
@@ -47,10 +50,28 @@ module.exports = class Queue extends EventEmitter {
         this.tracks.push(track);
     }
 
+    /**
+     * 
+     * @returns {Queue}
+     */
+    shuffleTracks() {
+        this.tracks.sort(() => Math.random() - 0.5);
+        return this;
+    }
+
     getNextSong() {
-        const song = this.tracks.shift();
-        this.np = song;
-        return song;
+        if(!this.loop) {
+            const song = this.tracks.shift();
+            this.np = song;
+            return song;
+        } else if(this.loop == "current") {
+            return this.np;
+        } else if(this.loop == 'queue') {
+            let currentPos = this.tracks.indexOf(this.np) || 0;
+            this.np = this.tracks[currentPos + 1];
+            if(!this.np) this.np = this.tracks[0];
+            return this.np;
+        }
     }
 
     progressBar() {
@@ -91,6 +112,17 @@ module.exports = class Queue extends EventEmitter {
         this.filter = null;
         await this.player.equalizer(resetBands.bands);
         return false;
+    }
+
+    /**
+     * 
+     * @param {false|'current'|'queue'} mode 
+     */
+    setLoop(mode) {
+        this.loop = mode
+        if(mode == "queue") {
+            this.tracks.unshift(this.np);
+        }
     }
 }
 

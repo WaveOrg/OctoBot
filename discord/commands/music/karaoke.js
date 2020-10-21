@@ -1,8 +1,8 @@
 const Discord = require("discord.js")
-const { utils, logger, audioPlayers, player } = require("../../../globals");
+const { player } = require("../../../globals");
 const { InfoEmbed, ErrorEmbed } = require("../../../utils/utils");
-const ms = require('ms')
-const { modules } = require("../../../database/constants")
+const { modules } = require("../../../database/constants");
+const Bands = require("../../music/structures/Bands");
 
 module.exports = {
     /**
@@ -17,16 +17,9 @@ module.exports = {
 
         const msg = await message.channel.send(InfoEmbed("", "<a:loading:752246174550982728> Processing filter `Karaoke`."));
 
-        var currentFilters = player.getQueue(message.guild.id).filters || {}
-        if(currentFilters[this.config.command] == true) {
-            currentFilters[this.config.command] = false
-            player.setFilters(message.guild.id, currentFilters, 0)
-        } else {
-            currentFilters[this.config.command] = true
-            player.setFilters(message.guild.id, currentFilters, parseInt(args[0]) || 20)
-        }
+        const enabled = await player.getQueue(message.guild.id).player.equalizer(Bands.karaoke.bands)
 
-        msg.edit(InfoEmbed("", `<:yes:752247197436870666> Karaoke has been ${currentFilters[this.config.command]? "enabled" : "disabled"}`))
+        msg.edit(InfoEmbed("", `<:yes:752247197436870666> Karaoke has been ${enabled ? "enabled" : "disabled"}`))
 
     },
 
