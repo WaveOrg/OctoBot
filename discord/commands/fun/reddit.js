@@ -13,15 +13,24 @@ module.exports = {
     async run(message, args, client) {
         var sent = await message.channel.send(InfoEmbed("🔍 Finding a post!", "Waiting for the waves to bring me a reddit post."))
 
+        if(!args[0]) return message.channel.send(ErrorEmbed("Usage: `reddit <subreddit name>`"))
 
         try {
 
             const subreddit = args[0].toLowerCase();
-            const redditData = await (await fetch(`https://www.reddit.com/r/${subreddit}/.json`)).json();
+            const redditData = await (await fetch(`https://www.reddit.com/r/${subreddit}/.json?limit=50`)).json();
     
             if (!redditData.data || !redditData.data.children || redditData.data.children.length == 0) return message.channel.send(ErrorEmbed("Unable to find any posts from r/" + args[0]))
-    
-            const post = redditData.data.children[Math.floor(Math.random() * redditData.data.children.length)].data;
+
+            const filteredData = redditData.data.children.filter(post => !post.data['over_18']);
+
+            if(!filteredData || filteredData.length == 0) return message.channel.send(ErrorEmbed("Unable to find any non NSFW posts from r/" + args[0]))
+
+            console.log(filteredData)
+
+            const post = filteredData[Math.floor(Math.random() * filteredData.length)].data;
+
+            console.log(post)
 
             sent.edit(new Discord.MessageEmbed()
                 .setTitle(post.title)
