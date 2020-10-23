@@ -18,7 +18,7 @@ module.exports = {
             return;
         }
 
-        var url = (args.join(" ").startsWith('https://') || args.join(" ").startsWith('http://'))? args.join(' ') : `https://${args.join("  ")}`
+        var url = (args.join(" ").startsWith('https://') || args.join(" ").startsWith('http://'))? args.join(' ') : `http://${args.join("  ")}`
         
         const sent = await message.channel.send(RedEmbed('<a:loading:752246174550982728> Taking a picture', '').setFooter("This may take up to 60 seconds."))
     
@@ -56,6 +56,8 @@ module.exports = {
                 sent.edit(ErrorEmbed('Uh oh! The messenger took too long to respond! (Timeout)'))
             } else if(error.message.includes('net::ERR_NAME_NOT_RESOLVED')) {
                 sent.edit(ErrorEmbed('Uh oh! I cannot find that site anywhere in the ocean! Double check that link! (net::ERR_NAME_NOT_RESOLVED)'))
+            } else if(error.message.includes('net::ERR_TUNNEL_CONNECTION_FAILED')) {
+                sent.edit(ErrorEmbed(`Uh oh! I was unable to load that site!`).setFooter("You will also see this error when attempting to view NSFW websites."))   
             } else {
                 sent.edit(ErrorEmbed('Uh oh! It seems like a shark ate the ethernet cable! I was unable to reach that site! `' + error.message + '`'))
             }
