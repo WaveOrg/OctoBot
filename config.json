@@ -1,11 +1,11 @@
 {
-    "prefix": "l!",
-    "token": "NzUxMDk5MzAzNjMxNTE5ODY1.X1EJvA.IwL33Sqr5AGGhTy8d_OzYWJI8d4",
+    "prefix": "!",
+    "token": "NzUwMTQ1NTQ0MDkzMTcxODAy.X02Reg.y2gIxh04_-oYynTT3jXpT6SLCws",
     "mongo": {
-        "user": "octodev",
-        "password": "q84d01OTwL458S6X",
-        "host": "51.81.96.174",
+        "user": "octobot",
+        "password": "ABC123",
+        "host": "192.168.1.54",
         "port": 27017,
-        "database": "octodev"
+        "database": "octobot"
     }
 }

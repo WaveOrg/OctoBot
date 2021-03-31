@@ -20,7 +20,7 @@ module.exports = {
         if(toEval.includes("token")) return message.channel.send(ErrorEmbed("No token for you"));
 
         try {
-            let evaled = eval(toEval);
+            let evaled = await eval(toEval);
             message.channel.send(InfoEmbed("Code evaluation", "")
                 .addField("Eval", "```js\n" + toEval + "\n```")
                 .addField("Result", "```js\n" + evaled + "\n```"))
