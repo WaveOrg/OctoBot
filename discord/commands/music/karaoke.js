@@ -17,9 +17,13 @@ module.exports = {
 
         const msg = await message.channel.send(InfoEmbed("", "<a:loading:752246174550982728> Processing filter `Karaoke`."));
 
-        const enabled = await player.getQueue(message.guild.id).player.equalizer(Bands.karaoke.bands)
+        const enabled = player.getQueue(message.guild.id).filterManager.toggle('karaoke')
 
-        msg.edit(InfoEmbed("", `<:yes:752247197436870666> Karaoke has been ${enabled ? "enabled" : "disabled"}`))
+        if(enabled.success)
+            msg.edit(InfoEmbed("", `<:yes:752247197436870666> Karaoke has been ${enabled.op}`))
+        else    
+            msg.edit(ErrorEmbed("", `<:no:750451799609311412> ${enabled.err ?? "General failure"}`))
+
 
     },
 

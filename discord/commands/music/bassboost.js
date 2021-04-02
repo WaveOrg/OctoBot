@@ -22,15 +22,20 @@ module.exports = {
 
         const msg = await message.channel.send(InfoEmbed("", "<a:loading:752246174550982728> Processing filter `BassBoost`."));
 
+        const queue = player.getQueue(message.guild.id);
+
         if(parsedRange === 0) {
-            await player.getQueue(message.guild.id).player.equalizer(bands.reset.bands);
+            queue.filterManager.toggle('bassboost', { force: 0 }); // force it off
+
             return msg.edit(InfoEmbed("", `<:yes:752247197436870666> Bassboost has been disabled`));
         }
 
-        await player.getQueue(message.guild.id).player.equalizer(_adjustBands(bands.bassboost, parsedRange).bands);
+        const success = queue.filterManager.toggle('bassboost', { force: 1, gain: parsedRange });
 
-        msg.edit(InfoEmbed("", `<:yes:752247197436870666> Bassboost has been enabled`))
-
+        if(success)
+            msg.edit(InfoEmbed("", `<:yes:752247197436870666> Bassboost has been enabled`))
+        else
+            msg.edit(ErrorEmbed("", `<:no:750451799609311412> ${success.err ?? "General failure"}`))
     },
 
     config: {
@@ -42,19 +47,4 @@ module.exports = {
         premium: true,
         requiresModules: [modules.MUSIC]
     }
-}
-
-/**
- * @param {Object} bands
- * @param {String} bands.name
- * @param {Array} bands.bands
- * 
- * @param {number} range 0-100
- */
-function _adjustBands(bands, range) {
-    const adjusted = _.cloneDeep(bands)
-    for(const band of adjusted.bands) {
-        band.gain = (band.gain / 100) * range;
-    }
-    return adjusted;
 }

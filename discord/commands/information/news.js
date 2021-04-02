@@ -30,7 +30,6 @@ module.exports = {
 
         new menu(message.channel, message.author.id, 
             articleArr.filter(article => {
-                console.log(articleArr.filter(articlee => articlee.title == article.title).length)
                 if(articleArr.filter(articlee => articlee.title == article.title).length > 1 && doubles.includes(article.title)) return false;
                 else {
                     doubles.push(article.title)

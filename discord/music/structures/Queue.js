@@ -2,6 +2,7 @@ const track = require('./Track')
 const { Player } = require('lavacord')
 const { EventEmitter } = require('events');
 const { reset: resetBands } = require("./Bands");
+const LavaDSPFilters = require('./Filters');
 
 module.exports = class Queue extends EventEmitter {
     /**
@@ -23,7 +24,7 @@ module.exports = class Queue extends EventEmitter {
         this.startTime = Date.now();
         this.lastPaused = -1;
 
-        this.filter = null;
+        this.filterManager = new LavaDSPFilters(this.player.node.ws, this.guildID);
         
         /** @type {false|'queue'|'current'} */
         this.loop = false;
@@ -96,23 +97,23 @@ module.exports = class Queue extends EventEmitter {
         this.lastPaused = -1;
     }
 
-    /**
-     * @param {Object} bands
-     * @param {String} bands.name
-     * @param {Array} bands.bands
-     * 
-     */
-    async toggleFilter(bands) {
-        if(this.filter !== bands.name) {
-            this.filter = bands.name;
-            await this.player.equalizer(bands.bands);
-            return true;
-        }
+    // /**
+    //  * @param {Object} bands
+    //  * @param {String} bands.name
+    //  * @param {Array} bands.bands
+    //  * 
+    //  */
+    // async toggleFilter(bands) {
+    //     if(this.filter !== bands.name) {
+    //         this.filter = bands.name;
+    //         await this.player.equalizer(bands.bands);
+    //         return true;
+    //     }
 
-        this.filter = null;
-        await this.player.equalizer(resetBands.bands);
-        return false;
-    }
+    //     this.filter = null;
+    //     await this.player.equalizer(resetBands.bands);
+    //     return false;
+    // }
 
     /**
      * 

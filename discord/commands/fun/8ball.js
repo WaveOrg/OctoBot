@@ -20,7 +20,7 @@ module.exports = {
         var title = args.join(" ");
         if(title.length > 256) title = title.substr(0, 253) + '...'
 
-        if(message.content.includes("max") && (message.content.includes("die") || message.content.includes("not good"))) return message.channel.send(InfoEmbed(title, "Definetely"));
+        if(message.content.includes("max") && (message.content.includes("die") || message.content.includes("not good"))) return message.channel.send(InfoEmbed(title, "Definitely"));
         message.channel.send(InfoEmbed(title, responses[Math.floor(Math.random() * responses.length)]));
     },
 

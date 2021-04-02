@@ -26,11 +26,7 @@ module.exports = {
 
             if(!filteredData || filteredData.length == 0) return message.channel.send(ErrorEmbed("Unable to find any non NSFW posts from r/" + args[0]))
 
-            console.log(filteredData)
-
             const post = filteredData[Math.floor(Math.random() * filteredData.length)].data;
-
-            console.log(post)
 
             sent.edit(new Discord.MessageEmbed()
                 .setTitle(post.title)

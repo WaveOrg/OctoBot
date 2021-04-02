@@ -2,7 +2,9 @@ const Discord = require("discord.js")
 const { player } = require("../../../globals");
 const { InfoEmbed, ErrorEmbed } = require("../../../utils/utils");
 const ms = require('ms')
-const { modules } = require("../../../database/constants")
+const { modules } = require("../../../database/constants");
+const { Menu: menu } = require('../../../utils/menu');
+const paginationEmbed = require('discord.js-pagination');
 
 module.exports = {
     /**
@@ -17,9 +19,26 @@ module.exports = {
 
         const queue = player.getQueue(message.guild.id);
 
-        message.channel.send(InfoEmbed("📜 Current Queue", `Playing: ${queue.np.title} | ${queue.np.author}\n` + (queue.tracks.map((track, i) => {
+        const text = `Playing: ${queue.np.title} | ${queue.np.author}\n` + queue.tracks.map((track, i) => {
             return `#${i+1} - ${track.title} | ${track.author}`;
-        }).join('\n'))));
+        }).join('\n')
+
+        if(text.length < 2048) {
+            message.channel.send(InfoEmbed("📜 Current Queue", text));
+        } else {
+            var parts = [];
+            var i = 0;
+
+            text.split('\n')
+                .forEach(part => {
+                    if(parts[i].length + part.length > 2048) 
+                        parts[++i] = part
+                    else 
+                        parts[i] += ('\n' + part);
+                });
+
+            paginationEmbed(message, parts.map((p, i) => InfoEmbed(`[${++i}/${parts.length}] 📜 Current Queue`, p)));
+        }
 
     },
 

@@ -33,7 +33,7 @@ module.exports = {
             width: isPremium ? 1920 : 640,
             height: isPremium ? 1280 : 480,
             launchOptions: {
-                args: ['--proxy-server=http://168.119.110.161:3128']
+                args: ['--proxy-server=http://165.225.77.47']
             },
         }).then(img => {
                 const attachment = new Discord.MessageAttachment(img, 'google.png')

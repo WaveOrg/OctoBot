@@ -16,11 +16,11 @@ module.exports = {
         
         if(!player.isPlaying(message.guild.id)) return message.channel.send(ErrorEmbed("Nothing is playing!"))
 
-        if(player.getQueue(message.guild.id).player.state.volume > 200) {
+        if(player.getQueue(message.guild.id).filterManager.activeFilters['earrape']) {
             const loading = await message.channel.send(InfoEmbed("", "<a:loading:752246174550982728> Processing filter `Earrape`."));
             
             player.changeVolume(message.guild.id, 100)
-            await player.getQueue(message.guild.id).toggleFilter(bands.earrape);
+            player.getQueue(message.guild.id).filterManager.toggle('earrape', { force: 0 });
 
            loading.edit(InfoEmbed("", `<:yes:752247197436870666> Earrape has been disabled.`))
         } else {
@@ -33,7 +33,7 @@ module.exports = {
             const loading = await message.channel.send(InfoEmbed("", "<a:loading:752246174550982728> Processing filter `Earrape`."));
 
             if(reactions.first().emoji.name == '✅') {
-                await player.getQueue(message.guild.id).toggleFilter(bands.earrape)
+                await player.getQueue(message.guild.id).filterManager.toggle('earrape', { force: 1 })
                 player.changeVolume(message.guild.id, 220)
                 loading.edit(InfoEmbed("", `<:yes:752247197436870666> Earrape has been enabled.`))
             } 
