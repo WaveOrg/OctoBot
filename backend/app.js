@@ -79,13 +79,13 @@ io.on("connection", socket => {
     })
 })
 
-Mongoose.connect(`mongodb://${mongo.user}:${mongo.password}@${mongo.host}:${mongo.port}/${mongo.database}`, {
+Mongoose.connect(`mongodb${mongo.plusSRV ? '+srv' : ''}://${mongo.user}:${mongo.password}@${mongo.host}${mongo.port != 27017 ? `:${mongo.port}` : ''}/${mongo.database}`, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         useCreateIndex: true,
         useFindAndModify: false
     }).then(async () => {
-        logger.logBackend(`Connected to MongoDB at ${chalk.green(mongo.host)} (${chalk.gray(await util.resolveDomain(mongo.host))}). Using database ${chalk.green(mongo.database)}.`)
+        logger.logBackend(`Connected to MongoDB at ${chalk.green(mongo.host)} (${chalk.gray(mongo.plusSRV ? 'srv domain' : await util.resolveDomain(mongo.host))}). Using database ${chalk.green(mongo.database)}.`)
     }).catch(console.error);
 
 httpsServer.listen(8443, () => {

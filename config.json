@@ -1,11 +1,18 @@
 {
     "prefix": "l!",
-    "token": "NzUwMTQ1NTQ0MDkzMTcxODAy.X02Reg.y2gIxh04_-oYynTT3jXpT6SLCws",
+    "token": "NzUxMDk5MzAzNjMxNTE5ODY1.X1EJvA.IwL33Sqr5AGGhTy8d_OzYWJI8d4",
     "mongo": {
-        "user": "octobot",
+        "plusSRV": true,
+        "user": "dbUser",
         "password": "ABC123",
-        "host": "192.168.1.54",
+        "host": "cluster0.3dyas.mongodb.net",
         "port": 27017,
-        "database": "octobot"
+        "database": "myFirstDatabase"
+    },
+
+    "apis": {
+        "genius": {
+            "apiKey": "34id7yOPcxb17z6NE1kue741hlcfr3K1i_sxWGCqp_IKl7EGLset5Szy2seAeL6y"
+        }
     }
 }

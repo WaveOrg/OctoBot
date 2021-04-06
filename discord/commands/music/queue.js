@@ -31,10 +31,10 @@ module.exports = {
 
             text.split('\n')
                 .forEach(part => {
-                    if(parts[i].length + part.length > 2048) 
+                    if((parts[i]?.length ?? 0) + part.length > 2048) 
                         parts[++i] = part
                     else 
-                        parts[i] += ('\n' + part);
+                        parts[i] += ('\n' + (part ?? ''));
                 });
 
             paginationEmbed(message, parts.map((p, i) => InfoEmbed(`[${++i}/${parts.length}] 📜 Current Queue`, p)));

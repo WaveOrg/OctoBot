@@ -5,6 +5,9 @@ const { reset: resetBands } = require("./Bands");
 const LavaDSPFilters = require('./Filters');
 
 module.exports = class Queue extends EventEmitter {
+    /** @type {track} */
+    np
+
     /**
      * 
      * @param {string} guildID 
@@ -60,6 +63,7 @@ module.exports = class Queue extends EventEmitter {
         return this;
     }
 
+    /** @returns {Track | null} */
     getNextSong() {
         if(!this.loop) {
             const song = this.tracks.shift();

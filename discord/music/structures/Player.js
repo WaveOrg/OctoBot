@@ -128,6 +128,7 @@ module.exports = class Player extends EventEmitter {
             const queue = new Queue(guildID, textChannel, voiceChannel, Array.isArray(track) ? track : [track], player);
 
             queue.on('trackChange', song => {
+                console.log(queue.loop, this.queues.has(guildID))
                 if(queue.loop != 'current' && this.queues.has(guildID))
                     textChannel.send(InfoEmbed("▶ Now Playing:", `${song.title}`)
                         .addFields([
