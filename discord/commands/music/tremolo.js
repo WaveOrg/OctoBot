@@ -15,12 +15,12 @@ module.exports = {
         
         if(!player.isPlaying(message.guild.id)) return message.channel.send(ErrorEmbed("Nothing is playing!"))
 
-        const msg = await message.channel.send(InfoEmbed("", "<a:loading:752246174550982728> Processing filter `Nightcore`."));
+        const msg = await message.channel.send(InfoEmbed("", "<a:loading:752246174550982728> Processing filter `Tremolo`."));
 
-        const enabled = player.getQueue(message.guild.id).filterManager.toggle('nightcore')
+        const enabled = player.getQueue(message.guild.id).filterManager.toggle('tremolo')
 
         if(enabled.success)
-            msg.edit(InfoEmbed("", `<:yes:752247197436870666> Nightcore has been ${enabled.op}`))
+            msg.edit(InfoEmbed("", `<:yes:752247197436870666> Tremolo has been ${enabled.op}`))
         else    
             msg.edit(ErrorEmbed("", `<:no:750451799609311412> ${enabled.err ?? "General failure"}`))
 
@@ -28,11 +28,11 @@ module.exports = {
     },
 
     config: {
-        command: "nightcore",
+        command: "tremolo",
         aliases: [],
         description: "Add nightcore effect.",
         permissions: [],
-        usage: `nightcore`,
+        usage: `tremolo`,
         premium: true,
         requiresModules: [modules.MUSIC]
     }

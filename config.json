@@ -25,5 +25,10 @@
             "certificate": "certificate path",
             "privateKey": "private key path"
         }
+    },
+    "apis": {
+        "genius": {
+            "apiKey": "34id7yOPcxb17z6NE1kue741hlcfr3K1i_sxWGCqp_IKl7EGLset5Szy2seAeL6y"
+        }
     }
 }

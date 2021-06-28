@@ -1,7 +1,8 @@
 const Discord = require("discord.js")
 const { utils, logger, audioPlayers, player } = require("../../../globals");
-const { InfoEmbed, ErrorEmbed } = require("../../../utils/utils");
+const { InfoEmbed, ErrorEmbed, RedEmbed } = require("../../../utils/utils");
 const ms = require('ms')
+const bands = require("../../music/structures/Bands")
 const { modules } = require("../../../database/constants")
 
 module.exports = {
@@ -15,18 +16,18 @@ module.exports = {
         
         if(!player.isPlaying(message.guild.id)) return message.channel.send(ErrorEmbed("Nothing is playing!"))
 
-        player.getQueue(message.guild.id).shuffleTracks();
+        const queue = player.getQueue(message.guild.id);
 
-        msg.edit(InfoEmbed("", `<:yes:752247197436870666> Songs Shuffled!`))
-
+        message.channel.send(InfoEmbed("🎧 Music Filters", `Active Filters: ${Object.keys(queue.filterManager.activeFilters).map(t => `\`${t}\``).join(', ')}`))
+        
     },
 
     config: {
-        command: "shuffle",
-        aliases: ['radomizesongs'],
-        description: "Shuffle songs in queue.",
+        command: "filters",
+        aliases: [],
+        description: "Shows active filters.",
         permissions: [],
-        usage: `shuffle`,
+        usage: `filters`,
         premium: false,
         requiresModules: [modules.MUSIC]
     }

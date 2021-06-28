@@ -14,7 +14,7 @@ module.exports = {
         
         if(!player.isPlaying(message.guild.id)) return message.channel.send(ErrorEmbed("Nothing is playing!"))
 
-        player.stop(message.guild.id);
+        await player.stop(message.guild.id);
 
         message.channel.send(InfoEmbed("🛑 Music Stopped", `I have stopped playing music!`))
 

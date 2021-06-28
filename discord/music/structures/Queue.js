@@ -2,8 +2,12 @@ const track = require('./Track')
 const { Player } = require('lavacord')
 const { EventEmitter } = require('events');
 const { reset: resetBands } = require("./Bands");
+const LavaDSPFilters = require('./Filters');
 
 module.exports = class Queue extends EventEmitter {
+    /** @type {track} */
+    np
+
     /**
      * 
      * @param {string} guildID 
@@ -23,7 +27,10 @@ module.exports = class Queue extends EventEmitter {
         this.startTime = Date.now();
         this.lastPaused = -1;
 
-        this.filter = null;
+        this.filterManager = new LavaDSPFilters(this.player.node.ws, this.guildID);
+        
+        /** @type {false|'queue'|'current'} */
+        this.loop = false;
     }
 
     get start() {
@@ -47,10 +54,29 @@ module.exports = class Queue extends EventEmitter {
         this.tracks.push(track);
     }
 
+    /**
+     * 
+     * @returns {Queue}
+     */
+    shuffleTracks() {
+        this.tracks.sort(() => Math.random() - 0.5);
+        return this;
+    }
+
+    /** @returns {Track | null} */
     getNextSong() {
-        const song = this.tracks.shift();
-        this.np = song;
-        return song;
+        if(!this.loop) {
+            const song = this.tracks.shift();
+            this.np = song;
+            return song;
+        } else if(this.loop == "current") {
+            return this.np;
+        } else if(this.loop == 'queue') {
+            let currentPos = this.tracks.indexOf(this.np) || 0;
+            this.np = this.tracks[currentPos + 1];
+            if(!this.np) this.np = this.tracks[0];
+            return this.np;
+        }
     }
 
     progressBar() {
@@ -75,22 +101,33 @@ module.exports = class Queue extends EventEmitter {
         this.lastPaused = -1;
     }
 
-    /**
-     * @param {Object} bands
-     * @param {String} bands.name
-     * @param {Array} bands.bands
-     * 
-     */
-    async toggleFilter(bands) {
-        if(this.filter !== bands.name) {
-            this.filter = bands.name;
-            await this.player.equalizer(bands.bands);
-            return true;
-        }
+    // /**
+    //  * @param {Object} bands
+    //  * @param {String} bands.name
+    //  * @param {Array} bands.bands
+    //  * 
+    //  */
+    // async toggleFilter(bands) {
+    //     if(this.filter !== bands.name) {
+    //         this.filter = bands.name;
+    //         await this.player.equalizer(bands.bands);
+    //         return true;
+    //     }
 
-        this.filter = null;
-        await this.player.equalizer(resetBands.bands);
-        return false;
+    //     this.filter = null;
+    //     await this.player.equalizer(resetBands.bands);
+    //     return false;
+    // }
+
+    /**
+     * 
+     * @param {false|'current'|'queue'} mode 
+     */
+    setLoop(mode) {
+        this.loop = mode
+        if(mode == "queue") {
+            this.tracks.unshift(this.np);
+        }
     }
 }
 

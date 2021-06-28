@@ -14,7 +14,7 @@ client.commands = new Discord.Collection();
 module.exports = {
     client,
     player: new Player([{
-        id:"1", host:"51.81.96.174", port:2334, password:"sTE1GW25z9AXZgIyGhwpfDpUhl9TqVtPuPc9vWJUnZLebLp6rxWmZpXlWdJqFE0D"
+        id:"1", host:"192.168.1.54", port: 2333, password:"sTE1GW25z9AXZgIyGhwpfDpUhl9TqVtPuPc9vWJUnZLebLp6rxWmZpXlWdJqFE0D"
     }], client)
     /*player: new Player(client, {
         leaveOnEnd: false,

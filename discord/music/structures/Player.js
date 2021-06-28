@@ -4,6 +4,12 @@ const { EventEmitter } = require('events');
 const Queue = require('./Queue');
 const fetch = require('node-fetch');
 const Track = require('./Track');
+const SpotifyURL = require('spotify-uri');
+const { SpotifyParser } = require('spotilink');
+const { InfoEmbed, ErrorEmbed } = require('../../../utils/utils');
+
+/** @type {Object.<string, SpotifyParser>} */
+const spotifyParsers = {};
 
 module.exports = class Player extends EventEmitter {
     /**
@@ -43,7 +49,7 @@ module.exports = class Player extends EventEmitter {
     
     /**
      * 
-     * @param {('ytsearch'|'ytlink'|'soundcloud'|'website')} source 
+     * @param {('ytsearch'|'ytlink'|'soundcloud'|'website'|'spotify'|'spotifyPlaylist')} source 
      * @param {String} searchTerms 
      * @param {discord.User} requestedBy
      * @returns {Promise<Track[]>}
@@ -51,18 +57,45 @@ module.exports = class Player extends EventEmitter {
     async search(source, searchTerms, requestedBy) {
         const node = this.manager.idealNodes[0];
 
-        const param = new URLSearchParams();
-        
-        if(source == 'ytsearch') param.append("identifier", `${source}:${searchTerms}`)
-            else param.append("identifier", `${searchTerms}`)
+        if(source === 'spotify' || source === 'spotifyPlaylist') {
+            /** @type {SpotifyParser} */
+            var spotilink;
 
-        const tracks = await fetch(`http://${node.host}:${node.port}/loadtracks?${param}`, {
-            headers: {
-                Authorization: node.password
+            if(spotifyParsers[node.id]) 
+                spotilink = spotifyParsers[node.id]
+            else 
+                spotilink = spotifyParsers[node.id] = new SpotifyParser(node, '0e2cf77d57894505a2c05c045a409258', '89d05519e56f4b468534223df4f34d4e');
+
+            if(!spotilink.token) { // using while freezes up entire bot
+                await new Promise(done => {
+                    const interval = setInterval(() => {
+                        if(spotilink.token) {
+                            clearInterval(interval);
+                            done();
+                        }
+                    }, 10)
+                });
             }
-        }).then(res => res.json()).then(data => data.tracks).catch(err => err);
 
-        return tracks.map(track => new Track(track, requestedBy, source));
+            if(source === 'spotifyPlaylist') {
+                return (await spotilink.getPlaylistTracks(SpotifyURL.parse(searchTerms).id, true)).filter(track => track).map(track => new Track(track, requestedBy, source));
+            } else {
+                return [await spotilink.getTrack(SpotifyURL.parse(searchTerms).id, true)].map(track => new Track(track, requestedBy, source));
+            }
+        } else {
+            const param = new URLSearchParams();
+        
+            if(source == 'ytsearch') param.append("identifier", `${source}:${searchTerms}`)
+                else param.append("identifier", `${searchTerms}`)
+
+            const tracks = await fetch(`http://${node.host}:${node.port}/loadtracks?${param}`, {
+                headers: {
+                    Authorization: node.password
+                }
+            }).then(res => res.json()).then(data => data.tracks).catch(err => err);
+
+            return tracks.map(track => new Track(track, requestedBy, source));
+        }
     }
 
     /**
@@ -75,12 +108,10 @@ module.exports = class Player extends EventEmitter {
     async play(track, voiceChannel, textChannel, guild) {
         const guildID = guild.id
         if(this.queues.has(guildID)) {
-
             const queue = this.queues.get(guildID);
             if(Array.isArray(track)) track.forEach(theTrack => queue.addToQueue(theTrack))
             else queue.addToQueue(track)
         } else {
-
             const player = await this.manager.join({
                 guild: guildID,
                 channel: voiceChannel.id,
@@ -95,6 +126,21 @@ module.exports = class Player extends EventEmitter {
             });
 
             const queue = new Queue(guildID, textChannel, voiceChannel, Array.isArray(track) ? track : [track], player);
+
+            queue.on('trackChange', song => {
+                console.log(queue.loop, this.queues.has(guildID))
+                if(queue.loop != 'current' && this.queues.has(guildID))
+                    textChannel.send(InfoEmbed("▶ Now Playing:", `${song.title}`)
+                        .addFields([
+                            { name: "Duration", value: song.formattedLength, inline: true },
+                            { name: "Author", value: song.author, inline: true },
+                            { name: "Requested By", value: `<@${song.requestedBy.id}>`, inline: true }
+                        ]))
+            });
+
+            queue.on('end', () => {
+                textChannel.send(ErrorEmbed("<:no:750451799609311412> All songs have been played!"))
+            }); 
             
             this.queues.set(guildID, queue);
 
@@ -128,13 +174,14 @@ module.exports = class Player extends EventEmitter {
     /**
      * 
      * @param {String} input
-     * @returns {('ytsearch'|'ytlink'|'soundcloud'|'website')} 
      */
     detectType(input) {
         if(/^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/.test(input))
             return 'ytlink';
         else if(/^https?:\/\/(soundcloud\.com|snd\.sc)\/(.*)$/.test(input))
-            return 'soundcloud';
+            return 'soundcloud'
+        else if(isSpotifyURL(input))
+            return SpotifyURL.parse(input).type === 'track' ? 'spotify' : 'spotifyPlaylist' 
         else if(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/.test(input))
             return 'website';
         else 
@@ -201,8 +248,25 @@ module.exports = class Player extends EventEmitter {
         this._playTrack(guildID)
     }
 
+    /**
+     * 
+     * @param {String} guildID
+     */
+    stop(guildID) {
+        return this.queues.get(guildID).player.stop()
+    }
+
     async _emitToListeners(guildId) {
         this.client.shard.send({ _shardEvent: "emitMusicToListeners", guildId })
     }
 
+}
+
+function isSpotifyURL(string) {
+    try {
+        const asdf = SpotifyURL.parse(string);
+        return asdf;
+    } catch (error) {
+        return false;
+    }
 }

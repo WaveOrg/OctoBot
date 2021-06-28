@@ -14,7 +14,7 @@ module.exports = {
         
         if(!player.isPlaying(message.guild.id)) return message.channel.send(ErrorEmbed("Nothing is playing!"))
 
-        await player.clearQueue(message.guild.id);
+        player.getQueue(message.guild.id).tracks = [];
 
         message.channel.send(InfoEmbed("🗑 Queue Cleared", `The queue has been cleared!`))
     },
