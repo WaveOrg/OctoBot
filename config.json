@@ -1,11 +1,29 @@
 {
-    "prefix": "l!",
-    "token": "NzUxMDk5MzAzNjMxNTE5ODY1.X1EJvA.IwL33Sqr5AGGhTy8d_OzYWJI8d4",
+    "prefix": "o!",
+    "token": "BOT_TOKEN",
     "mongo": {
-        "user": "octodev",
-        "password": "q84d01OTwL458S6X",
-        "host": "51.81.96.174",
+        "srvMode": true,
+        "user": "MONGO_USERNAME",
+        "password": "MONGO_PASSWORD",
+        "host": "MONGO_HOST",
         "port": 27017,
-        "database": "octodev"
+        "database": "MONGO_DATABASE"
+    },
+    "statcordKey": "STATCORD_KEY",
+    "lavalinkNodes": [
+        {
+            "id": 1,
+            "host": "NODE_HOST",
+            "port": "NODE_PORT",
+            "password": "NODE_PASSWORD"
+        }
+    ],
+    "backend": {
+        "port": 8443,
+        "useHttps": false,
+        "ssl": {
+            "certificate": "certificate path",
+            "privateKey": "private key path"
+        }
     }
 }

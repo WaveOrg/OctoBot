@@ -14,8 +14,8 @@ module.exports = {
     },
     welcomeLeaveTypes: {
         TEXT: "text", // Normal text
-        JSON_EMBED: "embed", // Embed, stored as json string
-        IMAGE_BASE64: "image" // Image encoded in base64
+        JSON_EMBED: "embed", // Embed, stored as json string, not implemented
+        IMAGE_BASE64: "image" // Image encoded in base64, not implemented
     },
 
     unimplementedModules: [

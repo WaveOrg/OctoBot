@@ -12,10 +12,12 @@ const globals = require("../launcher.globals");
 const { logger } = globals;
 const socketIo = require("socket.io");
 const https = require("https");
+const http = require("http");
 const { ssl } = require("./constants")
+const { backend } = require("../config.json")
 
-const httpsServer = https.createServer(ssl)
-const io = socketIo(httpsServer, {
+const backendServer = backend.useHttps ? https.createServer(ssl) : http.createServer()
+const io = socketIo(backendServer, {
     path: "/ws"
 })
 
@@ -79,7 +81,7 @@ io.on("connection", socket => {
     })
 })
 
-Mongoose.connect(`mongodb://${mongo.user}:${mongo.password}@${mongo.host}:${mongo.port}/${mongo.database}`, {
+Mongoose.connect(`mongodb${mongo.srvMode ? '+srv' : ''}://${mongo.user}:${mongo.password}@${mongo.host}${mongo.srvMode ? "" : ":" + mongo.port}/${mongo.database}`, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         useCreateIndex: true,
@@ -88,6 +90,6 @@ Mongoose.connect(`mongodb://${mongo.user}:${mongo.password}@${mongo.host}:${mong
         logger.logBackend(`Connected to MongoDB at ${chalk.green(mongo.host)} (${chalk.gray(await util.resolveDomain(mongo.host))}). Using database ${chalk.green(mongo.database)}.`)
     }).catch(console.error);
 
-httpsServer.listen(8443, () => {
-    logger.logBackend(`Now listening on ${8443}. Bound to HTTPS Server.`)
+backendServer.listen(backend.port, () => {
+    logger.logBackend(`Now listening on ${backend.port}. Bound to HTTP${backend.useHttps ? 'S': ''} Server.`)
 })

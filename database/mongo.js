@@ -3,7 +3,7 @@ const chalk = require("chalk");
 const util = require("../utils/utils");
 const { mongo } = require("../config.json");
 
-module.exports.start = () => Mongoose.connect(`mongodb://${mongo.user}:${mongo.password}@${mongo.host}:${mongo.port}/${mongo.database}`, {
+module.exports.start = () => Mongoose.connect(`mongodb${mongo.srvMode ? '+srv' : ''}://${mongo.user}:${mongo.password}@${mongo.host}${mongo.srvMode ? "" : ":" + mongo.port}/${mongo.database}`, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         useCreateIndex: true,
