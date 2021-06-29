@@ -77,7 +77,11 @@ module.exports = {
      * @returns {Promise<String>} IP address corresponding to the domain 
      */
     resolveDomain: async function(domain) {
-        return (await dns.lookup(domain)).address
+        try {
+            return (await dns.lookup(domain)).address
+        } catch {
+            return ""
+        }
     },
     
     cleanTitleForGenius(songTitle, songAuthor) {

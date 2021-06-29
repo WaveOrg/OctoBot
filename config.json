@@ -1,18 +1,34 @@
 {
-    "prefix": "l!",
-    "token": "NzUxMDk5MzAzNjMxNTE5ODY1.X1EJvA.IwL33Sqr5AGGhTy8d_OzYWJI8d4",
+    "prefix": "o!",
+    "token": "BOT_TOKEN",
     "mongo": {
-        "plusSRV": true,
-        "user": "dbUser",
-        "password": "ABC123",
-        "host": "cluster0.3dyas.mongodb.net",
+        "srvMode": true,
+        "user": "MONGO_USERNAME",
+        "password": "MONGO_PASSWORD",
+        "host": "MONGO_HOST",
         "port": 27017,
-        "database": "myFirstDatabase"
+        "database": "MONGO_DATABASE"
     },
-
+    "statcordKey": "STATCORD_KEY",
+    "lavalinkNodes": [
+        {
+            "id": 1,
+            "host": "NODE_HOST",
+            "port": "NODE_PORT",
+            "password": "NODE_PASSWORD"
+        }
+    ],
+    "backend": {
+        "port": 8443,
+        "useHttps": false,
+        "ssl": {
+            "certificate": "certificate path",
+            "privateKey": "private key path"
+        }
+    },
     "apis": {
         "genius": {
-            "apiKey": "34id7yOPcxb17z6NE1kue741hlcfr3K1i_sxWGCqp_IKl7EGLset5Szy2seAeL6y"
+            "apiKey": "GENIUS_API_KEY"
         }
     }
 }
