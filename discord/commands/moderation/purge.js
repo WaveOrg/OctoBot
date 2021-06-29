@@ -2,6 +2,7 @@ const Discord = require("discord.js")
 const { InfoEmbed, ErrorEmbed, RedEmbed } = require('../../../utils/utils');
 const { userDataOf } = require("../../../utils/dbUtils")
 const { logger } = require("../../../globals");
+const { modules } = require("../../../database/constants");
 
 module.exports = {
     /**
@@ -53,7 +54,7 @@ module.exports = {
         }).catch(er => {
             sent.edit(ErrorEmbed(`An error occurred when trying to delete messages! The error has been logged. Although we did successfully delete ${totalDeleted}/${args[0]} messages!`))
             logger.error(`Error on purge (args: ${args.join(" ")}) | Error: ${er}`)
-        })
+        })       
     },
 
     config: {
@@ -61,6 +62,7 @@ module.exports = {
         aliases: [],
         description: "Deletes <amount> amount of messages in the current channel.",
         permissions: ["MANAGE_MESSAGES"],
-        usage: `purge <amount (0-1000)>`
+        usage: `purge <amount (0-1000)>`,
+        requiredModules: [modules.MODERATION]
     }
 }

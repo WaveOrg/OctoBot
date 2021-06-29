@@ -43,6 +43,8 @@ module.exports = {
                 message.channel.send(InfoEmbed("🎵 Songs added to queue!", `I've added ${tracks.length} songs to the queue.`))
             }
         } else {
+            if(queue.firstPlay) return;
+
             message.channel.send(InfoEmbed("🎵 Added to queue!", `${track.title}`)
                 .addFields([
                     { name: "Duration", value: track.formattedLength, inline: true },

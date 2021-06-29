@@ -31,6 +31,8 @@ module.exports = class Queue extends EventEmitter {
         
         /** @type {false|'queue'|'current'} */
         this.loop = false;
+
+        this.firstPlay = true;
     }
 
     get start() {

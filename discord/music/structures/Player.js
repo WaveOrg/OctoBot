@@ -128,14 +128,14 @@ module.exports = class Player extends EventEmitter {
             const queue = new Queue(guildID, textChannel, voiceChannel, Array.isArray(track) ? track : [track], player);
 
             queue.on('trackChange', song => {
-                console.log(queue.loop, this.queues.has(guildID))
-                if(queue.loop != 'current' && this.queues.has(guildID))
+                if(queue.loop != 'current' && this.queues.has(guildID)) {
                     textChannel.send(InfoEmbed("▶ Now Playing:", `${song.title}`)
                         .addFields([
                             { name: "Duration", value: song.formattedLength, inline: true },
                             { name: "Author", value: song.author, inline: true },
                             { name: "Requested By", value: `<@${song.requestedBy.id}>`, inline: true }
-                        ]))
+                        ]));
+                }
             });
 
             queue.on('end', () => {
@@ -151,11 +151,15 @@ module.exports = class Player extends EventEmitter {
         return this.queues.get(guildID)
     }
 
+    reconnect() {
+        
+    }
+
     /**
      * 
      * @param {String} guildID
      */
-    _playTrack(guildID) {
+    async _playTrack(guildID) {
         this._emitToListeners(guildID);
         const queue = this.queues.get(guildID);
         const song = queue.getNextSong();
@@ -168,7 +172,8 @@ module.exports = class Player extends EventEmitter {
 
         queue.startSong()
         queue.emit('trackChange', song);
-        queue.player.play(song.lavalinkID);
+        await queue.player.play(song.lavalinkID);
+        queue.firstPlay = false;
     }
 
     /**

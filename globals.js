@@ -1,6 +1,6 @@
 const Log = require("./utils/logger");
 const { client, player } = require("./discord/bot")
-const Player = require("./discord/music/structures/Player")
+const Player = require("./discord/music/structures/Player");
 
 /**
  * Logger

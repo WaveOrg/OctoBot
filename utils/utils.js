@@ -79,4 +79,22 @@ module.exports = {
     resolveDomain: async function(domain) {
         return (await dns.lookup(domain)).address
     },
+    
+    cleanTitleForGenius(songTitle, songAuthor) {
+        if(songTitle.includes(songAuthor)) songTitle = songTitle.replace(songAuthor, '');
+
+        return songTitle
+            .replace(/\[LYRICS VIDEO\]/gi, '')
+            .replace(/\[MUSIC VIDEO\]/gi, '')
+            .replace(/official music video/gi, '')
+            .replace(/official lyrics video/gi, '')
+            .replace(/music video/gi, '')
+            .replace(/lyrics video/gi, '')
+            .replace(/\[[0-9]+ hour version]/gi, '')
+            .replace(/\[[0-9]+ hour(s)?]/gi, '')
+            .replace(/\[0-9]+ hour(s)?]/gi, '')
+            .replace(/\from [A-Za-z]+/gi, '')
+            .replace(/\(\)/gi, '')
+            .replace(/\[\]/gi, '')
+    }
 }

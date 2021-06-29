@@ -27,6 +27,7 @@
     "discord.js-pagination": "^1.0.3",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "genius-api": "^0.4.1",
     "genius-lyrics-api": "^3.0.6",
     "get-value": "^3.0.1",
     "jimp": "^0.16.1",
