@@ -3,7 +3,7 @@
 
 # OctoBot | A multipurpose bot
 
-This is the main part of the project, the bot
+This is the main part of the project, the bot.  
 Developed by [Derock](https://github.com/ItzDerock) and [Antony](https://github.com/Antony1060) + contributors
 
 ### Requiremnets
@@ -11,7 +11,7 @@ Developed by [Derock](https://github.com/ItzDerock) and [Antony](https://github.
 - A MongoDB database
 - StatCord Account
 - At least 1 Lavalink host
-- A Genius Api Key
+- A [Genius](https://genius.com/developers) Api Key
 
 ### Running
 
