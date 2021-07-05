@@ -1,4 +1,4 @@
-### DISCLAIMER: The bot is not 100% finished and has bugs, the project is officially abandonded but you're free to make PRs
+### DISCLAIMER: The bot is not 100% finished and has bugs, the project is officially abandoned but you're free to make PRs
 
 
 # OctoBot | A multipurpose bot
