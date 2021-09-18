@@ -38,7 +38,7 @@
     "mongoose": "^5.10.2",
     "ms": "^2.1.2",
     "node-fetch": "^2.6.1",
-    "set-value": "^3.0.2",
+    "set-value": "^4.0.1",
     "socket.io": "^2.3.0",
     "spotify-uri": "^2.2.0",
     "spotilink": "^1.4.5",
